@@ -24,4 +24,4 @@ Before you begin, ensure you have met the following requirements:
 
 1. Clone the repository
    ```bash
-   git clone https://github.com/your-username/flutter-ai-student-analytics.git
+   git clone [https://github.com/your-username/flutter-ai-student-analytics.git](https://github.com/IAStudentAnalytics/Flutter_ISA.git)https://github.com/IAStudentAnalytics/Flutter_ISA.git
