@@ -30,9 +30,10 @@ class Scene1 extends StatelessWidget {
         // Connexion réussie
         print('Connexion réussie: ${response.body}');
         Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => Onbording()),
-        );
+            context,
+            MaterialPageRoute(
+                   builder: (_) => Onbording(email: email), ),
+                 );
       } else {
         // Gérer les erreurs de connexion
         print('Erreur de connexion: ${response.statusCode}');

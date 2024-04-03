@@ -89,7 +89,7 @@ class SideMenu extends StatelessWidget {
              onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Sceneteacherhome()),
+            MaterialPageRoute(builder: (context) => Sceneteacherhome(email: '',)),
           );
         },
             ),

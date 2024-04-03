@@ -1,14 +1,22 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
-
+import 'package:fl_chart/fl_chart.dart'; // Importer le package fl_chart
 import 'side_menu.dart'; // Import the side_menu.dart file
 
 class Sceneteacherhome extends StatelessWidget {
+  final String email;
+
+  // Constructeur pour recevoir l'e-mail de l'utilisateur
+  const Sceneteacherhome({Key? key, required this.email}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
     double fem = screenWidth / 411;
+
+    // Extraire le nom de l'e-mail
+    String userName = email.split('@')[0]; // Supprimer le domaine de l'e-mail
 
     return Scaffold(
       body: SingleChildScrollView(
@@ -85,45 +93,38 @@ class Sceneteacherhome extends StatelessWidget {
                                 ),
                                 Container(
                                   margin: EdgeInsets.only(right: 10 * fem),
-                                  child: Text(
-                                    '👋',
-                                    style: TextStyle(
-                                      fontSize: 19.7266578674 * fem,
-                                      fontWeight: FontWeight.w700,
-                                      color: Color(0xff0c1e33),
-                                    ),
+                                  child:  Text(
+                                  userName,
+                                  style: TextStyle(
+                                    fontSize: 25 * fem,
+                                    fontWeight: FontWeight.w700,
+                                    color: Color.fromARGB(255, 241, 242, 243),
                                   ),
                                 ),
-                                Expanded(
-                                  child: TextField(
-                                    maxLines: null,
-                                    decoration: InputDecoration(
-                                      border: InputBorder.none,
-                                      focusedBorder: InputBorder.none,
-                                      enabledBorder: InputBorder.none,
-                                      errorBorder: InputBorder.none,
-                                      disabledBorder: InputBorder.none,
-                                    ),
-                                  ),
                                 ),
                               ],
                             ),
                           ),
-                          SizedBox(height: 20 * fem),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              buildMenuButton(context, fem, 'Create Test', Icons.question_answer, '/create_test'),
-                            ],
-                          ),
-                          SizedBox(height: 20 * fem),
-                          Row(
-                            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                            children: [
-                              buildMenuButton(context, fem, 'List of Students', Icons.people, ''),
-                              buildMenuButton(context, fem, 'Tests History', Icons.history, ''),
-                            ],
-                          ),
+                          SizedBox(height: 25 * fem),
+Column(
+  children: [
+    Row(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      children: [
+        buildMenuButton(context, fem, 'Create Test', Icons.question_answer, '/create_test'),
+        buildMenuButton(context, fem, 'List of Students', Icons.people, '/list_students'),
+      ],
+    ),
+    SizedBox(height: 20 * fem), // Ajoutez un espacement entre les deux rangées
+    Row(
+      mainAxisAlignment: MainAxisAlignment.center, // Centrez horizontalement les boutons
+      children: [
+        buildMenuButton(context, fem, 'Tests History', Icons.history, '/tests_history'),
+      ],
+    ),
+  ],
+),
+
                         ],
                       ),
                     ),
@@ -138,9 +139,8 @@ class Sceneteacherhome extends StatelessWidget {
               child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
-                  buildStatBubble(context, 'Math', '85%', Colors.blue, ['Choice 1', 'Choice 2', 'Choice 3']),
-                  buildStatBubble(context, 'Science', '92%', Colors.green, ['Choice 1', 'Choice 2', 'Choice 3']),
-                  buildStatBubble(context, 'English', '78%', Colors.orange, ['Choice 1', 'Choice 2', 'Choice 3']),
+                  buildStatBubble(context, 'Chapter', '85%', Colors.blue, ['Choice 1', 'Choice 2', 'Choice 3']),
+                  buildStatBubble(context, 'Test', '92%', Colors.green, ['Choice 1', 'Choice 2', 'Choice 3']),
                 ],
               ),
             ),
@@ -237,6 +237,31 @@ class Sceneteacherhome extends StatelessWidget {
                                   ),
                                 ),
                               ],
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          top: 40 * fem,
+                          left: 0,
+                          right: 0,
+                          child: PieChart(
+                            PieChartData(
+                              sections: List.generate(
+                                5,
+                                (index) {
+                                  return PieChartSectionData(
+                                    value: 20,
+                                    color: color,
+                                    title: 'Chapter ${index + 1}',
+                                    radius: 50 * fem,
+                                    titleStyle: TextStyle(
+                                      fontSize: 12 * fem,
+                                      fontWeight: FontWeight.bold,
+                                      color: Colors.white,
+                                    ),
+                                  );
+                                },
+                              ),
                             ),
                           ),
                         ),

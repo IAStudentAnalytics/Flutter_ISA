@@ -41,7 +41,8 @@ dependencies:
   flutter_svg: ^2.0.10+1
   http: 1.2.0
   image_picker: ^1.0.7
- 
+  fl_chart: ^0.35.0
+
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1
   flutter_test:

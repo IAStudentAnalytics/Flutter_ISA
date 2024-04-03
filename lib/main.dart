@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'dart:ui';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:pim/page-1/CreateTestPage.dart';
+import 'package:pim/page-1/TestsHistory.dart';
 import 'package:pim/page-1/quiz.dart';
 import 'package:pim/page-1/quiz_new.dart';
 import 'package:pim/utils.dart';
@@ -41,11 +43,20 @@ class MyApp extends StatelessWidget {
 		theme: ThemeData(
 		primarySwatch: Colors.blue,
 		),
+          routes: {
+     
+        '/create_test': (context) => CreateTestPage(),
+        //'/list_students': (context) => ListOfStudentsPage(),
+        '/tests_history': (context) => TestsHistory(tests: [],),
+        // Ajoutez d'autres routes ici au besoin
+      },
+
 		home: Scaffold(
 		body: SingleChildScrollView(
 			child: Scene1(),
 		),
 		),
 	);
+  
 	}
 }
