@@ -1,284 +1,274 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
-import 'dart:ui';
-
-import 'package:pim/utils.dart';
 
 
-class Scenequizz extends StatelessWidget {
+
+class QuizPage extends StatelessWidget {
+  const QuizPage({Key? key}) : super(key: key);
+
   @override
   Widget build(BuildContext context) {
-    double baseWidth = 411;
-    double fem = MediaQuery.of(context).size.width / baseWidth;
-    double ffem = fem * 0.97;
-    return Container(
-      width: double.infinity,
-      child: Container(
-        // quiz4cv (1:27)
-        width: double.infinity,
-        decoration: BoxDecoration (
-          color: Color(0xfff4f2f6),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.end,
+    return MaterialApp(
+      theme: ThemeData.dark().copyWith(
+        scaffoldBackgroundColor: const Color.fromARGB(255, 18, 32, 47),
+      ),
+      home: Scaffold(
+        body: ListView(
           children: [
-           
-            Container(
-              // autogroupd7ieAZU (REgjNEqzqTvNQApDsqD7ie)
-              padding: EdgeInsets.fromLTRB(45*fem, 16*fem, 43*fem, 54*fem),
-              width: double.infinity,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Container(
-                    // autogroup4yypTYa (REgiwAjSRLjtouHX144yyp)
-                    margin: EdgeInsets.fromLTRB(0*fem, 0*fem, 0*fem, 7*fem),
-                    width: double.infinity,
-                    height: 64*fem,
-                    decoration: BoxDecoration (
-                      color: Color(0xfff4f2f6),
-                      borderRadius: BorderRadius.circular(18*fem),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          // optionbwyY (1:49)
-                          left: 4*fem,
-                          top: 5*fem,
-                          child: Align(
-                            child: SizedBox(
-                              width: 316*fem,
-                              height: 55*fem,
-                              child: TextButton(
-                                onPressed: () {},
-                                style: TextButton.styleFrom (
-                                  padding: EdgeInsets.zero,
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration (
-                                    borderRadius: BorderRadius.circular(14*fem),
-                                    color: Color(0xffffffff),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color(0x3f9d57e3),
-                                        offset: Offset(0*fem, 2*fem),
-                                        blurRadius: 6.5*fem,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          // bpvr (1:53)
-                          left: 39.5*fem,
-                          top: 22*fem,
-                          child: Align(
-                            child: SizedBox(
-                              width: 10*fem,
-                              height: 23*fem,
-                              child: Text(
-                                'B',
-                                textAlign: TextAlign.center,
-                                style: SafeGoogleFont (
-                                  'Poppins',
-                                  fontSize: 15*ffem,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.5*ffem/fem,
-                                  color: Color(0xff5b1cae),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    // autogroupe7aesPL (REgj3fYcZ8j9671y1Ve7aE)
-                    margin: EdgeInsets.fromLTRB(0*fem, 0*fem, 0*fem, 5*fem),
-                    width: double.infinity,
-                    height: 64*fem,
-                    decoration: BoxDecoration (
-                      color: Color(0xfff4f2f6),
-                      borderRadius: BorderRadius.circular(18*fem),
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          // optioncySN (1:47)
-                          left: 4*fem,
-                          top: 5*fem,
-                          child: Align(
-                            child: SizedBox(
-                              width: 316*fem,
-                              height: 55*fem,
-                              child: TextButton(
-                                onPressed: () {},
-                                style: TextButton.styleFrom (
-                                  padding: EdgeInsets.zero,
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration (
-                                    borderRadius: BorderRadius.circular(14*fem),
-                                    color: Color(0xffffffff),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color(0x3f9d57e3),
-                                        offset: Offset(0*fem, 2*fem),
-                                        blurRadius: 6.5*fem,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          // cDrW (1:54)
-                          left: 38.5*fem,
-                          top: 23*fem,
-                          child: Align(
-                            child: SizedBox(
-                              width: 12*fem,
-                              height: 23*fem,
-                              child: Text(
-                                'C',
-                                textAlign: TextAlign.center,
-                                style: SafeGoogleFont (
-                                  'Poppins',
-                                  fontSize: 15*ffem,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.5*ffem/fem,
-                                  color: Color(0xff5b1cae),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    // autogrouper22ujL (REgjA5XbQU6hmtob6Per22)
-                    margin: EdgeInsets.fromLTRB(0*fem, 0*fem, 0*fem, 42*fem),
-                    width: double.infinity,
-                    height: 64*fem,
-                    decoration: BoxDecoration (
-                      color: Color(0xfff4f2f6),
-                      borderRadius: BorderRadius.circular(18*fem),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Color(0x3f9d57e3),
-                          offset: Offset(0*fem, 2*fem),
-                          blurRadius: 6.5*fem,
-                        ),
-                      ],
-                    ),
-                    child: Stack(
-                      children: [
-                        Positioned(
-                          // optiondPeW (1:45)
-                          left: 4*fem,
-                          top: 5*fem,
-                          child: Align(
-                            child: SizedBox(
-                              width: 316*fem,
-                              height: 55*fem,
-                              child: TextButton(
-                                onPressed: () {},
-                                style: TextButton.styleFrom (
-                                  padding: EdgeInsets.zero,
-                                ),
-                                child: Container(
-                                  decoration: BoxDecoration (
-                                    borderRadius: BorderRadius.circular(14*fem),
-                                    color: Color(0xffffffff),
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Color(0x3f9d57e3),
-                                        offset: Offset(0*fem, 2*fem),
-                                        blurRadius: 6.5*fem,
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                        Positioned(
-                          // dSMt (1:55)
-                          left: 39*fem,
-                          top: 23*fem,
-                          child: Align(
-                            child: SizedBox(
-                              width: 11*fem,
-                              height: 23*fem,
-                              child: Text(
-                                'Dehhhhhhhhhhhhe',
-                                textAlign: TextAlign.center,
-                                style: SafeGoogleFont (
-                                  'Poppins',
-                                  fontSize: 15*ffem,
-                                  fontWeight: FontWeight.w500,
-                                  height: 1.5*ffem/fem,
-                                  color: Color(0xff5b1cae),
-                                ),
-                              ),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ),
-                  Container(
-                    // autogroupcpneKwU (REgjEzZ59YPynFaLZVcPne)
-                    margin: EdgeInsets.fromLTRB(66*fem, 0*fem, 61*fem, 0*fem),
-                    child: TextButton(
-                      onPressed: () {},
-                      style: TextButton.styleFrom (
-                        padding: EdgeInsets.zero,
-                      ),
-                      child: Container(
-                        width: double.infinity,
-                        height: 64*fem,
-                        decoration: BoxDecoration (
-                          color: Color(0xff020202),
-                          borderRadius: BorderRadius.circular(50*fem),
-                          boxShadow: [
-                            BoxShadow(
-                              color: Color(0x3f9d57e3),
-                              offset: Offset(0*fem, 2*fem),
-                              blurRadius: 6.5*fem,
-                            ),
-                          ],
-                        ),
-                        child: Center(
-                          child: Text(
-                            'Next',
-                            textAlign: TextAlign.center,
-                            style: SafeGoogleFont (
-                              'Poppins',
-                              fontSize: 25*ffem,
-                              fontWeight: FontWeight.w500,
-                              height: 1.5*ffem/fem,
-                              color: Color(0xfffff9f9),
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
+            ResultQuiz(),
           ],
         ),
       ),
-          );
+    );
+  }
+}
+
+class ResultQuiz extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          width: 411,
+          height: 869,
+          clipBehavior: Clip.antiAlias,
+          decoration: BoxDecoration(color: Color(0xFFF4F2F6)),
+          child: Stack(
+            children: [
+              Positioned(
+                left: -37,
+                top: -80,
+                child: Container(
+                  width: 573,
+                  height: 961,
+                  child: Stack(
+                    children: [
+                      Positioned(
+                        left: 37,
+                        top: 80,
+                        child: Container(
+                          width: 411,
+                          height: 881,
+                          child: Stack(
+                            children: [
+                              Positioned(
+                                left: 0,
+                                top: 0,
+                                child: Container(
+                                  width: 411,
+                                  height: 881,
+                                  decoration: ShapeDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment(0.00, -1.00),
+                                      end: Alignment(0, 1),
+                                      colors: [
+                                        Color(0xFFFABFBF),
+                                        Color(0x00FBF5F5)
+                                      ],
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(18),
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              Positioned(
+                                left: 0,
+                                top: 0,
+                                child: Container(
+                                  width: 411,
+                                  height: 56,
+                                  decoration: BoxDecoration(
+                                    gradient: LinearGradient(
+                                      begin: Alignment(0.00, -1.00),
+                                      end: Alignment(0, 1),
+                                      colors: [
+                                        Color(0xFFFABFBF),
+                                        Color(0x00FBF5F5)
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 0,
+                        top: 97,
+                        child: Container(
+                          width: 262,
+                          height: 248,
+                          decoration: ShapeDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(0.00, -1.00),
+                              end: Alignment(0, 1),
+                              colors: [Color(0xFFDA3838), Color(0x00C7A8FC)],
+                            ),
+                            shape: OvalBorder(),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 29,
+                        top: 123,
+                        child: Container(
+                          width: 204,
+                          height: 196,
+                          decoration: ShapeDecoration(
+                            color: Color(0xFFF8A4A4),
+                            shape: OvalBorder(),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 318,
+                        top: 169,
+                        child: Container(
+                          width: 255,
+                          height: 240,
+                          decoration: ShapeDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(0.00, -1.00),
+                              end: Alignment(0, 1),
+                              colors: [Color(0xFFDA3838), Color(0x00C7A8FC)],
+                            ),
+                            shape: OvalBorder(),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 283,
+                        top: 144,
+                        child: Container(
+                          width: 52,
+                          height: 52,
+                          decoration: ShapeDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(0.00, -1.00),
+                              end: Alignment(0, 1),
+                              colors: [Color(0xFFDA3838), Color(0x00C7A8FC)],
+                            ),
+                            shape: OvalBorder(),
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        left: 172,
+                        top: 0,
+                        child: Container(
+                          width: 129,
+                          height: 117,
+                          decoration: ShapeDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(0.00, -1.00),
+                              end: Alignment(0, 1),
+                              colors: [Color(0xFFDA3838), Color(0x00C7A8FC)],
+                            ),
+                            shape: OvalBorder(),
+                          ),
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+              Positioned(
+                left: -65,
+                top: 292,
+                child: Container(
+                  width: 129,
+                  height: 117,
+                  decoration: ShapeDecoration(
+                    color: Color(0x5BC7A8FC),
+                    shape: OvalBorder(),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 324,
+                top: 364,
+                child: Container(
+                  width: 110,
+                  height: 110,
+                  decoration: ShapeDecoration(
+                    color: Color(0x5BC7A8FC),
+                    shape: OvalBorder(),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 80,
+                top: 500,
+                child: Container(
+                  width: 300,
+                  height: 300,
+                  decoration: BoxDecoration(
+                    image: DecorationImage(
+                      image: AssetImage("assets/result.png"),
+                      fit: BoxFit.fill,
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 90,
+                top: 200,
+                child: Container(
+                  padding: EdgeInsets.all(
+                      8), // Ajouter un espacement autour de l'image et du texte
+                  decoration: BoxDecoration(
+                    color: Colors.white, // Couleur de fond blanche du conteneur
+                    borderRadius: BorderRadius.circular(
+                        10), // Coins arrondis du conteneur
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      ClipOval(
+                        child: Opacity(
+                          opacity: 0.5,
+                          child: Image.asset(
+                            'assets/iconr.png', // Chemin de votre image
+                            width: 100,
+                            height: 100,
+                            fit: BoxFit.cover,
+                          ),
+                        ),
+                      ),
+                      SizedBox(
+                          width:
+                              8), // Ajouter un espace horizontal entre l'image et le texte
+                      Text(
+                        'Très bien 20/20',
+                        style: TextStyle(
+                          color: Colors.black, // Couleur du texte
+                          fontSize: 16, // Taille de la police
+                          fontWeight: FontWeight.bold, // Poids de la police
+                        ),
+                      ),
+                      SizedBox(
+                          height:
+                              16), // Ajouter un espacement entre le texte et le bouton
+                      Row(
+                        children: [
+                          ElevatedButton(
+                            onPressed: () {
+                              // Gérer le retour à l'accueil ici
+                              print('Retour à l\'accueil');
+                            },
+                            child: Text('Retour à l\'accueil'),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ],
+    );
   }
 }

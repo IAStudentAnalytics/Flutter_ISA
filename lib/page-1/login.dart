@@ -1,7 +1,8 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pim/page-1/onbording.dart';
-
+import 'package:shared_preferences/shared_preferences.dart';
 class Scene1 extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -10,46 +11,64 @@ class Scene1 extends StatelessWidget {
     final String email = emailController.text.trim();
     final String password = passwordController.text.trim();
 
-    // Vérifier si les champs email et mot de passe sont vides
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Veuillez remplir tous les champs'),
       ));
-      return; // Arrêter l'exécution de la fonction si les champs sont vides
+      return;
     }
 
     final String apiUrl = 'http://192.168.1.17:5000/api/user/login';
+    final String detailsUrl = 'http://192.168.1.17:5000/api/user/getUserByEmail/$email';
 
     try {
-      final response = await http.post(
+      final apiResponse = await http.post(
         Uri.parse(apiUrl),
-        body: {'email': email, 'password': password},
+        // headers: {'Content-Type': 'application/json'},
+        body: jsonEncode({'email': email, 'password': password}),
       );
 
-      if (response.statusCode == 200) {
-        // Connexion réussie
-        print('Connexion réussie: ${response.body}');
-        Navigator.push(
-            context,
-            MaterialPageRoute(
-                   builder: (_) => Onbording(email: email), ),
-                 );
+      if (apiResponse.statusCode == 200) {
+        SharedPreferences prefs = await SharedPreferences.getInstance();
+        var userData = json.decode(apiResponse.body);  // Basic user data from login
+        prefs.setString('userData', jsonEncode(userData));  // Save basic data first
+
+        // Try to fetch additional user details
+        final detailsResponse = await http.get(
+          Uri.parse(detailsUrl),
+          headers: {'Content-Type': 'application/json'}
+        );
+
+        if (detailsResponse.statusCode == 200) {
+          var detailsData = json.decode(detailsResponse.body);
+          if (detailsData['user'] != null) {
+            userData.addAll(detailsData['user']);  // Add additional details
+            prefs.setString('userData', jsonEncode(userData));  // Update stored data
+          }
+        } else {
+    print('Failed to fetch additional user details: ${detailsResponse.statusCode}');
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text('Failed to load additional details, proceeding with basic data'),
+    ));
+    // Consider adding logic to handle different types of errors differently
+}
+
+
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (_) => Onbording(userData: userData)),
+        );
       } else {
-        // Gérer les erreurs de connexion
-        print('Erreur de connexion: ${response.statusCode}');
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Email ou mot de passe incorrect'),
         ));
       }
     } catch (error) {
-      // Gérer les erreurs
-      print('Erreur: $error');
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
         content: Text('Erreur de connexion: $error'),
       ));
     }
   }
-
   @override
   Widget build(BuildContext context) {
     double baseWidth = 360;
@@ -160,6 +179,8 @@ class Scene1 extends StatelessWidget {
                                     enabledBorder: InputBorder.none,
                                     errorBorder: InputBorder.none,
                                     disabledBorder: InputBorder.none,
+                                    hintText: 'E-mail',
+                                    hintStyle: TextStyle(color: Color(0xff475569)),
                                   ),
                                 ),
                               ),

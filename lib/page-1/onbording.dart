@@ -4,9 +4,7 @@ import 'package:pim/page-1/content_model.dart';
 import 'package:pim/page-1/teacherhome.dart';
 
 class Onbording extends StatefulWidget {
-  final String email; // Ajoutez cette propriété pour recevoir l'e-mail de l'utilisateur
-
-  const Onbording({Key? key, required this.email}) : super(key: key);
+  const Onbording({Key? key, required Map<String, dynamic> userData}) : super(key: key);
 
   @override
   _OnbordingState createState() => _OnbordingState();
@@ -53,9 +51,8 @@ class _OnbordingState extends State<Onbording> {
                       SvgPicture.asset(
                         contents[i].image,
                         height: screenHeight * 0.65,
-                        width: screenWidth *0.65,
+                        width: screenWidth * 0.65,
                       ),
-                    
                     ],
                   ),
                 );
@@ -81,7 +78,7 @@ class _OnbordingState extends State<Onbording> {
                   Navigator.pushReplacement(
                     context,
                     MaterialPageRoute(
-                       builder: (_) => Sceneteacherhome(email: widget.email),
+                      builder: (_) => Sceneteacherhome(),
                     ),
                   );
                 }

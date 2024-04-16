@@ -5,6 +5,8 @@ import 'package:pim/page-1/quizzteacher.dart';
 import 'package:pim/page-1/resultquiz-FFc.dart';
 import 'package:pim/page-1/teacherhome.dart';
 import 'package:pim/page-1/javabot.dart';
+import 'package:pim/page-1/performance.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   runApp(MyApp());
 }
@@ -89,8 +91,8 @@ class SideMenu extends StatelessWidget {
              onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Sceneteacherhome(email: '',)),
-          );
+            MaterialPageRoute(builder: (context) => Sceneteacherhome(),
+          ));
         },
             ),
              ListTile(
@@ -129,14 +131,33 @@ class SideMenu extends StatelessWidget {
           );
         },
             ),
-            ListTile(
-              title: Text('Logout'),
+               ListTile(
+              title: Text('Performance !'),
              onTap: () {
           Navigator.push(
             context,
-            MaterialPageRoute(builder: (context) => Scene1()),
+            MaterialPageRoute(builder: (context) => Performance()),
           );
         },
+            ),
+          ListTile(
+  title: Text('Logout'),
+  onTap: () async {
+    // Obtain shared preferences instance
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+
+    // Clear all data stored in SharedPreferences
+    await prefs.clear();
+
+    // Optionally, if you want to remove only specific data like the token:
+    // await prefs.remove('token');  // if you're storing the token under the key 'token'
+
+    // Navigate to the login page and remove all routes (so user can't go back to the previous screens)
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => Scene1()),
+      (Route<dynamic> route) => false,
+    );
+  },
             ),
           ],
         ),
