@@ -62,7 +62,7 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
       marks: int.parse(marksController.text),
       options: options.map((option) => option.text).toList(),
       type: isQuizQuestion ? 'Quiz' : 'QA',
-      image: _image,
+     // image: _image,
     );
 
     // Add the question object to the list of questions

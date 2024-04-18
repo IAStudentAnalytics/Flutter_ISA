@@ -31,8 +31,8 @@ public class HelloWorld {
 
     try {
       final response = await http.post(
-        Uri.parse('http://172.16.2.164:5000/compilateur/run-code'),
-        headers: {'Content-Type': 'application/json'},
+        Uri.parse('http:://172.16.3.249:5000/compilateur/run-code'),
+        //headers: {'Content-Type': 'application/json'},
         body: jsonEncode({
           'script': code,
         }),
@@ -56,26 +56,25 @@ public class HelloWorld {
             begin: Alignment.topCenter,
             end: Alignment.bottomCenter,
             colors: [
-              Color.fromRGBO(193, 143, 143, 1),
-              const Color.fromARGB(255, 255, 255, 255)
-            ], // Dégradé de couleur linéaire du rouge au jaune
+              Color.fromARGB(255, 237, 46, 46),
+            Color(0x00f6f1fb)
+            ],
+            stops: [0,1] // Dégradé de couleur linéaire du rouge au jaune
           ),
         ),
         child: Padding(
           padding: const EdgeInsets.all(8.0),
           child: Column(
             children: [
-              Container(
-                alignment: Alignment.centerLeft,
-                child: Text(
-                  'EduSwift Compilator Java',
-                  style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: const Color.fromARGB(255, 39, 33, 33),
-                  ),
-                ),
-              ),
+              
+            Align(
+            alignment: Alignment.bottomLeft,
+            child: Image.asset(
+              'assets/pim11.png', // Chemin de votre image
+             width: 150,
+            ),
+          ),
+              
               Container(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
@@ -109,7 +108,7 @@ public class HelloWorld {
               Expanded(
                 child: Container(
                   width: double
-                      .infinity, // Pour s'adapter à la largeur du parent (TextField)
+                      .infinity,
                   padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
                     color: Color.fromARGB(201, 237, 235, 235), // Fond noir

@@ -6,6 +6,7 @@ import 'package:pim/page-1/resultquiz-FFc.dart';
 import 'package:pim/page-1/teacherhome.dart';
 import 'package:pim/page-1/javabot.dart';
 import 'package:pim/page-1/performance.dart';
+import 'package:pim/page-1/testblanc.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 void main() {
   runApp(MyApp());
@@ -137,6 +138,15 @@ class SideMenu extends StatelessWidget {
           Navigator.push(
             context,
             MaterialPageRoute(builder: (context) => Performance()),
+          );
+        },
+            ),
+              ListTile(
+              title: Text('Test Blanc !'),
+             onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => TestBlanc()),
           );
         },
             ),

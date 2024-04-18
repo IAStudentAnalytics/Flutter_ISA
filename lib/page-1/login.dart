@@ -18,8 +18,8 @@ class Scene1 extends StatelessWidget {
       return;
     }
 
-    final String apiUrl = 'http://192.168.1.17:5000/api/user/login';
-    final String detailsUrl = 'http://192.168.1.17:5000/api/user/getUserByEmail/$email';
+    final String apiUrl = 'http://172.16.3.249:5000/api/user/login';
+    final String detailsUrl = 'http://172.16.3.249:5000/api/user/getUserByEmail/$email';
 
     try {
       final apiResponse = await http.post(
