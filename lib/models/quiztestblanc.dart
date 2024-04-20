@@ -11,3 +11,13 @@ class QuizQuestion {
     required this.chapter,
   });
 }
+
+class QuizData {
+  final List<QuizQuestion> questions;
+  final Map<String, double> chapterPercentages;
+
+  QuizData({
+    required this.questions,
+    required this.chapterPercentages,
+  });
+}
