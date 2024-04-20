@@ -268,7 +268,7 @@ class _AjoutCoursPageState extends State<AjoutCoursPage> {
       return;
     }
 
-    final String apiUrl = 'http://localhost:9090/compilateur/run-code';
+    final String apiUrl = 'http://localhost:9090/cours/rec';
     var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
     request.fields['nomCoursR'] = _selectedChapter!;
     request.fields['description'] = _descriptionController.text;
