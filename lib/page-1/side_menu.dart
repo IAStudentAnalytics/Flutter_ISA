@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:pim/page-1/CalendarScreen.dart';
+import 'package:pim/page-1/CreateQuestionPage.dart';
+import 'package:pim/page-1/TestsHistory.dart';
 import 'package:pim/page-1/login.dart';
+import 'package:pim/provider/TestProvider.dart';
+import 'package:provider/provider.dart';
 
 void main() {
   runApp(MyApp());
@@ -90,6 +95,42 @@ class SideMenu extends StatelessWidget {
               title: Text('Talk with Bot'),
               onTap: () {
                 onMenuItemClicked(1);
+              },
+            ),
+            ListTile(
+              title: Text('Create Test'),
+              onTap: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => CreateQuestionPage( onSubmitQuestions: (List<Map<String, dynamic>> questions) {  },
+                      
+                    ),
+                  ),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('Tests History'),
+              onTap: () async {
+                final testProvider = Provider.of<TestProvider>(context, listen: false);
+                await testProvider.fetchTests();
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TestsHistory(
+                    tests: testProvider.tests, // Pass fetched tests data
+                    onMenuItemClicked: (int) {}, // Pass required function
+                  )),
+                );
+              },
+            ),
+            ListTile(
+              title: Text('My Calendar'),
+              onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CalendarScreen(onMenuItemClicked: (int ) {  },)), 
+              );
               },
             ),
             ListTile(

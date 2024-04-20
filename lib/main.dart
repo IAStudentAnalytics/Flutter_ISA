@@ -1,51 +1,115 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/gestures.dart';
-import 'dart:ui';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:pim/page-1/quiz.dart';
-import 'package:pim/page-1/quiz_new.dart';
-import 'package:pim/utils.dart';
+import 'package:pim/page-1/CreateQuestionPage.dart';
+import 'package:pim/page-1/side_menu.dart'; // Import side menu widget
+import 'package:pim/provider/TestProvider.dart';
+import 'package:provider/provider.dart';
 
-// import 'package:myapp/page-1/quiz.dart';
-// import 'package:myapp/page-1/resultquiz.dart';
-// import 'package:myapp/page-1/test.dart';
-// import 'package:myapp/page-1/resultquiz-FFc.dart';
-import 'page-1/login.dart';
-// import 'package:myapp/page-1/performance.dart';
-// import 'package:myapp/page-1/chathome.dart';
-// import 'page-1/chat.dart';
-// import 'package:myapp/page-1/info-box.dart';
-// import 'package:myapp/page-1/info-box-4XY.dart';
-// import 'package:myapp/page-1/homestudent.dart';
-// import 'package:myapp/page-1/hometeacher.dart';
-// import 'package:myapp/page-1/javabotbtn.dart';
-// import 'package:myapp/page-1/javabotbtn-rB8.dart';
-// import 'package:myapp/page-1/logoutbtn.dart';
-// import 'package:myapp/page-1/logout.dart';
-// import 'package:myapp/page-1/classes.dart';
-// import 'package:myapp/page-1/classesbtn.dart';
-// import 'package:myapp/page-1/resultbtn.dart';
-// import 'package:myapp/page-1/blue-robot-mascot-logo-icon-design675467-55-1-traced-1.dart';
-// import 'package:myapp/page-1/blue-robot-mascot-logo-icon-design675467-55-1-traced-1-uBC.dart';
-// import 'package:myapp/page-1/frame-2.dart';
+void main() {
+  runApp(
+    MultiProvider(
+      providers: [
+        ChangeNotifierProvider(create: (_) => TestProvider()),
+        // Add other providers if needed
+      ],
+      child: MyApp(),
+    ),
+  );
+}
 
-void main() => runApp(MyApp());
 
 class MyApp extends StatelessWidget {
-	@override
-	Widget build(BuildContext context) {
-	return MaterialApp(
-		title: 'EduSwift',
-		debugShowCheckedModeBanner: false,
-		scrollBehavior: MyCustomScrollBehavior(),
-		theme: ThemeData(
-		primarySwatch: Colors.blue,
-		),
-		home: Scaffold(
-		body: SingleChildScrollView(
-			child: Scene1(),
-		),
-		),
-	);
-	}
+  @override
+  Widget build(BuildContext context) {
+    return MaterialApp(
+      title: 'EduSwift',
+      debugShowCheckedModeBanner: false,
+      theme: ThemeData(
+        primarySwatch: Colors.blue,
+      ),
+      home: Scene1(),
+      routes: {
+        '/create_test': (context) => CreateQuestionPage( onSubmitQuestions: (questions) {  },
+                    ),
+      },
+    );
+  }
+}
+
+class Scene1 extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: LayoutBuilder(
+        builder: (context, constraints) {
+          // Adjust layout based on screen width
+          if (constraints.maxWidth > 600) {
+            return WideLayout();
+          } else {
+            return NarrowLayout();
+          }
+        },
+      ),
+    );
+  }
+}
+
+class WideLayout extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: MultiProvider( // Wrap with MultiProvider
+        providers: [
+          ChangeNotifierProvider(create: (_) => TestProvider()), // Provide the TestProvider
+        ],
+        child: Row(
+          children: [
+            SideMenu(onMenuItemClicked: (int) {}), 
+            Expanded(
+              child: Center(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    ElevatedButton(
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/create_test');
+                      },
+                      child: Text('Create Test'),
+                    ),
+                    SizedBox(height: 20),
+                    ElevatedButton(
+                      onPressed: () {
+                        // Add functionality for other actions
+                      },
+                      child: Text('Other Action'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+class NarrowLayout extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: MultiProvider( // Wrap with MultiProvider
+        providers: [
+          ChangeNotifierProvider(create: (_) => TestProvider()), // Provide the TestProvider
+        ],
+        child: Center(
+          child: ElevatedButton(
+            onPressed: () {
+              Navigator.pushNamed(context, '/create_test');
+            },
+            child: Text('Create Test'),
+          ),
+        ),
+      ),
+    );
+  }
 }
