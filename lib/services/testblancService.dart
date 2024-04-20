@@ -6,7 +6,7 @@ import '../models/quiztestblanc.dart';
 class TestBlancService {
   static Future<List<QuizQuestion>> fetchQuizQuestions() async {
     final response =
-        await http.get(Uri.parse('${APIConstants.baseURL}/compilateur/run-code'));
+        await http.get(Uri.parse('${APIConstants.baseURL}/testblanc/test'));
 
     if (response.statusCode == 200) {
       final jsonResponse = json.decode(response.body);
@@ -29,5 +29,4 @@ class TestBlancService {
           'Échec du chargement des questions de quiz : ${response.statusCode}');
     }
   }
-  
 }
