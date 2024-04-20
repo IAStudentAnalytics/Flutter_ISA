@@ -63,7 +63,7 @@ class Scenechat extends StatelessWidget {
                           ),
                         ),
                         Container(
-                          // frame39vPp (3:200)
+                          
                           height: double.infinity,
                           child: Row(
                             crossAxisAlignment: CrossAxisAlignment.center,
