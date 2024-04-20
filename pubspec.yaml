@@ -74,6 +74,7 @@ flutter_launcher_icons:
 # following page: https://dart.dev/tools/pub/pubspec
 flutter_native_splash:
  image: assets/images/logorb.png
+
  color: "#ffffff"
  android: true
  ios: true
@@ -92,7 +93,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   
+    - assets/pim11.png
     - assets/page-1/images/btn-add-1-c46.png
     - assets/page-1/images/auto-group-sowc.png
     - assets/page-1/images/btn-add-2.png
