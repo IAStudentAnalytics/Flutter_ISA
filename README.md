@@ -26,7 +26,7 @@ Before you begin, ensure you have met the following requirements:
 
 1. **Clone the Repository:**
    ```bash
-   git clone https://github.com/IAStudentAnalytics/backend_ISA.git
+   https://github.com/IAStudentAnalytics/Flutter_ISA.git
    cd backend_ISA
    ```
 
