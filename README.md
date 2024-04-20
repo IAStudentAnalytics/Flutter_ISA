@@ -9,6 +9,10 @@ Welcome to Flutter-AI Student Analytics, an innovative web application designed 
 - **Performance Analysis:** Gain insights into students' performance in AI subjects, including individual quiz scores, average response times, and complexity levels mastered.
 - **Personalized Recommendations:** Receive tailored recommendations for improvement based on individual strengths and weaknesses in different AI concepts.
 - **User-Friendly Interface:** The app boasts an intuitive and visually appealing user interface, making it easy for both students and educators to navigate and utilize the analytics features.
+- **Code Compiler:** Allows users to test Java code directly within the application.
+- **Revision Section:** Provides a dedicated section for revision to help users consolidate their knowledge.
+- **Course Management Interface:** Enables teachers to easily add courses to the application.
+- **ChatBot:** Integrates a chatbot to provide assistance and answer user questions in real-time.
 
 ## Prerequisites
 
@@ -18,10 +22,24 @@ Before you begin, ensure you have met the following requirements:
 - Emulator or physical device for testing
 
 
-## Getting Started
+## Usage
 
-### Installation
-
-1. Clone the repository
+1. **Clone the Repository:**
    ```bash
-   git clone [https://github.com/your-username/flutter-ai-student-analytics.git](https://github.com/IAStudentAnalytics/Flutter_ISA.git)https://github.com/IAStudentAnalytics/Flutter_ISA.git
+   git clone https://github.com/IAStudentAnalytics/backend_ISA.git
+   cd backend_ISA
+   ```
+
+2. **Install Dependencies:**
+   ```bash
+   flutter pub get
+   ```
+
+
+3. **Run the Application:**
+   
+   ```bash
+   flutter run
+   ```
+   ```
+   
