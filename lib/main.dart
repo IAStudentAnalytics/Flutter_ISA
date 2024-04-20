@@ -57,10 +57,12 @@ class HomePage extends StatelessWidget {
   }
 }*/
 import 'package:flutter/material.dart';
-import 'package:nom_du_projet/CoursPage.dart';
-import 'package:nom_du_projet/ajoutCours.dart';
-import 'compilateur.dart';
-import 'testblanc.dart';
+//import 'package:nom_du_projet/CoursPage.dart';
+//import 'package:nom_du_projet/ajoutCours.dart';
+import 'package:pim/CoursPage.dart';
+import 'package:pim/ajoutCours.dart';
+//import 'compilateur.dart';
+//import 'testblanc.dart';
 
 void main() {
   runApp(MyApp());
@@ -90,7 +92,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            ElevatedButton(
+           /* ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
@@ -98,8 +100,8 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: Text('Go to Compiler Page'),
-            ),
-            SizedBox(height: 20),
+            ),*/
+           /* SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
@@ -108,7 +110,7 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: Text('Go to Quiz Page'),
-            ),
+            ),*/
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
