@@ -58,7 +58,7 @@ public class HelloWorld {
             colors: [
               Color.fromRGBO(193, 143, 143, 1),
               const Color.fromARGB(255, 255, 255, 255)
-            ], // Dégradé de couleur linéaire du rouge au jaune
+            ],
           ),
         ),
         child: Padding(
@@ -109,10 +109,10 @@ public class HelloWorld {
               Expanded(
                 child: Container(
                   width: double
-                      .infinity, // Pour s'adapter à la largeur du parent (TextField)
+                      .infinity, 
                   padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
-                    color: Color.fromARGB(201, 237, 235, 235), // Fond noir
+                    color: Color.fromARGB(201, 237, 235, 235), 
                     border: Border.all(color: Color.fromARGB(185, 0, 0, 0)),
                   ),
                   child: Text(
