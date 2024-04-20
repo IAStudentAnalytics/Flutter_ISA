@@ -61,8 +61,8 @@ import 'package:flutter/material.dart';
 //import 'package:nom_du_projet/ajoutCours.dart';
 import 'package:pim/CoursPage.dart';
 import 'package:pim/ajoutCours.dart';
-//import 'compilateur.dart';
-//import 'testblanc.dart';
+import 'package:pim/page-1/compilateur.dart';
+import 'package:pim/page-1/testblanc.dart';
 
 void main() {
   runApp(MyApp());
@@ -92,7 +92,7 @@ class HomePage extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-           /* ElevatedButton(
+            ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
@@ -100,17 +100,16 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: Text('Go to Compiler Page'),
-            ),*/
-           /* SizedBox(height: 20),
+            ),
             ElevatedButton(
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => TestBlanc()), 
+                  MaterialPageRoute(builder: (context) => TestBlanc()),
                 );
               },
               child: Text('Go to Quiz Page'),
-            ),*/
+            ),
             SizedBox(height: 20),
             ElevatedButton(
               onPressed: () {
