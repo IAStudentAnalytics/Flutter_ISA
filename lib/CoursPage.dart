@@ -376,7 +376,7 @@ class _CoursPageState extends State<CoursPage> {
   bool isLoading = true;
 
   Future<void> getCours() async {
-    final response = await http.get(Uri.parse('http://localhost:9090/compilateur/cours'));
+    final response = await http.get(Uri.parse('http://localhost:9090/cours/rec'));
 
     if (response.statusCode == 200) {
       var list = json.decode(response.body);
@@ -397,7 +397,7 @@ class _CoursPageState extends State<CoursPage> {
   }
 
   Future<void> deleteCours(String id) async {
-    final response = await http.delete(Uri.parse('http://localhost:9090/compilateur/cours/$id'));
+    final response = await http.delete(Uri.parse('http://localhost:9090/cours/recid/$id'));
 
     if (response.statusCode == 200) {
       setState(() {
