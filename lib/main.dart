@@ -59,7 +59,7 @@ class HomePage extends StatelessWidget {
 import 'package:flutter/material.dart';
 //import 'package:nom_du_projet/CoursPage.dart';
 //import 'package:nom_du_projet/ajoutCours.dart';
-import 'package:pim/CoursPage.dart';
+import 'package:pim/page-1/coursPage.dart';
 import 'package:pim/ajoutCours.dart';
 import 'package:pim/page-1/compilateur.dart';
 import 'package:pim/page-1/testblanc.dart';

@@ -20,12 +20,12 @@ class CoursRecService {
       throw Exception('Échec de la récupération des cours');
     }
   }
-/*
+
   static Future<void> deleteCours(String id) async {
     final response = await http.delete(Uri.parse('http://localhost:9090/cours/recid/$id'));
 
     if (response.statusCode != 200) {
       throw Exception('Échec de la suppression du cours');
     }
-  }*/
+  }
 }
