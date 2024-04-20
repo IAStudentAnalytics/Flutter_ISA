@@ -29,8 +29,7 @@ class CoursRecService {
     }
   }
 }*/
-// services/cours_service.dart
-// services/coursRecService.dart
+
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:pim/models/CoursR.dart';
@@ -46,7 +45,7 @@ class CoursService {
             item['description'] != null &&
             item['pdff'] != null) {
           return CoursR(
-            id: item['_id'],  // Utilisez le champ '_id' comme identifiant
+            id: item['_id'],  
             nomCoursR: item['nomCoursR'],
             description: item['description'],
             pdff: item['pdff'],
