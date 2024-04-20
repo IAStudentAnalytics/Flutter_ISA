@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:pim/page-1/compilateur.dart';
-
-
+import 'package:pim/page-1/testblanc.dart';
 
 void main() {
   runApp(MyApp());
@@ -29,20 +28,31 @@ class HomePage extends StatelessWidget {
       ),
       body: Center(
         child: Column(
-           mainAxisAlignment: MainAxisAlignment.center,
-           children: [ElevatedButton(
-          onPressed: () {
-            Navigator.push(
-              context,
-              MaterialPageRoute(builder: (context) => CompilerPage()),
-            );
-          },
-          child: Text('Go to Compiler Page'),
-        ),
-        
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => CompilerPage()),
+                );
+              },
+              child: Text('Go to Compiler Page'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => TestBlanc()),
+                );
+              },
+              child: Text('Go to Quiz Page'),
+            ),
+            SizedBox(height: 20),
           ],
         ),
-      ), 
+      ),
     );
   }
 }
