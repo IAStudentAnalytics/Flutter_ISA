@@ -1,4 +1,4 @@
-name: pim
+name: performance
 description: "A new Flutter project."
 # The following line prevents the package from being accidentally published to
 # pub.dev using `flutter pub publish`. This is preferred for private packages.
@@ -19,7 +19,7 @@ publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 version: 1.0.0+1
 
 environment:
-  sdk: '>=3.2.2 <4.0.0'
+  sdk: '>=3.2.3 <4.0.0'
 
 # Dependencies specify other packages that your package needs in order to work.
 # To automatically upgrade your package dependencies to the latest versions
@@ -35,52 +35,24 @@ dependencies:
   # The following adds the Cupertino Icons font to your application.
   # Use with the CupertinoIcons class for iOS style icons.
   cupertino_icons: ^1.0.2
-  google_fonts: ^6.1.0
-  flutter_native_splash: any
- 
-
+  fl_chart: ^0.67.0
+  spider_chart: ^0.2.0
+  http: ^1.2.0
+  intl: ^0.19.0
 
 dev_dependencies:
-  flutter_launcher_icons: ^0.13.1
   flutter_test:
     sdk: flutter
 
-#icon_de_l'application
-flutter_launcher_icons:
-  android: "launcher_icon"
-  ios: true
-  image_path: assets/images/logorb.png
-  min_sdk_android: 21 # android min sdk min:16, default 21
-  web:
-    generate: true
-    image_path: assets/images/logorb.png
-    background_color: "#hexcode"
-    theme_color: "#hexcode"
-  windows:
-    generate: true
-    image_path: assets/images/logorb.png
-    icon_size: 48 # min:48, max:256, default: 48
-  macos:
-    generate: true
-    image_path: assets/images/logorb.png
   # The "flutter_lints" package below contains a set of recommended lints to
   # encourage good coding practices. The lint set provided by the package is
   # activated in the `analysis_options.yaml` file located at the root of your
   # package. See that file for information about deactivating specific lint
   # rules and activating additional ones.
   flutter_lints: ^2.0.0
- 
+
 # For information on the generic Dart part of this file, see the
 # following page: https://dart.dev/tools/pub/pubspec
-flutter_native_splash:
- image: assets/images/logorb.png
- color: "#ffffff"
- android: true
- ios: true
- 
-
- 
-
 
 # The following section is specific to Flutter packages.
 flutter:
@@ -92,56 +64,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   
-    - assets/page-1/images/btn-add-1-c46.png
-    - assets/page-1/images/auto-group-sowc.png
-    - assets/page-1/images/btn-add-2.png
-    - assets/page-1/images/btn-add-3-bYa.png
-    - assets/page-1/images/btn-add-4-iKp.png
-    - assets/page-1/images/btn-add-5-svv.png
-    - assets/page-1/images/n-removebg-preview-5.png
-    - assets/page-1/images/ellipse-10.png
-    - assets/page-1/images/auto-group-94rk.png
-    - assets/page-1/images/login-button.png
-    - assets/page-1/images/passwordinput.png
-    - assets/page-1/images/id.png
-    - assets/page-1/images/ellipse-13.png
-    - assets/page-1/images/auto-group-hgcn.png
-    - assets/page-1/images/vuesax-linear-export.png
-    - assets/page-1/images/auto-group-zbse.png
-    - assets/page-1/images/ellipse-7.png
-    - assets/page-1/images/log-out.png
-    - assets/page-1/images/ellipse-11.png
-    - assets/page-1/images/auto-group-lhmx.png
-    - assets/page-1/images/ellipse-12.png
-    - assets/page-1/images/info-box.png
-    - assets/page-1/images/vuesax-linear-volume-high.png
-    - assets/page-1/images/frame-33.png
-    - assets/page-1/images/keyboard-arrow-right.png
-    - assets/page-1/images/auto-group-hsca.png
-    - assets/page-1/images/quiz-1.png
-    - assets/page-1/images/vuesax-linear-arrow-right.png
-    - assets/page-1/images/auto-group-cqri.png
-    - assets/page-1/images/resultbtn.png
-    - assets/page-1/images/vuesax-linear-arrow-left.png
-    - assets/page-1/images/quiz-1-4BG.png
-    - assets/page-1/images/blue-robot-mascot-logo-icon-design675467-55-1-traced-1.png
-    - assets/page-1/images/blue-robot-mascot-logo-icon-design675467-55-1-traced-1-yt2.png
-    - assets/page-1/images/blue-robot-mascot-logo-icon-design675467-55-1-traced-1-HZG.png
-    - assets/page-1/images/blue-robot-mascot-logo-icon-design675467-55-1-traced-1-Tg2.png
-    - assets/page-1/images/blue-robot-mascot-logo-icon-design675467-55-1-traced-1-69t.png
-    - assets/page-1/images/ellipse-6.png
-    - assets/page-1/images/.png
-    - assets/page-1/images/background-design.png
-    - assets/page-1/images/auto-group-hadu.png
-    - assets/page-1/images/exit-to-app.png
-    - assets/page-1/images/completed-1.png
-    - assets/page-1/images/auto-group-upsi.png
-    - assets/page-1/images/auto-group-d3k2.png
-    - assets/page-1/images/resultquiz.png
-    - assets/page-1/images/teacherhome.png
-    - assets/page-1/images/login.png
-
+    - assets/
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware
