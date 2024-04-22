@@ -38,6 +38,7 @@ dependencies:
   fl_chart: ^0.45.0
   google_fonts: ^6.1.0
   flutter_native_splash: any
+  url_launcher: ^6.0.12
  
 
 

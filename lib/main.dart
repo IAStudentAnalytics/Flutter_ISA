@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:pim/page-1/compilateur.dart';
 import 'package:pim/page-1/testblanc.dart';
+import 'package:pim/page-1/rec.dart';
 
 void main() {
   runApp(MyApp());
@@ -48,6 +49,16 @@ class HomePage extends StatelessWidget {
                 );
               },
               child: Text('Go to Quiz Page'),
+            ),
+            SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RecommendedVideosPage()),
+                );
+              },
+              child: Text('Go to Quiz Rec'),
             ),
             SizedBox(height: 20),
           ],
