@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:performance/Studenthome.dart';
 import 'package:performance/performance.dart';
-import 'package:performance/qa.dart';
 import 'package:performance/quiz.dart';
-
-void main() {
+import 'package:performance/qa.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'firebase_options.dart';
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp(
+    options: DefaultFirebaseOptions.currentPlatform,
+  );
   runApp(const MyApp());
 }
 
@@ -19,9 +24,7 @@ class MyApp extends StatelessWidget {
       initialRoute: '/',  // Définition de la route initiale
       routes: {
         '/': (context) => const SceneStudentHome(email: 'example@email.com'), // Route initiale
-        '/qa': (context) => const QAPage(), // Assurez-vous que QAPage est un widget existant
-        '/quiz': (context) => const Performance(), // Assurez-vous que QuizPage est un widget existant
-        // Vous pouvez ajouter d'autres routes si nécessaire
+       
       },
     );
   }
