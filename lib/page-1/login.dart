@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pim/page-1/Studenthome.dart';
 import 'package:pim/page-1/onbording.dart';
+import 'package:pim/page-1/teacherhome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class Scene1 extends StatelessWidget {
@@ -31,13 +33,24 @@ class Scene1 extends StatelessWidget {
       if (response.statusCode == 200) {
         final userData = json.decode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        // Store the entire userData which includes user details and the token
         await prefs.setString('userData', jsonEncode(userData));
 
-        Navigator.pushReplacement(
-          context,
-          MaterialPageRoute(builder: (_) => Onbording(userData: userData)),
-        );
+        // Determine the role from the login response and navigate accordingly
+        if (userData['message'].contains('teacher')) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => Sceneteacherhome()),
+          );
+        } else if (userData['message'].contains('student')) {
+          Navigator.pushReplacement(
+            context,
+            MaterialPageRoute(builder: (_) => SceneStudentHome(email: '',)),
+          );
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text('Unknown role, cannot navigate properly'),
+          ));
+        }
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           content: Text('Invalid email or password'),
