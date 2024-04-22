@@ -1,171 +1,145 @@
 import 'package:flutter/material.dart';
+import 'dart:async';
 
+import 'package:pim/models/question.dart';
 
+class Quiz extends StatefulWidget {
+  final Question question;
+  final Function(String) onNext;
 
-class QuizPage extends StatelessWidget {
-  const QuizPage({Key? key}) : super(key: key);
+  const Quiz({Key? key, required this.question, required this.onNext})
+      : super(key: key);
 
   @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData.dark().copyWith(
-        scaffoldBackgroundColor: const Color.fromARGB(255, 18, 32, 47),
-      ),
-      home: Scaffold(
-        body: ListView(
-          children: [
-            ResultQuiz(),
-          ],
+  _QuizState createState() => _QuizState();
+}
+
+class _QuizState extends State<Quiz> {
+  Map<String, Color> buttonColors = {};
+  Timer? _timer;
+  int _remainingTime = 180;
+   List<String> options = [];
+   String selectedAnswer = "";
+  @override
+  void initState() {
+    super.initState();
+     if (widget.question.options != null) {
+      options = widget.question.options!;
+    }
+    // Initialiser les couleurs des boutons à blanc pour toutes les options si elles existent
+   
+    startTimer();
+  }
+
+  void startTimer() {
+    _timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      if (_remainingTime > 0) {
+        setState(() {
+          _remainingTime--;
+        });
+      } else {
+        _timer?.cancel();
+        widget
+            .onNext(selectedAnswer); // Passer automatiquement à la prochaine question lorsque le temps est écoulé
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    super.dispose();
+  }
+
+ Widget _buildChoiceButton(BuildContext context, String choice) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 40, vertical: 10),
+      child: ElevatedButton(
+        style: ElevatedButton.styleFrom(
+          primary: buttonColors[choice],  // Utilisez la couleur du Map pour chaque bouton
+          onPrimary: Colors.black,
+          textStyle: const TextStyle(fontSize: 18),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
+          minimumSize: const Size(double.infinity, 50),
         ),
+        onPressed: () {
+          // Mettre à jour l'état du bouton pour montrer qu'il est sélectionné
+          setState(() {
+            // Réinitialiser toutes les couleurs à la couleur initiale
+            buttonColors.forEach((key, value) {
+              buttonColors[key] = Colors.white; // ou autre couleur de fond par défaut
+            });
+
+            // Définir la couleur du bouton sélectionné pour le mettre en évidence
+            buttonColors[choice] = Colors.blue; 
+             selectedAnswer = choice;// Utilisez une couleur pour indiquer la sélection
+          });
+
+          // Optionnel: Exécutez le onNext après un délai, ou attendez une action de l'utilisateur
+          // Future.delayed(Duration(seconds: 1), () {
+          //   widget.onNext();  // Passer à la question suivante après un court délai
+          // });
+        },
+        child: Text(choice),
       ),
     );
   }
-}
 
-class ResultQuiz extends StatelessWidget {
+
   @override
   Widget build(BuildContext context) {
+    double screenWidth = MediaQuery.of(context).size.width;
+    double screenHeight = MediaQuery.of(context).size.height;
     return Column(
       children: [
         Container(
+          
           width: 411,
-          height: 869,
+          height: screenHeight * 0.88,
           clipBehavior: Clip.antiAlias,
-          decoration: BoxDecoration(color: Color(0xFFF4F2F6)),
+          decoration: BoxDecoration(color: const Color(0xFFF4F2F6)),
           child: Stack(
             children: [
               Positioned(
-                left: -37,
-                top: -80,
+                left: 0,
+                top: -3,
                 child: Container(
-                  width: 573,
-                  height: 961,
+                  width: 411,
+                  height: 872,
                   child: Stack(
                     children: [
                       Positioned(
-                        left: 37,
-                        top: 80,
+                        left: 0,
+                        top: 0,
                         child: Container(
                           width: 411,
-                          height: 881,
-                          child: Stack(
-                            children: [
-                              Positioned(
-                                left: 0,
-                                top: 0,
-                                child: Container(
-                                  width: 411,
-                                  height: 881,
-                                  decoration: ShapeDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment(0.00, -1.00),
-                                      end: Alignment(0, 1),
-                                      colors: [
-                                        Color(0xFFFABFBF),
-                                        Color(0x00FBF5F5)
-                                      ],
-                                    ),
-                                    shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(18),
-                                    ),
-                                  ),
-                                ),
-                              ),
-                              Positioned(
-                                left: 0,
-                                top: 0,
-                                child: Container(
-                                  width: 411,
-                                  height: 56,
-                                  decoration: BoxDecoration(
-                                    gradient: LinearGradient(
-                                      begin: Alignment(0.00, -1.00),
-                                      end: Alignment(0, 1),
-                                      colors: [
-                                        Color(0xFFFABFBF),
-                                        Color(0x00FBF5F5)
-                                      ],
-                                    ),
-                                  ),
-                                ),
-                              ),
-                            ],
+                          height: 872,
+                          decoration: ShapeDecoration(
+                            gradient: LinearGradient(
+                              begin: Alignment(0.00, -1.00),
+                              end: Alignment(0, 1),
+                              colors: [Color(0xFFDF0B0B), Color(0x00F6F1FB)],
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(18),
+                            ),
                           ),
                         ),
                       ),
                       Positioned(
                         left: 0,
-                        top: 97,
-                        child: Container(
-                          width: 262,
-                          height: 248,
-                          decoration: ShapeDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment(0.00, -1.00),
-                              end: Alignment(0, 1),
-                              colors: [Color(0xFFDA3838), Color(0x00C7A8FC)],
-                            ),
-                            shape: OvalBorder(),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 29,
-                        top: 123,
-                        child: Container(
-                          width: 204,
-                          height: 196,
-                          decoration: ShapeDecoration(
-                            color: Color(0xFFF8A4A4),
-                            shape: OvalBorder(),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 318,
-                        top: 169,
-                        child: Container(
-                          width: 255,
-                          height: 240,
-                          decoration: ShapeDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment(0.00, -1.00),
-                              end: Alignment(0, 1),
-                              colors: [Color(0xFFDA3838), Color(0x00C7A8FC)],
-                            ),
-                            shape: OvalBorder(),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 283,
-                        top: 144,
-                        child: Container(
-                          width: 52,
-                          height: 52,
-                          decoration: ShapeDecoration(
-                            gradient: LinearGradient(
-                              begin: Alignment(0.00, -1.00),
-                              end: Alignment(0, 1),
-                              colors: [Color(0xFFDA3838), Color(0x00C7A8FC)],
-                            ),
-                            shape: OvalBorder(),
-                          ),
-                        ),
-                      ),
-                      Positioned(
-                        left: 172,
                         top: 0,
                         child: Container(
-                          width: 129,
-                          height: 117,
-                          decoration: ShapeDecoration(
+                          width: 411,
+                          height: 108.27,
+                          decoration: BoxDecoration(
                             gradient: LinearGradient(
                               begin: Alignment(0.00, -1.00),
                               end: Alignment(0, 1),
-                              colors: [Color(0xFFDA3838), Color(0x00C7A8FC)],
+                              colors: [Color(0xFFDF0B0B), Color(0x00F6F1FB)],
                             ),
-                            shape: OvalBorder(),
                           ),
                         ),
                       ),
@@ -174,94 +148,159 @@ class ResultQuiz extends StatelessWidget {
                 ),
               ),
               Positioned(
-                left: -65,
-                top: 292,
+                left: 49,
+                top: 46,
                 child: Container(
-                  width: 129,
-                  height: 117,
-                  decoration: ShapeDecoration(
-                    color: Color(0x5BC7A8FC),
+                  width: 262,
+                  height: 248,
+                  decoration: const ShapeDecoration(
+                    color: Color(0x5BFB7D54),
                     shape: OvalBorder(),
                   ),
                 ),
               ),
               Positioned(
-                left: 324,
-                top: 364,
+                left: 78,
+                top: 72,
                 child: Container(
-                  width: 110,
-                  height: 110,
-                  decoration: ShapeDecoration(
-                    color: Color(0x5BC7A8FC),
+                  width: 204,
+                  height: 196,
+                  decoration: const ShapeDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment(0.00, -1.00),
+                      end: Alignment(0, 1),
+                      colors: [Color(0xFFE96868), Color(0x00FCA8A8)],
+                    ),
                     shape: OvalBorder(),
                   ),
                 ),
               ),
               Positioned(
-                left: 80,
-                top: 500,
-                child: Container(
-                  width: 300,
-                  height: 300,
-                  decoration: BoxDecoration(
-                    image: DecorationImage(
-                      image: AssetImage("assets/result.png"),
-                      fit: BoxFit.fill,
+                left: 104,
+                top: 98,
+                child: ClipOval(
+                  child: Container(
+                    width: 152,
+                    height: 144,
+                    color: Colors.white,
+                    child: Center(
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        child: Image.asset(
+                          'assets/quizz.png',
+                          fit: BoxFit.cover,
+                        ),
+                      ),
                     ),
                   ),
                 ),
               ),
               Positioned(
-                left: 90,
-                top: 200,
+                left: 285,
+                top: 25,
                 child: Container(
-                  padding: EdgeInsets.all(
-                      8), // Ajouter un espacement autour de l'image et du texte
-                  decoration: BoxDecoration(
-                    color: Colors.white, // Couleur de fond blanche du conteneur
-                    borderRadius: BorderRadius.circular(
-                        10), // Coins arrondis du conteneur
+                  width: 52,
+                  height: 52,
+                  decoration: const ShapeDecoration(
+                    color: Color(0x5BFB7D54),
+                    shape: OvalBorder(),
                   ),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      ClipOval(
-                        child: Opacity(
-                          opacity: 0.5,
-                          child: Image.asset(
-                            'assets/iconr.png', // Chemin de votre image
-                            width: 100,
-                            height: 100,
-                            fit: BoxFit.cover,
-                          ),
-                        ),
-                      ),
-                      SizedBox(
-                          width:
-                              8), // Ajouter un espace horizontal entre l'image et le texte
-                      Text(
-                        'Très bien 20/20',
-                        style: TextStyle(
-                          color: Colors.black, // Couleur du texte
-                          fontSize: 16, // Taille de la police
-                          fontWeight: FontWeight.bold, // Poids de la police
-                        ),
-                      ),
-                      SizedBox(
-                          height:
-                              16), // Ajouter un espacement entre le texte et le bouton
-                      Row(
-                        children: [
-                          ElevatedButton(
-                            onPressed: () {
-                              // Gérer le retour à l'accueil ici
-                              print('Retour à l\'accueil');
-                            },
-                            child: Text('Retour à l\'accueil'),
-                          ),
-                        ],
+                ),
+              ),
+              Positioned(
+                left: 6,
+                top: 8,
+                child: Container(
+                  width: 129,
+                  height: 117,
+                  decoration: const ShapeDecoration(
+                    color: Color(0x5BFB7D54),
+                    shape: OvalBorder(),
+                  ),
+                ),
+              ),
+              Positioned(
+                left: 40,
+                top: 300,
+                child: Container(
+                  width: 316,
+                  decoration: const ShapeDecoration(
+                    color: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.all(Radius.circular(14)),
+                    ),
+                    shadows: [
+                      BoxShadow(
+                        color: Color(0x3F9D57E3),
+                        blurRadius: 13,
+                        offset: Offset(0, 2),
+                        spreadRadius: 4,
                       ),
                     ],
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(16.0),
+                    child: Text(
+                      "Question: ${widget.question.question ?? 'Pas de question fournie.'}\n"
+                      "Complexité: ${widget.question.complexity?.toString() ?? 'Non spécifiée'} | "
+                      "Points possibles: ${widget.question.marks?.toString() ?? '0'}",
+                      style: const TextStyle(
+                        color: Colors.black,
+                        fontSize: 16,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              Positioned(
+                // Add the timer display somewhere suitable in your UI
+                left: 60,
+                top: 20, // Example position, adjust as needed
+                child: Text("Time remaining: $_remainingTime seconds",
+                    style: TextStyle(
+                        fontSize: 20,
+                        fontWeight: FontWeight.bold,
+                        color: const Color.fromARGB(255, 0, 0, 0))),
+              ),
+              Positioned(
+                left: 40,
+                top: 400,
+                child: SizedBox(
+                  width: 316,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: options
+                        .map((choice) => _buildChoiceButton(context, choice))
+                        .toList(),
+                  ),
+                ),
+              ),
+                Positioned(
+                left: 120,
+                top: 650,
+                child: Transform(
+                  transform: Matrix4.identity()
+                    ..translate(0.0, 0.0)
+                    ..rotateZ(-0.03),
+                  child: SizedBox(
+                    width: 150,
+                    height: 45,
+                    child: ElevatedButton(
+                   onPressed: () {
+                        widget.onNext(selectedAnswer); // L'appel est maintenant dans une fonction callback
+                      },
+                      style: ElevatedButton.styleFrom(
+                        primary: Color(0xFFFFF9F9), // Fond du bouton
+                        onPrimary: Colors.black, // Couleur du texte
+                        textStyle: TextStyle(
+                          fontFamily: 'Poppins',
+                          fontWeight: FontWeight.w500,
+                          fontSize: 25,
+                        ),
+                      ),
+                      child: Text('Next', textAlign: TextAlign.center),
+                    ),
                   ),
                 ),
               ),
