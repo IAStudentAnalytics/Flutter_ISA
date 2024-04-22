@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pim/page-1/onbording.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+
 class Scene1 extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
@@ -13,46 +14,25 @@ class Scene1 extends StatelessWidget {
 
     if (email.isEmpty || password.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Veuillez remplir tous les champs'),
+        content: Text('Please fill in all fields'),
       ));
       return;
     }
 
-    final String apiUrl = 'http://172.16.3.249:5000/api/user/login';
-    final String detailsUrl = 'http://172.16.3.249:5000/api/user/getUserByEmail/$email';
+    final String apiUrl = 'http://192.168.1.17:5000/api/user/login';
 
     try {
-      final apiResponse = await http.post(
+      final response = await http.post(
         Uri.parse(apiUrl),
-        // headers: {'Content-Type': 'application/json'},
+        headers: {'Content-Type': 'application/json'},
         body: jsonEncode({'email': email, 'password': password}),
       );
 
-      if (apiResponse.statusCode == 200) {
+      if (response.statusCode == 200) {
+        final userData = json.decode(response.body);
         SharedPreferences prefs = await SharedPreferences.getInstance();
-        var userData = json.decode(apiResponse.body);  // Basic user data from login
-        prefs.setString('userData', jsonEncode(userData));  // Save basic data first
-
-        // Try to fetch additional user details
-        final detailsResponse = await http.get(
-          Uri.parse(detailsUrl),
-          headers: {'Content-Type': 'application/json'}
-        );
-
-        if (detailsResponse.statusCode == 200) {
-          var detailsData = json.decode(detailsResponse.body);
-          if (detailsData['user'] != null) {
-            userData.addAll(detailsData['user']);  // Add additional details
-            prefs.setString('userData', jsonEncode(userData));  // Update stored data
-          }
-        } else {
-    print('Failed to fetch additional user details: ${detailsResponse.statusCode}');
-    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Failed to load additional details, proceeding with basic data'),
-    ));
-    // Consider adding logic to handle different types of errors differently
-}
-
+        // Store the entire userData which includes user details and the token
+        await prefs.setString('userData', jsonEncode(userData));
 
         Navigator.pushReplacement(
           context,
@@ -60,15 +40,16 @@ class Scene1 extends StatelessWidget {
         );
       } else {
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text('Email ou mot de passe incorrect'),
+          content: Text('Invalid email or password'),
         ));
       }
-    } catch (error) {
+    } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text('Erreur de connexion: $error'),
+        content: Text('Error: $e'),
       ));
     }
   }
+ 
   @override
   Widget build(BuildContext context) {
     double baseWidth = 360;
@@ -229,7 +210,7 @@ class Scene1 extends StatelessWidget {
                         height: 40 * fem,
                         child: GestureDetector(
                           onTap: () {
-                            login(context); // Appel de la fonction de connexion
+                            login(context); // Trigger the login function
                           },
                           child: Image.asset(
                             'assets/page-1/images/login-button.png',

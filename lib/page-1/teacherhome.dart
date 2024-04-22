@@ -1,20 +1,29 @@
 import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'side_menu.dart';  // Ensure 'side_menu.dart' contains the necessary widget definition
-
+import 'side_menu.dart';  // Ensure 'side_menu.dart' contains the necessary widget definitions
+import 'package:fl_chart/fl_chart.dart';
 
 class Sceneteacherhome extends StatelessWidget {
- @override
+  Future<Map<String, dynamic>?> _getUserDataFromSharedPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? userDataString = prefs.getString('userData');
+    if (userDataString != null) {
+      return json.decode(userDataString);
+    }
+    return null;
+  }
+
+  @override
   Widget build(BuildContext context) {
-    return FutureBuilder<String?>(
-  future: _getUserDataFromSharedPreferences(),
-  builder: (context, snapshot) {
-    if (snapshot.connectionState == ConnectionState.waiting) {
-      return CircularProgressIndicator();
-    } else if (snapshot.hasData && snapshot.data != null) {
-      var userData = json.decode(snapshot.data!);
-      String userName = (userData['user'] != null && userData['user']['firstName'] != null) ? userData['user']['firstName'] : 'Guest';
+    return FutureBuilder<Map<String, dynamic>?>(
+      future: _getUserDataFromSharedPreferences(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else {
+          var userData = snapshot.data;
+          String userName = (userData != null && userData['user'] != null && userData['user']['firstName'] != null) ? userData['user']['firstName'] : 'Guest';
           final double screenWidth = MediaQuery.of(context).size.width;
           final double screenHeight = MediaQuery.of(context).size.height;
           final double fem = screenWidth / 411;
@@ -85,11 +94,7 @@ class Sceneteacherhome extends StatelessWidget {
                 ],
               ),
             ),
-            drawer: SideMenu(onMenuItemClicked: (int ) {  },),  // Custom widget for the drawer
-          );
-        } else {
-          return Scaffold(
-            body: Center(child: Text("Please login again, no user data available.")),
+            drawer: SideMenu(onMenuItemClicked: (int) {  }),  // Custom widget for the drawer
           );
         }
       },
@@ -110,77 +115,44 @@ class Sceneteacherhome extends StatelessWidget {
 
   Widget buildStatSection(BuildContext context, double screenWidth, double fem) {
     return Container(
+      width: screenWidth,
       padding: EdgeInsets.all(16 * fem),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-        children: [
-          buildStatBubble(context, 'Chapter', '85%', Colors.blue, ['Choice 1', 'Choice 2', 'Choice 3']),
-          buildStatBubble(context, 'Test', '92%', Colors.green, ['Choice 1', 'Choice 2', 'Choice 3']),
+      child: BarChart(BarChartData(
+        alignment: BarChartAlignment.spaceAround,
+        maxY: 100,
+        barGroups: [
+          BarChartGroupData(x: 0, barRods: [BarChartRodData(y: 80, colors: [Colors.lightBlue])], showingTooltipIndicators: [0]),
+          BarChartGroupData(x: 1, barRods: [BarChartRodData(y: 65, colors: [Colors.orange])], showingTooltipIndicators: [0]),
+          BarChartGroupData(x: 2, barRods: [BarChartRodData(y: 95, colors: [Colors.red])], showingTooltipIndicators: [0]),
+          BarChartGroupData(x: 3, barRods: [BarChartRodData(y: 90, colors: [Colors.green])], showingTooltipIndicators: [0]),
+          BarChartGroupData(x: 4, barRods: [BarChartRodData(y: 75, colors: [Colors.yellow])], showingTooltipIndicators: [0]),
         ],
-      ),
-    );
-  }
-
-  Widget buildStatBubble(BuildContext context, String title, String percentage, Color color, List<String> choices) {
-    double fem = MediaQuery.of(context).size.width / 411;
-    return GestureDetector(
-      onTap: () {
-        showModalBottomSheet(
-          context: context,
-          builder: (BuildContext context) {
-            return Container(
-              height: 200,
-              color: Color(0xFF737373),  // Could adjust this as needed for your design
-              child: Container(
-                decoration: BoxDecoration(
-                  color: Theme.of(context).canvasColor,
-                  borderRadius: BorderRadius.only(
-                    topLeft: Radius.circular(10),
-                    topRight: Radius.circular(10),
-                  ),
-                ),
-                child: Center(
-                  child: Text(title + " " + percentage, style: TextStyle(fontSize: 24 * fem, color: color)),
-                ),
-              ),
-            );
-          },
-        );
-      },
-      child: Container(
-        width: 70 * fem,
-        height: 70 * fem,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: color,
-          boxShadow: [
-            BoxShadow(
-              color: Colors.grey.withOpacity(0.3),
-              spreadRadius: 2,
-              blurRadius: 5,
-              offset: Offset(0, 3),
-            ),
-          ],
-        ),
-        child: Center(
-          child: Text(
-            percentage,
-            style: TextStyle(
-              fontSize: 14 * fem,
-              fontWeight: FontWeight.bold,
-              color: Colors.white,
-            ),
+        titlesData: FlTitlesData(
+          bottomTitles: SideTitles(
+            showTitles: true,
+            getTitles: (double value) {
+              switch (value.toInt()) {
+                case 0:
+                  return 'Classes & Objects';
+                case 1:
+                  return 'Heritage';
+                case 2:
+                  return 'Polymorphism';
+                case 3:
+                  return 'Interfaces';
+                case 4:
+                  return 'Encapsulation';
+                default:
+                  return '';
+              }
+            },
+            margin: 8,
           ),
+          leftTitles: SideTitles(showTitles: false),
         ),
-      ),
+        gridData: FlGridData(show: false),
+        borderData: FlBorderData(show: false),
+      )),
     );
-  }
-
-
-  Future<String?> _getUserDataFromSharedPreferences() async {
-    SharedPreferences prefs = await SharedPreferences.getInstance();
-    String? userData = prefs.getString('userData');
-    print("Retrieved User Data: $userData");  // Additional debugging
-    return userData;
   }
 }
