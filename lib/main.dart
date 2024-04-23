@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pim/page-1/coursPage.dart';
 import 'package:pim/page-1/ajoutCoursPage.dart';
 import 'package:pim/page-1/compilateur.dart';
+import 'package:pim/page-1/recommandation.dart';
 import 'package:pim/page-1/testblanc.dart';
 
 void main() {
@@ -61,6 +62,17 @@ class HomePage extends StatelessWidget {
                 // Naviguer vers la page de cours
               },
               child: Text('Ajouter Cours'),
+            ),
+                        SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => Recomandation()),
+                );
+                // Naviguer vers la page de cours
+              },
+              child: Text('Recomandation'),
             ),
             SizedBox(height: 20),
             ElevatedButton(
