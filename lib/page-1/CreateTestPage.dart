@@ -1,9 +1,15 @@
+
 import 'package:flutter/material.dart';
 import 'package:pim/models/test.dart';
-import 'package:pim/page-1/CreateQuestionPage.dart';
+import 'package:pim/page-1/TestsHistory.dart';
 import 'package:pim/page-1/side_menu.dart';
+import 'package:pim/provider/TestProvider.dart';
+import 'package:provider/provider.dart';
 
 class CreateTestPage extends StatefulWidget {
+  late final List<Map<String, dynamic>> questions;
+  CreateTestPage({Key? key, required this.questions}) : super(key: key); // Add this constructor
+ // Add this line
   @override
   _CreateTestPageState createState() => _CreateTestPageState();
 }
@@ -11,44 +17,36 @@ class CreateTestPage extends StatefulWidget {
 class _CreateTestPageState extends State<CreateTestPage> {
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  TextEditingController durationController = TextEditingController();
   List<Test> tests = [];
-
-  void navigateToCreateQuestion(BuildContext context) {
+  List<Map<String, dynamic>> questions = [];
+  Duration selectedDuration = Duration(hours: 0, minutes: 0);
+  DateTime? selectedDateTime;
+  
+  void addTest() {
+    final testProvider = Provider.of<TestProvider>(context, listen: false);
+    
+    // Get the values of the text controllers
     String title = titleController.text;
     String description = descriptionController.text;
-    int duration = int.parse(durationController.text);
-
+    int duration = selectedDuration.inSeconds;
+    print('duration: $duration'); // Convert duration to seconds
+    // Check if questions list is not null and not empty
+    if (widget.questions.isNotEmpty) {
+      // Ensure all required fields in each question are populated
+      List<Map<String, dynamic>> validQuestions = widget.questions.where((q) => q['question'] != null && q['response'] != null).toList();
+      
+      // Call the addTest method with the required parameters
+      testProvider.addTest(title, description, duration, validQuestions, selectedDateTime!);
+      print('Test created - Title: $title, Description: $description, Duration: $duration, Questions: $validQuestions, Test Date: $selectedDateTime');
+    } else {
+      print('Questions list is null or empty');
+    }
+    // Navigate to the test history page
     Navigator.push(
-    context,
-    MaterialPageRoute(
-      builder: (context) => CreateQuestionPage(
-        questions: [],
-        onSubmitTest: (title, description, duration, questions) {
-          _submitTest(title, description, duration, questions );
-        }, title: title,description: description,duration: duration,tests: tests,
-      ),
-    ),
-  );
-
-  }
-
-  void _submitTest(String title, String description, int duration, List<Question> questions) {
-    // Implement the logic to submit the test
-    // You can use the provided parameters to create a Test object
-    // For example:
-    Test test = Test(
-      title: title,
-      description: description,
-      duration: duration,
-      questions: questions,
-      creationDate: DateTime.now(),
+      context,
+      MaterialPageRoute(builder: (context) => TestsHistory(tests: [], onMenuItemClicked: (int ) {  },)),
     );
-
-    // After creating the test, you can handle it as needed
-    // For example, you can save it to a database or display it on a screen
   }
-
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
@@ -105,29 +103,149 @@ class _CreateTestPageState extends State<CreateTestPage> {
                     ),
                   ),
                   SizedBox(height: 16 * fem),
-                  TextField(
-                    controller: durationController,
-                    keyboardType: TextInputType.number,
-                    decoration: InputDecoration(
-                      labelText: 'Duration (minutes)',
-                      filled: true,
-                      fillColor: Colors.white,
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide.none,
+                  Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Text('0 mins'),
+                    IconButton(
+                      onPressed: () {
+                        if (selectedDuration.inMinutes > 0) {
+                          setState(() => selectedDuration -= Duration(minutes: 5));
+                        }
+                      },
+                      icon: Icon(Icons.remove),
+                    ),
+                    Expanded(
+                      child: Container(
+                        padding: EdgeInsets.all(8.0),
+                        decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(10.0),
+                          border: Border.all(color: Colors.transparent),
+                          color: Colors.white,
+                        ),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Text(
+                              'Duration',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                fontSize: 16.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
+                            SizedBox(height: 8.0),
+                            Container(
+                              decoration: BoxDecoration(
+                                borderRadius: BorderRadius.circular(10.0),
+                                border: Border.all(color: Colors.transparent),
+                              ),
+                              child: Stack(
+                                alignment: Alignment.center,
+                                children: [
+                                  Slider(
+                                    value: selectedDuration.inMinutes.toDouble(),
+                                    min: 0,
+                                    max: 120,
+                                    divisions: 24,
+                                    onChanged: (value) {
+                                      setState(() {
+                                        selectedDuration = Duration(minutes: value.toInt());
+                                      });
+                                    },
+                                  ),
+                                  Text(
+                                    '${selectedDuration.inMinutes} mins',
+                                    style: TextStyle(
+                                      fontWeight: FontWeight.bold,
+                                      fontSize: 16,
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
                     ),
+                    IconButton(
+                      onPressed: () {
+                        setState(() => selectedDuration += Duration(minutes: 5));
+                      },
+                      icon: Icon(Icons.add),
+                    ),
+                    Text('120 mins'),
+                  ],
+                ),
+                  SizedBox(height: 16 * fem),
+                  Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(10.0),
                   ),
-                  SizedBox(height: 32 * fem),
+                  child: ListTile(
+              title: Text('Select Date and Time:'),
+              trailing: IconButton(
+                icon: Icon(Icons.calendar_today),
+                onPressed: () async {
+                  final DateTime? pickedDate = await showDatePicker(
+                    context: context,
+                    initialDate: DateTime.now(),
+                    firstDate: DateTime.now(),
+                    lastDate: DateTime.now().add(Duration(days: 365)), // Allow selecting dates within the next year
+                  );
+                  if (pickedDate != null) {
+                    final TimeOfDay? pickedTime = await showTimePicker(
+                      context: context,
+                      initialTime: TimeOfDay.now(),
+                    );
+                    if (pickedTime != null) {
+                      setState(() {
+                        selectedDateTime = DateTime(
+                          pickedDate.year,
+                          pickedDate.month,
+                          pickedDate.day,
+                          pickedTime.hour,
+                          pickedTime.minute,
+                        );
+                      });
+                    }
+                  }
+                },
+              ),
+              subtitle: selectedDateTime != null
+                ? Text('Selected Date and Time: ${selectedDateTime!.toString()}')
+                : Text('Select Date and Time'),
+            ),
+            ),
+            SizedBox(height: 16 * fem),
+            Text(
+                  'Questions:',
+                  style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                ),
+                Expanded(
+                  child: ListView.builder(
+                    itemCount: widget.questions.length,
+                    itemBuilder: (context, index) {
+                      final question = widget.questions[index];
+                      // Customize the appearance of each question item as needed
+                      return ListTile(
+                        title: Text(question['question']),
+                        subtitle: Text(question['image'] ?? 'Image not available'),
+                        // Add other details of the question if available
+                      );
+                    },
+                  ),
+                ),
                   Align(
                     alignment: Alignment.bottomRight,
                     child: SizedBox(
                       width: 150,
                       child: ElevatedButton(
                         onPressed: () {
-                          navigateToCreateQuestion(context);
+                          addTest();
                         },
-                        child: Text('Next', style: TextStyle(fontSize: 18)),
+                        child: Text('Save Test', style: TextStyle(fontSize: 18)),
                       ),
                     ),
                   ),
@@ -156,6 +274,8 @@ class _CreateTestPageState extends State<CreateTestPage> {
       drawer: SideMenu(onMenuItemClicked: (int) {}),
     );
   }
+
+
   Widget buildMenuButton(BuildContext context, double fem, String text, IconData icon, String route) {
     return ElevatedButton.icon(
       onPressed: () {

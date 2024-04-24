@@ -1,39 +1,58 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
+import 'package:qr_flutter/qr_flutter.dart';
 import 'package:pim/models/test.dart';
-import 'package:pim/page-1/side_menu.dart'; // Import the Test model
+import 'package:pim/provider/TestProvider.dart';
+import 'package:pim/page-1/side_menu.dart';
+import 'package:provider/provider.dart';
 
 class TestsHistory extends StatefulWidget {
-  final List<Test> tests;
-
-  TestsHistory({required this.tests});
+  final Function(int) onMenuItemClicked;
+  TestsHistory({required this.onMenuItemClicked, required List<Test> tests});
 
   @override
   _TestsHistoryState createState() => _TestsHistoryState();
 }
 
 class _TestsHistoryState extends State<TestsHistory> {
-  List<Test> _sortedTests = [];
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+  late Test updatedTest ;
 
   @override
   void initState() {
+    final testProvider = Provider.of<TestProvider>(context, listen: false);
     super.initState();
-    _sortedTests = List.from(widget.tests); // Initialize sortedTests with the provided tests
+    print('Fetching tests...');
+    testProvider.fetchTests().then((_) {
+      print('Tests fetched successfully. Total tests: ${testProvider.tests}');
+    }).catchError((error) {
+      print('Error fetching tests: $error');
+    });
   }
 
   void _sortByAlphabet() {
+    final testProvider = Provider.of<TestProvider>(context, listen: false);
     setState(() {
-      _sortedTests.sort((a, b) => a.title.compareTo(b.title));
+      testProvider.tests.sort((a, b) => a.title.compareTo(b.title));
     });
   }
 
   void _sortByDate() {
+    final testProvider = Provider.of<TestProvider>(context, listen: false);
     setState(() {
-      _sortedTests.sort((a, b) => a.creationDate.compareTo(b.creationDate));
+      testProvider.tests.sort((a, b) => a.testDate.compareTo(b.testDate));
     });
+  }
+
+  String? generateUniqueCode() {
+    // Generate a random unique code
+    var random = Random();
+    return random.nextInt(999999).toString().padLeft(6, '0');
   }
 
   @override
   Widget build(BuildContext context) {
+    var testProvider = Provider.of<TestProvider>(context, listen: false);
     return Scaffold(
       appBar: AppBar(
         title: Text('Tests History'),
@@ -53,21 +72,21 @@ class _TestsHistoryState extends State<TestsHistory> {
             ),
           ),
           Positioned.fill(
-                child: Opacity(
-                  opacity: 0.15,
-                  child: Align(
-                    alignment: Alignment.center,
-                    child: FractionallySizedBox(
-                      widthFactor: 0.5,
-                      heightFactor: 0.5,
-                      child: Image.asset(
-                        'assets/page-1/images/n-removebg-preview-5.png',
-                        fit: BoxFit.cover, // Adjust how the image should be fitted
-                      ),
-                    ),
+            child: Opacity(
+              opacity: 0.15,
+              child: Align(
+                alignment: Alignment.center,
+                child: FractionallySizedBox(
+                  widthFactor: 0.5,
+                  heightFactor: 0.5,
+                  child: Image.asset(
+                    'assets/page-1/images/n-removebg-preview-5.png',
+                    fit: BoxFit.cover,
                   ),
                 ),
               ),
+            ),
+          ),
           Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
@@ -76,61 +95,198 @@ class _TestsHistoryState extends State<TestsHistory> {
                 mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                 children: [
                   Flexible(
-                  child: ElevatedButton(
-                    onPressed: _sortByAlphabet,
-                    child: FittedBox(
+                    child: ElevatedButton(
+                      onPressed: _sortByAlphabet,
+                      child: FittedBox(
                         fit: BoxFit.scaleDown,
                         child: Text('Sort by Alphabet'),
+                      ),
                     ),
-                  ),
                   ),
                   SizedBox(width: 2),
                   Flexible(
-                  child: ElevatedButton(
-                    onPressed: _sortByDate,
-                    child: FittedBox(
-                      fit: BoxFit.scaleDown,
-                      child: Text('Sort by Date'),
+                    child: ElevatedButton(
+                      onPressed: _sortByDate,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text('Sort by Date'),
+                      ),
                     ),
-                  ),
                   ),
                 ],
               ),
               SizedBox(height: 10),
               Expanded(
-                child: ListView.builder(
-                  itemCount: _sortedTests.length,
-                  itemBuilder: (context, index) {
-                    return Card(
-                      margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
-                      child: ListTile(
-                        title: Text(_sortedTests[index].title),
-                        subtitle: Text(_sortedTests[index].creationDate.toString()),
-                        // Add more details to display as needed
+                child: testProvider.tests.isEmpty
+                    ? Center(
+                        child: CircularProgressIndicator(), // Show loading indicator
+                      )
+                    : Consumer<TestProvider>(
+                        builder: (context, testProvider, child) {
+                          return ListView.builder(
+                            itemCount: testProvider.tests.length,
+                            itemBuilder: (context, index) {
+                              final Test test = testProvider.tests[index];
+                              return Card(
+                                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: GestureDetector(
+                                        onTap: () async {
+                                          String uniqueCode = generateUniqueCode() ?? '';
+                                          final qrImageData = await QrPainter(
+                                            data: 'Test :${test.title},Date : ${test.testDate}, Access Code : $uniqueCode',
+                                            version: QrVersions.auto,
+                                            gapless: false,
+                                          ).toImageData(200);
+
+                                          // Show the test details in a popup
+                                          showDialog(
+                                            context: context,
+                                            builder: (context) => AlertDialog(
+                                              title: Text(test.title),
+                                              content: Column(
+                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                mainAxisSize: MainAxisSize.min,
+                                                children: [
+                                                  Text('Description: ${test.description}'),
+                                                  Text('Date: ${test.testDate.toString()}'),
+                                                  Text('Duration: ${test.duration.toString()}'),
+                                                  Text('Questions: ${test.questions.length}'),
+                                                  // Add more details as needed
+                                                  Padding(
+                                                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                                                    child: Center(
+                                                      child: SizedBox(
+                                                        width: 100, // Adjust the width as needed
+                                                        height: 100, // Adjust the height as needed
+                                                        child: Image.memory(
+                                                            qrImageData!.buffer.asUint8List()), // Display the QR code image
+                                                      ),
+                                                    ),
+                                                  ),
+                                                ],
+                                              ),
+                                              actions: [
+                                                TextButton(
+                                                  onPressed: () {
+                                                    Navigator.pop(context);
+                                                  },
+                                                  child: Text('Close'),
+                                                ),
+                                              ],
+                                            ),
+                                          );
+                                        },
+                                        child: ListTile(
+                                          title: Text(test.title),
+                                          subtitle: Text(test.testDate.toString()),
+                                        ),
+                                      ),
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.delete),
+                                      onPressed: () {
+                                        // Show confirmation dialog before deleting
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: Text('Confirm Deletion'),
+                                            content: Text('Are you sure you want to delete this test?'),
+                                            actions: [
+                                              TextButton(
+                                                onPressed: () {
+                                                  Navigator.pop(context); // Close dialog
+                                                },
+                                                child: Text('Cancel'),
+                                              ),
+                                              TextButton(
+                                                onPressed: () {
+                                                  // Perform deletion logic here
+                                                  // Remove the test from the list
+                                                  setState(() {
+                                                    testProvider.removeTest(test.id!);
+                                                  });
+                                                  Navigator.pop(context); // Close dialog
+                                                },
+                                                child: Text('Delete'),
+                                              ),
+                                            ],
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                    IconButton(
+                                      icon: Icon(Icons.edit),
+                                      onPressed: () {
+                                        // Show modify test popup
+                                        showDialog(
+                                          context: context,
+                                          builder: (context) => AlertDialog(
+                                            title: Text('Modify Test'),
+                                            content: Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              mainAxisSize: MainAxisSize.min,
+                                              children: [
+                                                TextFormField(
+                                                initialValue: test.title,
+                                                decoration: InputDecoration(labelText: 'Title'),
+                                                onChanged: (value) {
+                                                  // Update the title of the selected test
+                                                  setState(() {
+                                                    updatedTest.title = value;
+                                                  });
+                                                },
+                                              ),
+                                              TextFormField(
+                                                initialValue: test.description,
+                                                decoration: InputDecoration(labelText: 'Description'),
+                                                onChanged: (value) {
+                                                  // Update the description of the selected test
+                                                  setState(() {
+                                                    updatedTest.description = value;
+                                                  });
+                                                },
+                                              ),
+                                              SizedBox(width: 10),
+                                              Row(
+                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                                children: [
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                    child: Text('Save'),
+                                                  ),
+                                                  SizedBox(width: 2), // Add padding between the buttons
+                                                  ElevatedButton(
+                                                    onPressed: () {
+                                                      Navigator.pop(context);
+                                                    },
+                                                    child: Text('Cancel'),
+                                                  ),
+                                                ],
+                                              )
+                                              ],
+                                            ),
+                                          ),
+                                        );
+                                      },
+                                    ),
+                                  ],
+                                ),
+                              );
+                            },
+                          );
+                        },
                       ),
-                    );
-                  },
-                ),
               ),
             ],
           ),
         ],
       ),
-      drawer: SideMenu(onMenuItemClicked: (int) {}),
-    );
-  }
-  Widget buildMenuButton(BuildContext context, double fem, String text, IconData icon, String route) {
-    return ElevatedButton.icon(
-      onPressed: () {
-        Navigator.pushNamed(context, route);
-      },
-      icon: Icon(icon),
-      label: Text(text),
-      style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.symmetric(horizontal: 16.0 * fem, vertical: 12.0 * fem),
-        // Adjust button size according to screen size
-        minimumSize: Size(150 * fem, 50 * fem),
-      ),
+      drawer: SideMenu(onMenuItemClicked: widget.onMenuItemClicked),
     );
   }
 }

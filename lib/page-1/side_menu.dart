@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pim/page-1/CalendarScreen.dart';
 import 'package:pim/page-1/compilateur.dart';
 import 'package:pim/page-1/login.dart';
 import 'package:pim/page-1/quizzteacher.dart';
@@ -7,7 +8,10 @@ import 'package:pim/page-1/teacherhome.dart';
 import 'package:pim/page-1/javabot.dart';
 import 'package:pim/page-1/performance.dart';
 import 'package:pim/page-1/testblanc.dart';
+import 'package:pim/page-1/coursPage.dart';
+import 'package:pim/page-1/ajoutCoursPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '/main.dart';
 void main() {
   runApp(MyApp());
 }
@@ -149,29 +153,43 @@ class SideMenu extends StatelessWidget {
             MaterialPageRoute(builder: (context) => TestBlanc()),
           );
         },
+            ),ListTile(
+              title: Text('Votre Cours'),
+              onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CoursPage()), 
+              );
+              },
             ),
-          ListTile(
-  title: Text('Logout'),
-  onTap: () async {
-    // Obtain shared preferences instance
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-
-    // Clear all data stored in SharedPreferences
-    await prefs.clear();
-
-    // Optionally, if you want to remove only specific data like the token:
-    // await prefs.remove('token');  // if you're storing the token under the key 'token'
-
-    // Navigate to the login page and remove all routes (so user can't go back to the previous screens)
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => Scene1()),
-      (Route<dynamic> route) => false,
-    );
-  },
+            ListTile(
+              title: Text('Ajout Recomndation'),
+              onTap: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => AjoutCoursPage()), 
+              );
+              },
             ),
+    ListTile(
+        title: Text('Logout'),
+        onTap: () {
+          logout(context);  // Call the global logout function
+        },
+      ),
           ],
         ),
       ),
     );
   }
+   void logout(BuildContext context) async {
+    SharedPreferences prefs = await SharedPreferences.getInstance();
+    await prefs.clear();
+
+    Navigator.of(context).pushAndRemoveUntil(
+      MaterialPageRoute(builder: (context) => Scene1()),
+      (Route<dynamic> route) => false,
+    );
 }
+}
+

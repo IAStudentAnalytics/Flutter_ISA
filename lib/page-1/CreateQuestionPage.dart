@@ -1,26 +1,15 @@
+
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:pim/models/test.dart';
-import 'package:pim/page-1/TestsHistory.dart';
-import 'package:pim/page-1/side_menu.dart';
+import 'package:pim/page-1/CreateTestPage.dart';
 
 class CreateQuestionPage extends StatefulWidget {
-  final List<Question> questions;
-  final Function(String, String, int, List<Question>) onSubmitTest;
-  final String title;
-  final String description;
-  final int duration;
-  final List<Test> tests;
- 
+  final Function(List<Map<String, dynamic>>) onSubmitQuestions;
+
   CreateQuestionPage({
-    required this.questions,
-    required this.onSubmitTest,
-    required this.title,
-    required this.description,
-    required this.duration,
-    required this.tests,
-    });
+    required this.onSubmitQuestions
+  });
 
   @override
   _CreateQuestionPageState createState() => _CreateQuestionPageState();
@@ -28,374 +17,401 @@ class CreateQuestionPage extends StatefulWidget {
 
 class _CreateQuestionPageState extends State<CreateQuestionPage> {
   TextEditingController questionController = TextEditingController();
-  TextEditingController complexityController = TextEditingController();
-  TextEditingController imageController = TextEditingController();
   TextEditingController marksController = TextEditingController();
-
-  bool isQuizQuestion = true;
-  List<Option> options = [];
   TextEditingController answerController = TextEditingController();
+  TextEditingController imageController = TextEditingController();
+  int? selectedComplexity;
+  String? selectedChapter;
+
+  final List<String> chapters = [
+    'Les classes et les objets',
+    'L héritage',
+    'Le polymorphisme',
+    'Les interfaces',
+    'Encapsulation'
+  ];
+
   File? _image;
-  List<String> keywords = [];
-  bool _isCreatingNewQuestion = true;
+  List<Option> options = [];
+  bool isQuizQuestion = true;
+  List<Map<String, dynamic>> questions = [];
 
-  void _saveQuestion() {
-    // Initialize response variable
-    String response;
-
-    // Determine the response based on question type
-    if (isQuizQuestion) {
-      // Find the selected option
-      Option selectedOption = options.firstWhere((option) => option.isCorrect, orElse: () => Option(text: ''));
-      // Assign the text of the selected option as the response
-      response = selectedOption.text;
-    } else {
-      // For non-quiz questions, use the text from the answerController
-      response = answerController.text;
-    }
-
-    // Create a Question object using the data entered in the text fields
-    Question question = Question(
-      complexity: int.parse(complexityController.text),
-      question: questionController.text,
-      response: response,
-      marks: int.parse(marksController.text),
-      options: options.map((option) => option.text).toList(),
-      type: isQuizQuestion ? 'Quiz' : 'QA',
-     // image: _image,
-    );
-
-    // Add the question object to the list of questions
-    widget.questions.add(question);
-
-    // Print a confirmation message
-    print('Question saved!');
+  void _addQuestion() {
+  if (_areFieldsEmpty()) {
+    _showAlert('Please fill all fields before adding a question.');
+    return;
   }
 
-  void _submitTest() {
-  // Create a new Test object with the provided data
-  Test test = Test(
-    title: widget.title,
-    description: widget.description,
-    duration: widget.duration,
-    creationDate: DateTime.now(),
-    questions: widget.questions,
-  );
+  Map<String, dynamic> newQuestion = {
+    'complexity': int.parse(selectedComplexity.toString()),
+    'question': questionController.text,
+    'response': answerController.text,
+    'marks': int.parse(marksController.text),
+    'options': options.map((option) => option.text).toList(),
+    'chapitre': selectedChapter,
+    'type': isQuizQuestion ? 'Quiz' : 'QA',
+    'image': _image.toString(),
+  };
 
-  // Update the list of tests in the TestsHistory widget
-  List<Test> updatedTests = List.from(widget.tests);
-  updatedTests.add(test);
+  // Append the new question to the list of questions
+  setState(() {
+    questions.add(newQuestion);
+  });
 
-  // Navigate to the test history page, passing the updated list of tests
+  // Clear the text fields and options
+  _clearFields();
+  widget.onSubmitQuestions(questions);
+}
+  void _saveQuestions() {
+  if (questions.isEmpty) {
+    _showAlert('No questions to save.');
+    return;
+  }
+
+  List<Map<String, dynamic>> savedQuestions = List.from(questions);
+  questions.clear();
+  print('Saved Questions : $savedQuestions');
   Navigator.push(
     context,
     MaterialPageRoute(
-      builder: (context) => TestsHistory(tests: updatedTests),
+      builder: (context) => CreateTestPage(questions: savedQuestions),
     ),
   );
+
+  _showAlert('Questions saved successfully.');
+  widget.onSubmitQuestions(questions);
 }
 
-
-  void _addAnotherQuestion() {
-    _saveQuestion();
-    print('Question Saved!'); // Save the current question
-
-    Navigator.push(
-      context,
-      MaterialPageRoute(
-        builder: (context) => CreateQuestionPage(
-          questions: widget.questions,
-          onSubmitTest: widget.onSubmitTest,
-          title: widget.title,
-          description: widget.description,
-          duration: widget.duration,
-          tests: widget.tests,
-          ),
-      ),
-    ).then((_) {
-      setState(() {
-        _isCreatingNewQuestion = true; // Set to true when creating a new question
-      });
-    });
+  bool _areFieldsEmpty() {
+    return questionController.text.isEmpty ||
+        marksController.text.isEmpty;
   }
 
-  Future<void> _getImage(ImageSource source) async {
- final pickedFile = await ImagePicker().pickImage(source: source);
-
-
+  void _clearFields() {
+    questionController.clear();
+    marksController.clear();
+    answerController.clear();
+    imageController.clear();
     setState(() {
-      if (pickedFile != null) {
-        _image = File(pickedFile.path);
-        imageController.text = _image!.path;
-      } else {
-        print('No image selected.');
-      }
+      _image = null;
     });
   }
 
+  void _showAlert(String message) {
+    showDialog(
+      context: context,
+      builder: (context) => AlertDialog(
+        title: Text('Alert'),
+        content: Text(message),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(context).pop(),
+            child: Text('OK'),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _getImage() async {
+    final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
+    setState(() {
+      _image = pickedFile != null ? File(pickedFile.path) : null;
+    });
+  }
+  
+  
+  
   @override
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
-    double screenHeight = MediaQuery.of(context).size.height;
     double fem = screenWidth / 411;
 
-    return WillPopScope(
-      onWillPop: () async {
-        // Add logic here if needed when the back button is pressed
-        return true; // Return true to allow back navigation
-      },
-      child: Scaffold(
+    return Scaffold(
         appBar: AppBar(
-          title: Text(_isCreatingNewQuestion ? 'Create Question' : 'Previous Question'),
+          title: Text('Create Questions'),
         ),
-        body: Stack(
+        body: SingleChildScrollView(
+        padding: EdgeInsets.all(16.0),
+        child: Container(
+          width: MediaQuery.of(context).size.width,
+          height: MediaQuery.of(context).size.height,
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [Color(0xffdf0b0b), Color(0x00f6f1fb)],
+              stops: [0, 1],
+            ),
+          ),
+      child: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: SingleChildScrollView(
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: double.infinity,
-              height: double.infinity,
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
-                  begin: Alignment.topCenter,
-                  end: Alignment.bottomCenter,
-                  colors: [Color(0xffdf0b0b), Color(0x00f6f1fb) ],
-                  stops: [0, 1],
+            TextField(
+              controller: questionController,
+              decoration: InputDecoration(
+                labelText: 'Question',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide.none,
                 ),
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.8),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: SingleChildScrollView(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    TextField(
-                      controller: questionController,
-                      decoration: InputDecoration(
-                        labelText: 'Question',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.8),
+            SizedBox(height: 10 * fem),
+            DropdownButtonFormField<String>(
+              value: selectedChapter,
+              onChanged: (value) {
+                setState(() {
+                  selectedChapter = value;
+                });
+              },
+              items: chapters.map((chapter) {
+                return DropdownMenuItem<String>(
+                  value: chapter,
+                  child: Text(chapter),
+                );
+              }).toList(),
+              decoration: InputDecoration(
+                labelText: 'Chapter',
+                filled: true,
+                fillColor: Colors.white.withOpacity(0.8), // Set background color to white
+                border: OutlineInputBorder( // Define border
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide.none, // Define border color
+                ),
+                // Add additional styling properties as needed
+                // You can customize labelStyle, hintStyle, and more
+              ),
+            ),
+            SizedBox(height: 10 * fem),
+            CheckboxListTile(
+              title: Text('Quiz Question'),
+              value: isQuizQuestion,
+              onChanged: (value) {
+                setState(() {
+                  isQuizQuestion = value!;
+                  options = [];
+                });
+              },
+            ),
+            if (isQuizQuestion)
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text('Options:'),
+                  SizedBox(height: 8 * fem),
+                  for (int i = 0; i < options.length; i++)
+                    ListTile(
+                      leading: Icon(Icons.drag_handle),
+                      title: Row(
+                        children: [
+                          Expanded(
+                            child: TextField(
+                              decoration: InputDecoration(
+                                labelText: 'Option ${i + 1}',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  borderSide: BorderSide.none,
+                                ),
+                                filled: true,
+                                fillColor: Colors.white.withOpacity(0.8),
+                              ),
+                              onChanged: (value) {
+                                options[i].text = value;
+                              },
+                            ),
+                          ),
+                          Checkbox(
+                            value: options[i].isCorrect,
+                            onChanged: (value) {
+                              setState(() {
+                                options[i].isCorrect = value ?? false;
+                                if (value ?? false) {
+                                  answerController.text = options[i].text;
+                                }
+                              });
+                            },
+                          ),
+                          IconButton(
+                            icon: Icon(Icons.delete),
+                            onPressed: () {
+                              setState(() {
+                                options.removeAt(i);
+                              });
+                            },
+                          ),
+                        ],
                       ),
                     ),
-                    SizedBox(height: 10 * fem),
-                    CheckboxListTile(
-                      title: Text('Quiz Question'),
-                      value: isQuizQuestion,
+                  SizedBox(height: 8 * fem),
+                  ElevatedButton(
+                    onPressed: () {
+                      setState(() {
+                        options.add(Option());
+                      });
+                    },
+                    child: Text('Add Option'),
+                  ),
+                ],
+              )
+            else
+              TextField(
+                controller: answerController,
+                decoration: InputDecoration(
+                  labelText: 'Keywords (comma-separated)',
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(10.0),
+                    borderSide: BorderSide.none,
+                  ),
+                  filled: true,
+                  fillColor: Colors.white.withOpacity(0.8),
+                ),
+              ),
+            SizedBox(height: 16 * fem),
+            Row(
+              children: [
+                Text('Complexity:'),
+                SizedBox(width: 10),
+                Row(
+                  children: [
+                    Radio<int>(
+                      value: 1,
+                      groupValue: selectedComplexity,
                       onChanged: (value) {
                         setState(() {
-                          isQuizQuestion = value!;
-                          options = [];
+                          selectedComplexity = value;
                         });
                       },
                     ),
-                    if (isQuizQuestion)
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text('Options:'),
-                          SizedBox(height: 8 * fem),
-                          for (int i = 0; i < options.length; i++)
-                            ListTile(
-                              leading: Icon(Icons.drag_handle),
-                              title: Row(
-                                children: [
-                                  Expanded(
-                                    child: TextField(
-                                      decoration: InputDecoration(
-                                        labelText: 'Option ${i + 1}',
-                                        border: OutlineInputBorder(
-                                          borderRadius: BorderRadius.circular(10.0),
-                                          borderSide: BorderSide.none,
-                                        ),
-                                        filled: true,
-                                        fillColor: Colors.white.withOpacity(0.8),
-                                      ),
-                                      onChanged: (value) {
-                                        options[i].text = value;
-                                      },
-                                    ),
-                                  ),
-                                  Checkbox(
-                                    value: options[i].isCorrect,
-                                    onChanged: (value) {
-                                      setState(() {
-                                        options[i].isCorrect = value ?? false;
-                                      });
-                                    },
-                                  ),
-                                  IconButton(
-                                    icon: Icon(Icons.delete),
-                                    onPressed: () {
-                                      setState(() {
-                                        options.removeAt(i);
-                                      });
-                                    },
-                                  ),
-                                ],
-                              ),
-                            ),
-                          SizedBox(height: 8 * fem),
-                          ElevatedButton(
-                            onPressed: () {
-                              setState(() {
-                                options.add(Option());
-                              });
-                            },
-                            child: Text('Add Option'),
-                          ),
-                        ],
-                      )
-                    else
-                      TextField(
-                        decoration: InputDecoration(
-                          labelText: 'Keywords (comma-separated)',
-                          border: OutlineInputBorder(
-                            borderRadius: BorderRadius.circular(10.0),
-                            borderSide: BorderSide.none,
-                          ),
-                          filled: true,
-                          fillColor: Colors.white.withOpacity(0.8),
-                        ),
-                      ),
-                    SizedBox(height: 16 * fem),
-                    TextField(
-                      controller: complexityController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Complexity',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                        filled: true,
-                        fillColor: Colors.white.withOpacity(0.8),
-                      ),
-                    ),
-                    SizedBox(height: 16 * fem),
-                    Row(
-                      crossAxisAlignment: CrossAxisAlignment.end,
-                      children: [
-                        Expanded(
-                          child: TextField(
-                            controller: imageController,
-                            readOnly: true,
-                            decoration: InputDecoration(
-                              labelText: 'Image URL',
-                              border: OutlineInputBorder(
-                                borderRadius: BorderRadius.circular(10.0),
-                                borderSide: BorderSide.none,
-                              ),
-                              filled: true,
-                              fillColor: Colors.white.withOpacity(0.8),
-                            ),
-                          ),
-                        ),
-                        SizedBox(width: 16),
-                        SizedBox(
-                          height: 48.0,
-                          child: ElevatedButton(
-                            onPressed: () {
-                              _getImage(ImageSource.gallery);
-                            },
-                            child: Text('Select Image'),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 16 * fem),
-                    TextField(
-                      controller: marksController,
-                      keyboardType: TextInputType.number,
-                      decoration: InputDecoration(
-                        labelText: 'Marks',
-                        filled: true,
-                        fillColor: Colors.white,
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10.0),
-                          borderSide: BorderSide.none,
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 32 * fem),
-                    Center(
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                        children: [
-                          Flexible(
-                            child: ElevatedButton(
-                              onPressed: (){
-                                _submitTest();
-                                _saveQuestion();
-                              },
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text('Submit Test'),
-                              ),
-                            ),
-                          ),
-                          SizedBox(width: 16),
-                          Flexible(
-                            child: ElevatedButton(
-                              onPressed: () {
-                                _addAnotherQuestion();
-                              },
-                              child: FittedBox(
-                                fit: BoxFit.scaleDown,
-                                child: Text('Add Another Question'),
-                              ),
-                            ),
-                          ),
-                        ],
-                      ),
-                    ),
+                    Text('1'),
                   ],
+                ),
+                Row(
+                  children: [
+                    Radio<int>(
+                      value: 2,
+                      groupValue: selectedComplexity,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedComplexity = value;
+                        });
+                      },
+                    ),
+                    Text('2'),
+                  ],
+                ),
+                Row(
+                  children: [
+                    Radio<int>(
+                      value: 3,
+                      groupValue: selectedComplexity,
+                      onChanged: (value) {
+                        setState(() {
+                          selectedComplexity = value;
+                        });
+                      },
+                    ),
+                    Text('3'),
+                  ],
+                ),
+              ],
+            ),
+            SizedBox(height: 16 * fem),
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                Expanded(
+                  child: TextField(
+                    readOnly: true,
+                    decoration: InputDecoration(
+                      labelText: 'Image URL',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(10.0),
+                        borderSide: BorderSide.none,
+                      ),
+                      filled: true,
+                      fillColor: Colors.white.withOpacity(0.8),
+                    ),
+                    controller: TextEditingController(text: _image?.path ?? ''),
+                  ),
+                ),
+                SizedBox(width: 16),
+                SizedBox(
+                  height: 48.0,
+                  child: ElevatedButton(
+                    onPressed: () {
+                      _getImage();
+                    },
+                    child: Text('Select Image'),
+                  ),
+                ),
+              ],
+            ),
+            SizedBox(height: 16 * fem),
+            TextField(
+              controller: marksController,
+              keyboardType: TextInputType.number,
+              decoration: InputDecoration(
+                labelText: 'Marks',
+                filled: true,
+                fillColor: Colors.white,
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(10.0),
+                  borderSide: BorderSide.none,
                 ),
               ),
             ),
-            Positioned.fill(
-              child: Opacity(
-                opacity: 0.15,
-                child: Align(
-                  alignment: Alignment.center,
-                  child: FractionallySizedBox(
-                    widthFactor: 0.5,
-                    heightFactor: 0.5,
-                    child: Image.asset(
-                      'assets/page-1/images/n-removebg-preview-5.png',
-                      fit: BoxFit.cover, // Adjust how the image should be fitted
-                    ),
-                  ),
+            SizedBox(height: 16.0),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: () {
+                    _addQuestion();
+                  },
+                  child: Text('Add Question'),
                 ),
-              ),
+                ElevatedButton(
+                  onPressed: _saveQuestions,
+                  child: Text('Save Questions'),
+                ),
+              ],
+            ),
+            SizedBox(height: 16.0),
+            Text(
+              'Questions:',
+              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+            ),
+            SizedBox(height: 8.0),
+            ListView.builder(
+              shrinkWrap: true,
+              itemCount: questions.length,
+              itemBuilder: (context, index) {
+                return ListTile(
+                  title: Text(questions[index]['question']),
+                  subtitle: Text('Complexity: ${questions[index]['complexity']}, Marks: ${questions[index]['marks']}'),
+                  leading: questions[index]['image'] != null ? Image.network(questions[index]['image']) : null ,
+                );
+              },
             ),
           ],
         ),
-        drawer: SideMenu(onMenuItemClicked: (int) {}),
+        ),
       ),
-    );
-  }
-  Widget buildMenuButton(BuildContext context, double fem, String text, IconData icon, String route) {
-    return ElevatedButton.icon(
-      onPressed: () {
-        Navigator.pushNamed(context, route);
-      },
-      icon: Icon(icon),
-      label: Text(text),
-      style: ElevatedButton.styleFrom(
-        padding: EdgeInsets.symmetric(horizontal: 16.0 * fem, vertical: 12.0 * fem),
-        // Adjust button size according to screen size
-        minimumSize: Size(150 * fem, 50 * fem),
-      ),
+    ),
+  ),
     );
   }
 }
+
 
 class Option {
   String text;
   bool isCorrect;
-
   Option({this.text = '', this.isCorrect = false});
 }

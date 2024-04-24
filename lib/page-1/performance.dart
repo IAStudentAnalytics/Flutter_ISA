@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart'; // Import the fl_chart package
 import 'dart:math';
-
+import 'package:pim/page-1/rec.dart';
 import 'package:spider_chart/spider_chart.dart';
 
 class Performance extends StatelessWidget {
@@ -255,6 +255,27 @@ class Performance extends StatelessWidget {
                   color: Color(0xB5D2D2D2),
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(13),
+                  ),
+                ),
+              ),
+            ),
+            // Navigation button to RecommendedVideosPage
+            Positioned(
+              left: 25,
+              top: 726, // Adjusted based on the layout
+              child: SizedBox(
+                width: 325, // Match the width of the container above
+                height: 50, // Height of the button
+                child: ElevatedButton(
+                  onPressed: () {
+                    Navigator.of(context).push(
+                      MaterialPageRoute(builder: (context) => RecommendedVideosPage()),
+                    );
+                  },
+                  child: Text('View Recommended Videos'),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.blue, // Button color
+                    onPrimary: Colors.white, // Text color
                   ),
                 ),
               ),
