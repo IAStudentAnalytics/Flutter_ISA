@@ -208,6 +208,7 @@ import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:pim/page-1/coursPage.dart';
 import 'package:pim/services/coursRecService.dart';
 import 'package:file_picker/file_picker.dart';
 
@@ -316,7 +317,9 @@ if (_pdfBytes == null) {
     try {
       await CoursService.addCours(_selectedChapter!, _descriptionController.text, _pdfBytes!);
 
-      _afficherSucces('Cours ajouté avec succès.');
+      //_afficherSucces('Cours ajouté avec succès.');
+      _afficherSucces(context, 'Cours ajouté avec succès.');
+
 
       _resetState();
 
@@ -344,7 +347,31 @@ if (_pdfBytes == null) {
       },
     );
   }
+void _afficherSucces(BuildContext context, String message) {
+  showDialog(
+    context: context,
+    builder: (BuildContext context) {
+      return AlertDialog(
+        title: Text('Succès'),
+        content: Text(message),
+        actions: <Widget>[
+          TextButton(
+            child: Text('OK'),
+            onPressed: () {
+              Navigator.of(context).pop(); // Fermer l'alerte
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => CoursPage()), // Remplacez CoursPage par le nom de votre interface
+              );
+            },
+          ),
+        ],
+      );
+    },
+  );
+}
 
+/*
   void _afficherSucces(String message) {
     showDialog(
       context: context,
@@ -363,7 +390,7 @@ if (_pdfBytes == null) {
         );
       },
     );
-  }
+  }*/
 
   void _resetState() {
     _descriptionController.clear();
