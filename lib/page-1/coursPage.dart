@@ -290,7 +290,7 @@ class _CoursPageState extends State<CoursPage> {
           ),
         ),
       ),
-      trailing: ElevatedButton.icon(
+      /*trailing: ElevatedButton.icon(
         onPressed: () {
           deleteCours(cours.id); // Utilisez le champ 'id' comme identifiant
         },
@@ -300,7 +300,42 @@ class _CoursPageState extends State<CoursPage> {
           primary: Colors.red,
           onPrimary: Colors.white,
         ),
-      ),
+      ),*/
+      trailing: ElevatedButton.icon(
+  onPressed: () {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return AlertDialog(
+          title: Text('Confirmation'),
+          content: Text('Êtes-vous sûr de vouloir supprimer ce cours ?'),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Annuler'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fermer l'alerte
+              },
+            ),
+            TextButton(
+              child: Text('Confirmer'),
+              onPressed: () {
+                Navigator.of(context).pop(); // Fermer l'alerte
+                deleteCours(cours.id); // Utilisez le champ 'id' comme identifiant
+              },
+            ),
+          ],
+        );
+      },
+    );
+  },
+  icon: Icon(Icons.delete),
+  label: Text('Supprimer'),
+  style: ElevatedButton.styleFrom(
+    primary: Colors.red,
+    onPrimary: Colors.white,
+  ),
+),
+
     );
   }
 }
