@@ -133,7 +133,7 @@ class _ResultatState extends State<Resultat> {
                 sections: [
                   PieChartSectionData(
                     value: percentage,
-                    color: Colors.blue,
+                    color: const Color.fromARGB(255, 33, 243, 65),
                     title: '${percentage.toStringAsFixed(2)}%',
                     radius: 30,
                     titleStyle: TextStyle(
@@ -278,8 +278,35 @@ class _ResultatState extends State<Resultat> {
                       ),
                     ),
                     SizedBox(height: 16),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Container(
+                          width: 15,
+                          height: 15,
+                           color: const Color.fromARGB(255, 33, 243, 65),
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'Réponses correctes',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                        SizedBox(width: 16),
+                        Container(
+                          width: 15,
+                          height: 15,
+                          color: Colors.grey,
+                        ),
+                        SizedBox(width: 8),
+                        Text(
+                          'Réponses incorrectes',
+                          style: TextStyle(fontSize: 14),
+                        ),
+                      ],
+                    ),
+                    SizedBox(height: 20),
                     Text(
-                      'Liste des cours :',
+                      'Pour améliorer votre niveau , vous pouvez consulter ces cours :',
                       style: TextStyle(
                         fontSize: 18,
                         fontWeight: FontWeight.bold,
@@ -366,7 +393,7 @@ class _ResultatState extends State<Resultat> {
                   fontWeight: FontWeight.bold,
                 ),
               ),
-              SizedBox(height: 8),
+              SizedBox(height: 5),
               for (var cours in entry.value)
                 Padding(
                   padding: const EdgeInsets.symmetric(vertical: 4.0),
@@ -416,32 +443,7 @@ class _ResultatState extends State<Resultat> {
                       },
                     ),
                     SizedBox(height: 16),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Container(
-                          width: 15,
-                          height: 15,
-                          color: Colors.blue,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Réponses correctes',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                        SizedBox(width: 16),
-                        Container(
-                          width: 15,
-                          height: 15,
-                          color: Colors.grey,
-                        ),
-                        SizedBox(width: 8),
-                        Text(
-                          'Réponses incorrectes',
-                          style: TextStyle(fontSize: 14),
-                        ),
-                      ],
-                    ),
+                    
                   ],
                 ),
               ),

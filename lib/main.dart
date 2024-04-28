@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:pim/page-1/coursPage.dart';
 import 'package:pim/page-1/ajoutCoursPage.dart';
 import 'package:pim/page-1/compilateur.dart';
+import 'package:pim/page-1/rec.dart';
 import 'package:pim/page-1/recommandation.dart';
 import 'package:pim/page-1/testblanc.dart';
 
@@ -85,6 +86,17 @@ class HomePage extends StatelessWidget {
               },
               child: Text('Cours'),
             ),
+              SizedBox(height: 20),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => RecommendedVideosPage()),
+                );
+              },
+              child: Text('Go to Quiz Rec'),
+            ),
+            SizedBox(height: 20),
           ],
         ),
       ), 

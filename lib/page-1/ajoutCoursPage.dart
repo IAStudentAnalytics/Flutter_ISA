@@ -204,7 +204,9 @@ class _AjoutCoursPageState extends State<AjoutCoursPage> {
 }
 */
 import 'dart:async';
+import 'dart:io';
 import 'dart:typed_data';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pim/services/coursRecService.dart';
 import 'package:file_picker/file_picker.dart';
@@ -219,7 +221,8 @@ class _AjoutCoursPageState extends State<AjoutCoursPage> {
   Uint8List? _pdfBytes;
   String? _selectedChapter;
   String? _fileName;
-
+  //fonction sur le web
+/*
   Future<void> _pickPDF() async {
     FilePickerResult? result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
@@ -233,16 +236,82 @@ class _AjoutCoursPageState extends State<AjoutCoursPage> {
         _pdfBytes = file.bytes;
         _fileName = file.name;
       });
+    } 
+  }*/
+  Future<void> _pickPDF() async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    type: FileType.custom,
+    allowedExtensions: ['pdf'],
+  );
+
+  if (result != null) {
+    PlatformFile file = result.files.first;
+
+    if (kIsWeb) {
+      // Web version
+      setState(() {
+        _pdfBytes = file.bytes;
+        _fileName = file.name;
+      });
     } else {
-      // L'utilisateur a annulé la sélection
+      // SDK version
+      final filePath = file.path!; // Use non-null assertion (!)
+
+      try {
+        final bytes = await File(filePath).readAsBytes();
+
+        setState(() {
+          _pdfBytes = bytes;
+          _fileName = file.name;
+        });
+      } on FileSystemException catch (e) {
+        _afficherErreur('Échec de la sélection du fichier: $e');
+      }
     }
   }
+}
+//fonction sur SDK 
+/*
+  Future<void> _pickPDF() async {
+  FilePickerResult? result = await FilePicker.platform.pickFiles(
+    type: FileType.custom,
+    allowedExtensions: ['pdf'],
+  );
+
+  if (result != null) {
+    PlatformFile file = result.files.first;
+    final filePath = file.path!; // Use non-null assertion (!)
+
+    try {
+      final bytes = await File(filePath).readAsBytes();
+
+      setState(() {
+        _pdfBytes = bytes;
+        _fileName = file.name;
+      });
+    } on FileSystemException catch (e) {
+      _afficherErreur('Échec de la sélection du fichier: $e');
+    }
+  }
+}*/
+
 
   Future<void> _ajouterCours() async {
-    if (_pdfBytes == null || _selectedChapter == null || _descriptionController.text.isEmpty) {
-      _afficherErreur('Veuillez remplir tous les champs.');
-      return;
-    }
+
+if (_selectedChapter == null) {
+  _afficherErreur('Veuillez sélectionner un chapitre.');
+  return;
+}
+
+if (_descriptionController.text.isEmpty) {
+  _afficherErreur('Veuillez entrer une description.');
+  return;
+}
+if (_pdfBytes == null) {
+  _afficherErreur('Veuillez sélectionner un fichier PDF.');
+  return;
+}
+
 
     try {
       await CoursService.addCours(_selectedChapter!, _descriptionController.text, _pdfBytes!);

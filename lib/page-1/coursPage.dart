@@ -259,7 +259,7 @@ class _CoursPageState extends State<CoursPage> {
       color: Colors.white,
       margin: EdgeInsets.all(8.0),
       child: ExpansionTile(
-        initiallyExpanded: true,
+        initiallyExpanded: false,
         title: Text(
           key,
           style: TextStyle(

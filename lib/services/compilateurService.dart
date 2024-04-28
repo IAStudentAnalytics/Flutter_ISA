@@ -18,4 +18,14 @@ class CompilerService {
       return '';
     }
   }
+   Future<Map<String, dynamic>> fetchRecommendedVideos(String testId, String studentId) async {
+    final response = await http.get(Uri.parse('${APIConstants.baseURL}/note/rec/$testId/$studentId'));
+
+    if (response.statusCode == 200) {
+      final data = json.decode(response.body);
+      return data['recommendedVideos'];
+    } else {
+      throw Exception('Failed to load recommended videos');
+    }
+  }
 }
