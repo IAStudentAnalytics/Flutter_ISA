@@ -158,6 +158,7 @@ flutter:
     - assets/page-1/images/login.png
     - assets/pim11.png
     - assets/images/livre.png
+    - assets/javaz.png
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
