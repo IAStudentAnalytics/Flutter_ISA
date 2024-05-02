@@ -7,7 +7,7 @@ import 'package:pim/models/CoursR.dart';
 
 class CoursService {
   static Future<List<CoursR>> fetchCours() async {
-    final response = await http.get(Uri.parse('http://192.168.1.17:5000/cours/rec'));
+    final response = await http.get(Uri.parse('http://192.168.1.19:5000/cours/rec'));
 
     if (response.statusCode == 200) {
       final List<dynamic> jsonResponse = json.decode(response.body);
@@ -31,7 +31,7 @@ class CoursService {
   }
 
   static Future<void> deleteCours(String id) async {
-    final response = await http.delete(Uri.parse('http://192.168.1.17:5000/cours/recid/$id'));
+    final response = await http.delete(Uri.parse('http://172.16.6.189:5000/cours/recid/$id'));
 
     if (response.statusCode != 200) {
       print('Code de statut HTTP: ${response.statusCode}');
@@ -41,7 +41,7 @@ class CoursService {
   }
 
   static Future<void> addCours(String nomCoursR, String description, Uint8List pdfBytes) async {
-    final String apiUrl = 'http://192.168.1.17:5000/cours/rec';
+    final String apiUrl = 'http://172.16.6.189:5000/cours/rec';
     var request = http.MultipartRequest('POST', Uri.parse(apiUrl));
     request.fields['nomCoursR'] = nomCoursR;
     request.fields['description'] = description;

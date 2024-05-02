@@ -235,7 +235,7 @@ class _QAPageState extends State<QAPage> {
                     ..rotateZ(-0.03),
                   child: SizedBox(
                     width: 150,
-                    height: 45,
+                    height: 5,
                     child: ElevatedButton(
                       onPressed: () {
                         widget.onNext(_controller

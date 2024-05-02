@@ -41,7 +41,7 @@ class TestInfo {
 
 Future<List<TestInfo>> getAllTests() async {
   final response =
-      await http.get(Uri.parse('http://192.168.1.17:5000/test/getAllTests'));
+      await http.get(Uri.parse('http://192.168.1.19:5000/test/getAllTests'));
   print('Response body: ${response.body}');
 
   if (response.statusCode == 200) {
@@ -55,7 +55,7 @@ Future<List<TestInfo>> getAllTests() async {
 Future<List<Question>> getQuestionsByTestId(String? testId) async {
   // Remplacez 'http://your-api-url.com' par l'URL réelle de votre API.
   final response =
-      await http.get(Uri.parse('http://192.168.1.17:5000/test/tests/$testId/'));
+      await http.get(Uri.parse('http://192.168.1.19:5000/test/tests/$testId/'));
 
   if (response.statusCode == 200) {
     // Convertir la réponse en JSON et extraire les questions.
@@ -73,7 +73,7 @@ Future<List<Question>> getQuestionsByTestId(String? testId) async {
 
 Future<List<String>> getChaptersByTestId(String testId) async {
   final response = await http
-      .get(Uri.parse('http://192.168.1.17:5000/test/tests/$testId/chapters'));
+      .get(Uri.parse('http://192.168.1.19:5000/test/tests/$testId/chapters'));
 
   if (response.statusCode == 200) {
     List<dynamic> chaptersJson = json.decode(response.body);

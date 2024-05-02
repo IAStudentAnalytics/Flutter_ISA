@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:pim/models/question.dart';
 import 'dart:convert';
+import 'package:pim/page-1/performance.dart';
+
 import 'package:shared_preferences/shared_preferences.dart'; // Import SharedPreferences
 import 'qa.dart';
 import 'quiz.dart';
@@ -34,6 +36,10 @@ class _TestPageState extends State<TestPage> {
       });
     } else {
       submitAnswers();
+      Navigator.of(context).push(MaterialPageRoute(
+                       builder: (_) =>
+                          Performance(studentId: '65defb8f796124616d1ecdc2',),
+                     ));
     }
   }
 
@@ -51,7 +57,7 @@ class _TestPageState extends State<TestPage> {
     String studentId = await getStudentId(); // Fetch the dynamic student ID
 
     final response = await http.post(
-      Uri.parse('http://192.168.1.17:5000/note/tests/submit'),
+      Uri.parse('http://192.168.1.19:5000/note/tests/submit'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },
