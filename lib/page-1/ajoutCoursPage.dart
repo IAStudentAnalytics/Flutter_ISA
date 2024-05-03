@@ -398,7 +398,167 @@ void _afficherSucces(BuildContext context, String message) {
     _selectedChapter = null;
     _fileName = null;
   }
+  @override
+Widget build(BuildContext context) {
+ return Scaffold(
+  
+   body: Padding(
+    padding: EdgeInsets.only(left: 00.0), // Décalage vers la gauche
+    child: Container(
+      decoration: BoxDecoration(
+        gradient: LinearGradient(
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+          colors: [
+            Color.fromARGB(255, 157, 14, 14),
+            Color.fromARGB(255, 157, 14, 14),
+          ],
+          stops: [0, 1],
+        ),
+        image: DecorationImage(
+          image: AssetImage('assets/bajoutt.png'),
+          fit: BoxFit.cover,
+        ),
+        borderRadius: BorderRadius.circular(15),
+      /*boxShadow: [
+        BoxShadow(
+          color: Color.fromARGB(255, 119, 14, 14).withOpacity(0.5),
+          spreadRadius: 2,
+          blurRadius: 5,
+          offset: Offset(0, 3),
+        ),
+      ],*/
+      ),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.start, // Aligner le contenu à gauche
+        children: [
+     Padding(
+  padding: EdgeInsets.fromLTRB(
+    MediaQuery.of(context).size.width > 600 ? 400.0 : 70.0, // Décalage horizontal
+    MediaQuery.of(context).size.width > 600 ? 150.0 : 70.0, // Décalage vers le haut pour les grands écrans, sinon pour les petits écrans
+    0.0, // Décalage horizontal
+    0.0, // Pas de décalage vers le bas
+  ),
+  child: Text(
+    'Ajouter votre cours',
+    style: TextStyle(
+      fontWeight: FontWeight.bold,
+      fontSize: 24,
+      color: Color.fromARGB(255, 255, 255, 255),
+    ),
+  ),
+),
 
+          SizedBox(height: 20),
+
+      Padding(
+  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 430.0 : 130.0),// Décalage vers la gauche et vers la droite
+  child:Image.asset(
+            'assets/ok.png', // Ajouter le chemin de votre nouvelle image
+            width: 150, // Adapter la largeur selon votre besoin
+          ),
+),
+          SizedBox(height: 40),
+          
+         
+           Padding(
+  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 410.0 : 80.0),// Décalage vers la gauche et vers la droite
+  child:
+          DropdownButton<String>(
+            value: _selectedChapter,
+           hint: Text(
+    'Choisir un chapitre',
+    style: TextStyle(color: Color.fromARGB(255, 119, 14, 14)),
+  ),
+            items: [
+              "Les classes et les objets",
+              "L'héritage",
+              "Le polymorphisme",
+              "Les interfaces",
+              "Encapsulation"
+            ].map<DropdownMenuItem<String>>((String value) {
+              return DropdownMenuItem<String>(
+                value: value,
+                child: Text(value),
+              );
+            }).toList(),
+            onChanged: (String? newValue) {
+              setState(() {
+                _selectedChapter = newValue;
+              });
+            },
+          ),
+           ),
+          SizedBox(height: 20),
+Padding(
+  padding: EdgeInsets.fromLTRB(
+    MediaQuery.of(context).size.width > 600 ? 20.0 : 20.0, // Décalage horizontal à gauche
+    0.0, // Pas de décalage vers le haut
+    MediaQuery.of(context).size.width > 600 ? 600.0 : 20.0, // Décalage horizontal à droite
+    0.0, // Pas de décalage vers le bas
+  ),
+  child: TextField(
+    controller: _descriptionController,
+    decoration: InputDecoration(
+      labelText: 'Description',
+      border: OutlineInputBorder(
+        borderSide: BorderSide(
+          color: Color.fromARGB(255, 255, 255, 255),
+        ),
+        borderRadius: BorderRadius.circular(10.0),
+      ),
+      fillColor: Color.fromARGB(255, 255, 255, 255),
+      filled: true,
+    ),
+  ),
+),
+
+          SizedBox(height: 20),
+             Padding(
+ padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 410.0 : 100.0),// Décalage vers la gauche et vers la droite
+  child:
+          ElevatedButton(
+            onPressed: _pickPDF,
+            child: Text('Sélectionner un PDF'),
+          ),
+       
+             ),
+                SizedBox(height: 10),
+          if (_fileName != null)
+            Row(
+              children: [
+                Icon(Icons.picture_as_pdf, color: Colors.red),
+                SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    'Fichier sélectionné: $_fileName',
+                    style: TextStyle(fontSize: 16),
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ),
+              ],
+            ),
+          SizedBox(height: 20),
+               Padding(
+  //padding: EdgeInsets.only(left: 430.0, right: 20.0), // Décalage vers la gauche et vers la droite
+  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 430.0 : 130.0),
+  child:
+          ElevatedButton(
+            onPressed: _ajouterCours,
+            child: Text('Ajouter Cours'),
+          ),
+               ),
+        ],
+      ),
+    ),
+  ),
+);
+
+}
+}
+
+/*
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -514,7 +674,7 @@ void _afficherSucces(BuildContext context, String message) {
       ),
     );
   }
-}
+}*/
 /*import 'dart:async';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';

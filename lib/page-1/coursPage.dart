@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:pim/models/CoursR.dart';
 import 'package:pim/services/coursRecService.dart';
@@ -94,17 +95,48 @@ class _CoursPageState extends State<CoursPage> {
                   } else if (snapshot.hasData) {
                     final coursMap = groupCoursByNomCoursR(snapshot.data!);
                     return GridView.builder(
-                      padding: EdgeInsets.all(10.0),
+  padding: EdgeInsets.all(20.0),
+  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+    crossAxisCount: kIsWeb ? 2 : 1, // Nombre de colonnes
+    childAspectRatio: kIsWeb ? 6 / 2 : 5 / 2, // Ratio largeur/hauteur des cellules
+    crossAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les colonnes
+    mainAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les lignes
+  ),
+  itemCount: coursMap.length,
+  itemBuilder: (context, index) {
+    final key = coursMap.keys.elementAt(index);
+    return buildGroupedContainer(key, coursMap[key]!);
+  },
+);
+/*zeyed njareb 
+return GridView.builder(
+  padding: EdgeInsets.all(20.0),
+  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+    maxCrossAxisExtent: kIsWeb ? 200.0 : 150.0, // Taille maximale des éléments de la grille
+    childAspectRatio: kIsWeb ? 6 / 2 : 5 / 2, // Ratio largeur/hauteur des cellules
+    crossAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les colonnes
+    mainAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les lignes
+  ),
+  itemCount: coursMap.length,
+  itemBuilder: (context, index) {
+    final key = coursMap.keys.elementAt(index);
+    return buildGroupedContainer(key, coursMap[key]!);
+  },
+);*/
+                   /* return GridView.builder(
+                      padding: EdgeInsets.all(20.0),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, // Nombre de colonnes
                         childAspectRatio: 5 / 2, // Ratio largeur/hauteur des cellules
+                        crossAxisSpacing: 20.0, // Espace entre les colonnes
+                        mainAxisSpacing: 20.0, // Espace entre les lignes
                       ),
                       itemCount: coursMap.length,
                       itemBuilder: (context, index) {
                         final key = coursMap.keys.elementAt(index);
                         return buildGroupedContainer(key, coursMap[key]!);
                       },
-                    );
+                    );*/
                   } else {
                     return Center(child: Text('Aucun cours trouvé'));
                   }
@@ -182,7 +214,7 @@ class _CoursPageState extends State<CoursPage> {
                             primary: Colors.red,
                             onPrimary: Colors.white,*/
                             icon: Icon(Icons.delete,size: 12.0,),
-                            label: Text('Supprimer',
+                            label: Text('',
                             style: TextStyle(
                             fontSize: 10.0, // Réduisez la taille du texte
                           ),
@@ -216,38 +248,39 @@ class _CoursPageState extends State<CoursPage> {
             child: Container(
               width: double.infinity,
               decoration: BoxDecoration(
-                color: const Color.fromARGB(255, 242, 134, 126),
+                color: Color.fromARGB(255, 237, 46, 46),
                 borderRadius: BorderRadius.only(
                   topLeft: Radius.circular(12.0),
                   topRight: Radius.circular(12.0),
                 ),
               ),
               child: Stack(
+                
                 children: [
                   Positioned.fill(
                     child: Opacity(
                       opacity: 0.3,
                       child: Image.asset(
-                        'assets/javaz.png',
+                        'assets/jaa.png',
                         fit: BoxFit.fill,
                       ),
                     ),
                   ),
                   Container(
-                    alignment: Alignment.centerLeft,
+                    alignment: Alignment.center,
                     padding: EdgeInsets.all(8.0),
                     child: Text(
-                      key,
+                      'Chapitre $key',
                       style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 15,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w900,
+                        fontSize: 30,
                       ),
                     ),
                   ),
                 ],
               ),
-            ),
+            )
           ),
           Expanded(
             flex: 1,
@@ -270,7 +303,8 @@ class _CoursPageState extends State<CoursPage> {
                       'Nombre de cours : $numberOfCours',
                       style: TextStyle(
                         color: Colors.black,
-                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        fontSize: 18,
                       ),
                     ),
                   ],
