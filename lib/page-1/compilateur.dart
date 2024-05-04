@@ -225,7 +225,7 @@ public class HelloWorld {
                 SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  constraints: BoxConstraints(minHeight: 100),
+                  constraints: BoxConstraints(minHeight: 200),
                   padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
                     color: Color.fromARGB(201, 237, 235, 235),

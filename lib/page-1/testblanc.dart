@@ -61,150 +61,146 @@ class _TestBlancState extends State<TestBlanc> {
     }
     return (score / questions.length) * 100;
   }
-
   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
+Widget build(BuildContext context) {
+  return Scaffold(
+    body: Stack(
+      children: [
+        Container(
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [
+                Color.fromARGB(255, 237, 46, 46),
+                Color(0x00f6f1fb),
+              ],
+              stops: [0, 1],
+            ),
+          ),
+        ),
+        Positioned(
+          top: 20,
+          left: 0,
+          child: Image.asset(
+            'assets/pim11.png',
+            width: 150,
+          ),
+        ),
+        FutureBuilder<List<QuizQuestion>?>(
+          future: quizQuestions,
+          builder: (context, snapshot) {
+            if (snapshot.connectionState == ConnectionState.waiting) {
+              return Center(child: CircularProgressIndicator());
+            } else if (snapshot.hasError) {
+              return Center(child: Text('Erreur : ${snapshot.error}'));
+            } else if (snapshot.hasData) {
+              return SingleChildScrollView(
+                child: buildQuiz(snapshot.data!),
+              );
+            } else {
+              return Center(child: CircularProgressIndicator());
+            }
+          },
+        ),
+      ],
+    ),
+  );
+}
+
+Widget buildQuiz(List<QuizQuestion> questions) {
+  final currentQuestion = questions[currentQuestionIndex];
+
+  return Container(
+    margin: EdgeInsets.only(top: 100.0, bottom: 100.0),
+    child: Padding(
+      padding: const EdgeInsets.all(8.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Container(
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                begin: Alignment.topCenter,
-                end: Alignment.bottomCenter,
-                colors: [
-                  Color.fromARGB(255, 237, 46, 46),
-                  Color(0x00f6f1fb),
-                ],
-                stops: [0, 1],
+          Text(
+            '${currentQuestion.question.trim()}',
+            style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
+          ),
+          SizedBox(height: 16.0),
+          ...List.generate(currentQuestion.answers.length, (index) {
+            return Container(
+              margin: EdgeInsets.symmetric(vertical: 5.0),
+              padding: EdgeInsets.all(8.0),
+              decoration: BoxDecoration(
+                borderRadius: BorderRadius.circular(5.0),
+                color: Color.fromARGB(201, 237, 235, 235),
+                border: Border.all(color: Color.fromARGB(201, 237, 235, 235)),
               ),
-            ),
-          ),
-          Positioned(
-            top: 0,
-            left: 0,
-            child: Image.asset(
-              'assets/pim11.png',
-              width: 150,
-            ),
-          ),
-          FutureBuilder<List<QuizQuestion>?>(
-            future: quizQuestions,
-            builder: (context, snapshot) {
-              if (snapshot.connectionState == ConnectionState.waiting) {
-                return Center(child: CircularProgressIndicator());
-              } else if (snapshot.hasError) {
-                return Center(child: Text('Erreur : ${snapshot.error}'));
-              } else if (snapshot.hasData) {
-                return buildQuiz(snapshot.data!);
-              } else {
-                return Center(child: CircularProgressIndicator());
-              }
-            },
+              child: RadioListTile<int?>(
+                title: Text(currentQuestion.answers[index]),
+                value: index,
+                groupValue: selectedAnswers[currentQuestionIndex],
+                onChanged: (int? value) {
+                  setState(() {
+                    selectedAnswers[currentQuestionIndex] = value;
+                  });
+                },
+              ),
+            );
+          }),
+          SizedBox(height: 16.0),
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              if (currentQuestionIndex > 0)
+                ElevatedButton(
+                  onPressed: _previousQuestion,
+                  style: ElevatedButton.styleFrom(),
+                  child: Row(
+                    children: [
+                      Icon(Icons.arrow_back, color: Colors.black),
+                      SizedBox(width: 4),
+                      Text('Précédent'),
+                    ],
+                  ),
+                ),
+              Spacer(),
+              if (currentQuestionIndex < questions.length - 1)
+                ElevatedButton(
+                  onPressed: _nextQuestion,
+                  child: Row(
+                    children: [
+                      Text('Suivant'),
+                      SizedBox(width: 4),
+                      Icon(Icons.arrow_forward, color: Colors.black),
+                    ],
+                  ),
+                )
+              else
+                ElevatedButton(
+                  onPressed: () {
+                    double score = calculateScore(questions);
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                        builder: (context) => Resultat(
+                          score: score,
+                          questions: questions,
+                          selectedAnswers: selectedAnswers,
+                        ),
+                      ),
+                    );
+                  },
+                  style: ElevatedButton.styleFrom(),
+                  child: Row(
+                    children: [
+                      Text('Terminer'),
+                      SizedBox(width: 4),
+                    ],
+                  ),
+                ),
+            ],
           ),
         ],
       ),
-    );
-  }
+    ),
+  );
+}
 
-  Widget buildQuiz(List<QuizQuestion> questions) {
-    final currentQuestion = questions[currentQuestionIndex];
-
-    return Container(
-      margin: EdgeInsets.only(top: 100.0),
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(
-              '${currentQuestion.question.trim()}',
-              style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
-            ),
-            SizedBox(height: 16.0),
-            ...List.generate(currentQuestion.answers.length, (index) {
-              return Container(
-                margin: EdgeInsets.symmetric(vertical: 5.0),
-                padding: EdgeInsets.all(8.0),
-                decoration: BoxDecoration(
-                  borderRadius: BorderRadius.circular(5.0),
-                  color: Color.fromARGB(201, 237, 235, 235),
-                  border: Border.all(color: Color.fromARGB(201, 237, 235, 235)),
-                ),
-                child: RadioListTile<int?>(
-                  title: Text(currentQuestion.answers[index]),
-                  value: index,
-                  groupValue: selectedAnswers[currentQuestionIndex],
-                  onChanged: (int? value) {
-                    setState(() {
-                      selectedAnswers[currentQuestionIndex] = value;
-                    });
-                  },
-                ),
-              );
-            }),
-            Spacer(),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                // Afficher le bouton "Précédent" si possible, aligné à gauche
-                if (currentQuestionIndex > 0)
-                  ElevatedButton(
-                    onPressed: _previousQuestion,
-                    style: ElevatedButton.styleFrom(),
-                    child: Row(
-                      children: [
-                        Icon(Icons.arrow_back, color: Colors.black),
-                        SizedBox(width: 4),
-                        Text('Précédent'),
-                      ],
-                    ),
-                  ),
-
-                // Espace pour séparer les boutons
-                Spacer(),
-
-                // Afficher le bouton "Suivant" ou "Terminer" aligné à droite
-                if (currentQuestionIndex < questions.length - 1)
-                  ElevatedButton(
-                    onPressed: _nextQuestion,
-                    child: Row(
-                      children: [
-                        Text('Suivant'),
-                        SizedBox(width: 4),
-                        Icon(Icons.arrow_forward, color: Colors.black),
-                      ],
-                    ),
-                  )
-                else
-                  ElevatedButton(
-                    onPressed: () {
-                      double score = calculateScore(questions);
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => Resultat(
-                            score: score,
-                            questions: questions,
-                            selectedAnswers: selectedAnswers,
-                          ),
-                        ),
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(),
-                    child: Row(
-                      children: [
-                        Text('Terminer'),
-                        SizedBox(width: 4),
-                      ],
-                    ),
-                  ),
-              ],
-            ),
-          ],
-        ),
-      ),
-    );
-  }
 }
