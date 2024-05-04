@@ -9,44 +9,11 @@ import 'package:pim/page-1/javabot.dart';
 import 'package:pim/page-1/performance.dart';
 import 'package:pim/page-1/testblanc.dart';
 import 'package:pim/page-1/coursPage.dart';
+import 'package:pim/page-1/profile_page.dart';
 import 'package:pim/page-1/ajoutCoursPage.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'dart:convert';
 import '/main.dart';
-void main() {
-  runApp(MyApp());
-}
-
-class MyApp extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return MaterialApp(
-      title: 'My App',
-      home: MyHomePage(),
-    );
-  }
-}
-
-class MyHomePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('My App'),
-      ),
-      body: Center(
-        child: Text('Welcome to my app'),
-      ),
-      drawer: SideMenu(
-        onMenuItemClicked: (index) {
-          // Gérer les clics sur les éléments du menu
-          // Vous pouvez mettre votre logique ici pour naviguer vers différentes pages
-          // ou effectuer d'autres actions en fonction de l'index
-          print('Menu item clicked: $index');
-        },
-      ),
-    );
-  }
-}
 
 class SideMenu extends StatelessWidget {
   final Function(int) onMenuItemClicked;
@@ -56,133 +23,164 @@ class SideMenu extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      child: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [Colors.red, Colors.white],
-          ),
-        ),
-        child: ListView(
-          padding: EdgeInsets.zero,
-          children: [
-            DrawerHeader(
-              decoration: BoxDecoration(
-                color: Color.fromARGB(132, 199, 37, 37),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                mainAxisAlignment: MainAxisAlignment.end,
-                children: [
-                  Text(
-                    'Menu',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 24.0,
-                    ),
-                  ),
-                  SizedBox(height: 8.0),
-                  Icon(
-                    Icons.home,
-                    color: Colors.white,
-                    size: 50.0,
-                  ),
-                ],
-              ),
-            ),
-            ListTile(
-              title: Text('Home '),
-             onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Sceneteacherhome(),
-          ));
-        },
-            ),
-             ListTile(
-              title: Text('Java Bot'),
-              onTap: () {
-                Navigator.push(
+      child: Column(
+        children: [
+          _buildProfileHeader(context),
+          Expanded(
+            child: ListView(
+              padding: EdgeInsets.zero,
+              children: [
+                _buildMenuItem(
                   context,
-                  MaterialPageRoute(builder: (context) => JavaBotPage()),
-                );
-              },
+                  'Home',
+                  Icons.home,
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Sceneteacherhome()),
+                  ),
+                ),
+                _buildMenuItem(
+                  context,
+                  'Java Bot',
+                  Icons.android,
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => JavaBotPage()),
+                  ),
+                ),
+                _buildMenuItem(
+                  context,
+                  'Quizz!',
+                  Icons.question_answer,
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Scenequizzteacher()),
+                  ),
+                ),
+                _buildMenuItem(
+                  context,
+                  'Result',
+                  Icons.score,
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => ResultQuiz()),
+                  ),
+                ),
+                _buildMenuItem(
+                  context,
+                  'Compilateur Java!',
+                  Icons.code,
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CompilerPage()),
+                  ),
+                ),
+                _buildMenuItem(
+                  context,
+                  'Performance!',
+                  Icons.show_chart,
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => Performance(studentId: '65defb8f796124616d1ecdc2')),
+                  ),
+                ),
+                _buildMenuItem(
+                  context,
+                  'Test Blanc!',
+                  Icons.description,
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => TestBlanc()),
+                  ),
+                ),
+                _buildMenuItem(
+                  context,
+                  'Votre Cours',
+                  Icons.book,
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => CoursPage()),
+                  ),
+                ),
+                _buildMenuItem(
+                  context,
+                  'Ajout Recommendation',
+                  Icons.recommend,
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(builder: (context) => AjoutCoursPage()),
+                  ),
+                ),
+                _buildMenuItem(
+                  context,
+                  'Logout',
+                  Icons.logout,
+                  () => logout(context),
+                ),
+              ],
             ),
-             ListTile(
-              title: Text('Quizz !'),
-             onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Scenequizzteacher()),
-          );
-        },
-            ),
-            ListTile(
-              title: Text('Result'),
-              onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => ResultQuiz()),
-          );
-        },
-            ),
-             ListTile(
-              title: Text('Compilateur Java !'),
-             onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => CompilerPage()),
-          );
-        },
-            ),
-               ListTile(
-              title: Text('Performance !'),
-             onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => Performance(studentId: '65defb8f796124616d1ecdc2',)),
-          );
-        },
-            ),
-              ListTile(
-              title: Text('Test Blanc !'),
-             onTap: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (context) => TestBlanc()),
-          );
-        },
-            ),ListTile(
-              title: Text('Votre Cours'),
-              onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => CoursPage()), 
-              );
-              },
-            ),
-            ListTile(
-              title: Text('Ajout Recomndation'),
-              onTap: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(builder: (context) => AjoutCoursPage()), 
-              );
-              },
-            ),
-    ListTile(
-        title: Text('Logout'),
-        onTap: () {
-          logout(context);  // Call the global logout function
-        },
-      ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
-   void logout(BuildContext context) async {
+
+  Widget _buildProfileHeader(BuildContext context) {
+    return FutureBuilder<Map<String, dynamic>>(
+      future: _getUserDataFromSharedPreferences(),
+      builder: (context, snapshot) {
+        if (snapshot.connectionState == ConnectionState.waiting) {
+          return CircularProgressIndicator();
+        } else if (snapshot.hasError || !snapshot.hasData) {
+          return Text('Error fetching user data');
+        } else {
+          final userData = snapshot.data;
+          final userName = userData?['user']?['firstName'] ?? 'Guest';
+          final userEmail = userData?['user']?['email'] ?? 'user@example.com';
+          return UserAccountsDrawerHeader(
+            accountName: Text("Welcome, $userName!"),
+            accountEmail: Text(userEmail),
+            currentAccountPicture: CircleAvatar(
+              child: Icon(Icons.person),
+            ),
+            decoration: BoxDecoration(
+              gradient: LinearGradient(
+                colors: [Color.fromARGB(113, 236, 131, 131), Color.fromARGB(255, 124, 23, 16)],
+                begin: Alignment.topLeft,
+                end: Alignment.bottomRight,
+              ),
+            ),
+            onDetailsPressed: () {
+              Navigator.push(
+                context,
+                MaterialPageRoute(builder: (context) => ProfilePage()),
+              );
+            },
+          );
+        }
+      },
+    );
+  }
+
+  Future<Map<String, dynamic>> _getUserDataFromSharedPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? userDataString = prefs.getString('userData');
+    if (userDataString != null) {
+      return json.decode(userDataString);
+    }
+    return {};
+  }
+
+  Widget _buildMenuItem(
+      BuildContext context, String title, IconData icon, VoidCallback onTap) {
+    return ListTile(
+      title: Text(title),
+      leading: Icon(icon),
+      onTap: onTap,
+    );
+  }
+
+  void logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
 
@@ -190,6 +188,5 @@ class SideMenu extends StatelessWidget {
       MaterialPageRoute(builder: (context) => Scene1()),
       (Route<dynamic> route) => false,
     );
+  }
 }
-}
-
