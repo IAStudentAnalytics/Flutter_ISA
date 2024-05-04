@@ -55,7 +55,8 @@ class HomePage extends StatelessWidget {
               onPressed: () {
                 Navigator.push(
                   context,
-                  MaterialPageRoute(builder: (context) => RecommendedVideosPage()),
+                  MaterialPageRoute(
+                      builder: (context) => RecommendedVideosPage()),
                 );
               },
               child: Text('Go to Quiz Rec'),
