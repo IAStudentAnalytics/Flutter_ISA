@@ -80,7 +80,7 @@ Widget build(BuildContext context) {
           ),
         ),
         Positioned(
-          top: 20,
+          top: 22,
           left: 0,
           child: Image.asset(
             'assets/pim11.png',

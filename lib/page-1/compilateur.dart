@@ -186,7 +186,7 @@ public class HelloWorld {
                   child: Padding(
                     padding: EdgeInsets.only(
                         top:
-                            20.0), // Ajoute un padding supplémentaire vers le haut
+                            22.0), // Ajoute un padding supplémentaire vers le haut
                     child: Image.asset(
                       'assets/pim11.png',
                       width: 150,

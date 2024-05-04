@@ -143,10 +143,16 @@ class Resultat extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Align(
-                alignment: Alignment.bottomLeft,
-                child: Image.asset(
-                  'assets/pim11.png',
-                  width: 150,
+                alignment: Alignment
+                    .topLeft, // Déplace l'image vers le haut et la gauche
+                child: Padding(
+                  padding: EdgeInsets.only(
+                      top:
+                          22.0), // Ajoute un padding supplémentaire vers le haut
+                  child: Image.asset(
+                    'assets/pim11.png',
+                    width: 150,
+                  ),
                 ),
               ),
               SizedBox(height: 16),
@@ -198,13 +204,25 @@ class Resultat extends StatelessWidget {
                       ), // Pas de titres sur l'axe gauche
                       bottomTitles: SideTitles(
                         showTitles: true,
-                        reservedSize: 32,
+                        reservedSize: 35,
                         getTitles: (value) {
                           final index = value.toInt();
                           final chapterName =
                               chapterPercentages.keys.toList()[index];
                           return chapterName;
                         },
+/*
+                        getTextStyles: (context, value) => TextStyle(
+                          fontSize: MediaQuery.of(context).size.width /
+                              60, // Adaptatif
+                        ),*/
+                        getTextStyles: (context, value) =>
+                            MediaQuery.of(context).size.width < 600
+                                ? TextStyle(
+                                    fontSize:
+                                        MediaQuery.of(context).size.width / 65)
+                                : TextStyle(fontSize: 14),
+                        //margin: 10,
                       ),
                       topTitles: SideTitles(
                         showTitles: false,
@@ -213,6 +231,7 @@ class Resultat extends StatelessWidget {
                   ),
                 ),
               ),
+
               SizedBox(height: 16),
               Text(
                 'Pourcentages de réponses correctes par chapitre :',
@@ -225,6 +244,7 @@ class Resultat extends StatelessWidget {
               Center(
                 child: SingleChildScrollView(
                   scrollDirection: Axis.horizontal,
+                  padding: EdgeInsets.all(20.0),
                   child: Row(
                     crossAxisAlignment: CrossAxisAlignment.center,
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -246,7 +266,7 @@ class Resultat extends StatelessWidget {
                 children: [
                   // Légende couleur correcte
                   Container(
-                    width: 15,
+                    width: 12,
                     height: 15,
                     color: Colors.blue,
                   ),
@@ -258,7 +278,7 @@ class Resultat extends StatelessWidget {
                   SizedBox(width: 16),
                   // Légende couleur incorrecte
                   Container(
-                    width: 15,
+                    width: 12,
                     height: 15,
                     color: Colors.grey,
                   ),
