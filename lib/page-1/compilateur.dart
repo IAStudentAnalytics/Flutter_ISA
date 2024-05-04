@@ -181,10 +181,16 @@ public class HelloWorld {
             child: Column(
               children: [
                 Align(
-                  alignment: Alignment.bottomLeft,
-                  child: Image.asset(
-                    'assets/pim11.png',
-                    width: 150,
+                  alignment: Alignment
+                      .topLeft, // Déplace l'image vers le haut et la gauche
+                  child: Padding(
+                    padding: EdgeInsets.only(
+                        top:
+                            20.0), // Ajoute un padding supplémentaire vers le haut
+                    child: Image.asset(
+                      'assets/pim11.png',
+                      width: 150,
+                    ),
                   ),
                 ),
                 Container(
@@ -219,7 +225,8 @@ public class HelloWorld {
                 SizedBox(height: 16),
                 Container(
                   width: double.infinity,
-                  padding: EdgeInsets.all(90.0),
+                  constraints: BoxConstraints(minHeight: 100),
+                  padding: EdgeInsets.all(8.0),
                   decoration: BoxDecoration(
                     color: Color.fromARGB(201, 237, 235, 235),
                     border: Border.all(color: Color.fromARGB(185, 0, 0, 0)),
