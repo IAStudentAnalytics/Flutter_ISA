@@ -50,7 +50,7 @@ class SideMenu extends StatelessWidget {
                 ),
                 _buildMenuItem(
                   context,
-                  'Quizz!',
+                  'Test',
                   Icons.question_answer,
                   () => Navigator.push(
                     context,
@@ -68,7 +68,7 @@ class SideMenu extends StatelessWidget {
                 ),
                 _buildMenuItem(
                   context,
-                  'Compilateur Java!',
+                  'Java Compiler',
                   Icons.code,
                   () => Navigator.push(
                     context,
@@ -84,18 +84,19 @@ class SideMenu extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => Performance(studentId: '65defb8f796124616d1ecdc2')),
                   ),
                 ),
+                
                 _buildMenuItem(
                   context,
-                  'Test Blanc!',
-                  Icons.description,
+                  'Add Course',
+                  Icons.recommend,
                   () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => TestBlanc()),
+                    MaterialPageRoute(builder: (context) => AjoutCoursPage()),
                   ),
                 ),
                 _buildMenuItem(
                   context,
-                  'Votre Cours',
+                  'List of courses',
                   Icons.book,
                   () => Navigator.push(
                     context,
@@ -104,13 +105,14 @@ class SideMenu extends StatelessWidget {
                 ),
                 _buildMenuItem(
                   context,
-                  'Ajout Recommendation',
-                  Icons.recommend,
+                  'Review space',
+                  Icons.description,
                   () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => AjoutCoursPage()),
+                    MaterialPageRoute(builder: (context) => TestBlanc()),
                   ),
                 ),
+                
                 _buildMenuItem(
                   context,
                   'Logout',

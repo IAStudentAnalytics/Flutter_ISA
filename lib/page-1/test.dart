@@ -57,7 +57,7 @@ class _TestPageState extends State<TestPage> {
     String studentId = await getStudentId(); // Fetch the dynamic student ID
 
     final response = await http.post(
-      Uri.parse('http://192.168.1.19:5000/note/tests/submit'),
+      Uri.parse('http://192.168.1.54:5000/note/tests/submit'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

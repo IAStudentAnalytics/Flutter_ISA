@@ -31,6 +31,359 @@ class _CoursPageState extends State<CoursPage> {
         coursList = CoursService.fetchCours();
       });
     } catch (error) {
+      print('Error deleting course: $error');
+    }
+  }
+
+  void openPdf(String pdfUrl) async {
+    if (await canLaunch(pdfUrl)) {
+      await launch(pdfUrl);
+    } else {
+      print('Error: Unable to open URL $pdfUrl');
+    }
+  }
+
+  Map<String, List<CoursR>> groupCoursByNomCoursR(List<CoursR> coursList) {
+    Map<String, List<CoursR>> groupedCours = {};
+
+    for (var cours in coursList) {
+      if (!groupedCours.containsKey(cours.nomCoursR)) {
+        groupedCours[cours.nomCoursR] = [];
+      }
+      groupedCours[cours.nomCoursR]!.add(cours);
+    }
+
+    return groupedCours;
+  }
+
+  Map<String, int> countCoursByChapter(Map<String, List<CoursR>> coursMap) {
+    Map<String, int> countMap = {};
+    coursMap.forEach((key, value) {
+      countMap[key] = value.length;
+    });
+    return countMap;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('List of Courses'),
+        backgroundColor: Color.fromARGB(255, 237, 46, 46),
+      ),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color.fromARGB(255, 237, 46, 46),
+              Color(0xFFF6F1FB),
+            ],
+            stops: [0, 1],
+          ),
+        ),
+        child: isLoading
+            ? Center(child: CircularProgressIndicator())
+            : FutureBuilder<List<CoursR>>(
+                future: coursList,
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(child: CircularProgressIndicator());
+                  } else if (snapshot.hasError) {
+                    return Center(child: Text('error : ${snapshot.error}'));
+                  } else if (snapshot.hasData) {
+                    final coursMap = groupCoursByNomCoursR(snapshot.data!);
+                    return GridView.builder(
+                      padding: EdgeInsets.all(20.0),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: kIsWeb ? 2 : 1, // Nombre de colonnes
+                        childAspectRatio: kIsWeb
+                            ? 6 / 2
+                            : 5 / 2, // Ratio largeur/hauteur des cellules
+                        crossAxisSpacing:
+                            kIsWeb ? 20.0 : 10.0, // Espace entre les colonnes
+                        mainAxisSpacing:
+                            kIsWeb ? 20.0 : 10.0, // Espace entre les lignes
+                      ),
+                      itemCount: coursMap.length,
+                      itemBuilder: (context, index) {
+                        final key = coursMap.keys.elementAt(index);
+                        return buildGroupedContainer(key, coursMap[key]!);
+                      },
+                    );
+/*zeyed njareb 
+return GridView.builder(
+  padding: EdgeInsets.all(20.0),
+  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
+    maxCrossAxisExtent: kIsWeb ? 200.0 : 150.0, // Taille maximale des éléments de la grille
+    childAspectRatio: kIsWeb ? 6 / 2 : 5 / 2, // Ratio largeur/hauteur des cellules
+    crossAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les colonnes
+    mainAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les lignes
+  ),
+  itemCount: coursMap.length,
+  itemBuilder: (context, index) {
+    final key = coursMap.keys.elementAt(index);
+    return buildGroupedContainer(key, coursMap[key]!);
+  },
+);*/
+                    /* return GridView.builder(
+                      padding: EdgeInsets.all(20.0),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2, // Nombre de colonnes
+                        childAspectRatio: 5 / 2, // Ratio largeur/hauteur des cellules
+                        crossAxisSpacing: 20.0, // Espace entre les colonnes
+                        mainAxisSpacing: 20.0, // Espace entre les lignes
+                      ),
+                      itemCount: coursMap.length,
+                      itemBuilder: (context, index) {
+                        final key = coursMap.keys.elementAt(index);
+                        return buildGroupedContainer(key, coursMap[key]!);
+                      },
+                    );*/
+                  } else {
+                    return Center(child: Text('No courses found'));
+                  }
+                },
+              ),
+      ),
+    );
+  }
+
+  Widget buildGroupedContainer(String key, List<CoursR> coursList) {
+    Map<String, int> countMap =
+        countCoursByChapter(groupCoursByNomCoursR(coursList));
+    int numberOfCours = countMap[key] ?? 0;
+
+    return GestureDetector(
+      onTap: () {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return StatefulBuilder(
+              builder: (context, setState) {
+                return AlertDialog(
+                  title: Text(key),
+                  content: SingleChildScrollView(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: coursList
+                          .map((cours) => ListTile(
+                                title: Row(
+                                  children: [
+                                    Icon(Icons.picture_as_pdf),
+                                    SizedBox(width: 8),
+                                    Expanded(
+                                      child: TextButton(
+                                        onPressed: () {
+                                          openPdf(cours.pdff);
+                                        },
+                                        child: Text(cours.description),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                trailing: ElevatedButton.icon(
+                                  onPressed: () async {
+                                    showDialog(
+                                      context: context,
+                                      builder: (BuildContext context) {
+                                        return AlertDialog(
+                                          title: Text('Confirmation'),
+                                          content: Text(
+                                              'Are you sure you want to delete this course?'),
+                                          actions: <Widget>[
+                                            TextButton(
+                                              child: Text('Cancel'),
+                                              onPressed: () {
+                                                Navigator.of(context)
+                                                    .pop(); // Fermer l'alerte
+                                              },
+                                            ),
+                                            TextButton(
+                                              child: Text('Confirm'),
+                                              onPressed: () async {
+                                                Navigator.of(context)
+                                                    .pop(); // Fermer l'alerte
+                                                deleteCours(cours.id);
+                                                setState(() {
+                                                  // Mettre à jour l'état de la liste des cours dans l'alerte de dialogue
+                                                  coursList.removeWhere(
+                                                      (element) =>
+                                                          element.id ==
+                                                          cours.id);
+                                                });
+                                              },
+                                            ),
+                                          ],
+                                        );
+                                      },
+                                    );
+                                  },
+                                  /* icon: Icon(Icons.delete),
+                          label: Text('Supprimer'),
+                          style: ElevatedButton.styleFrom(
+                            primary: Colors.red,
+                            onPrimary: Colors.white,*/
+                                  icon: Icon(
+                                    Icons.delete,
+                                    size: 12.0,
+                                  ),
+                                  label: Text(
+                                    '',
+                                    style: TextStyle(
+                                      fontSize:
+                                          10.0, // Réduisez la taille du texte
+                                    ),
+                                  ),
+                                  style: ElevatedButton.styleFrom(
+                                    primary: Colors.red,
+                                    onPrimary: Colors.white,
+                                  ),
+                                ),
+                              ))
+                          .toList(),
+                    ),
+                  ),
+                  actions: <Widget>[
+                    TextButton(
+                      child: Text('Close'),
+                      onPressed: () {
+                        Navigator.of(context).pop(); // Fermer l'alerte
+                      },
+                    ),
+                  ],
+                );
+              },
+            );
+          },
+        );
+      },
+      child: Column(
+        children: [
+          Expanded(
+              flex: 1,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 237, 46, 46),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12.0),
+                    topRight: Radius.circular(12.0),
+                  ),
+                ),
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Opacity(
+                        opacity: 0.3,
+                        child: Image.asset(
+                          'assets/jaa.png',
+                          fit: BoxFit.fill,
+                        ),
+                      ),
+                    ),
+                    Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'Chapitre $key',
+                        style: MediaQuery.of(context).size.width < 600
+                            ? TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 20,
+                              )
+                            : TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 30,
+                              ),
+                      ),
+                    ),
+                  ],
+                ),
+              )),
+          Expanded(
+            flex: 1,
+            child: Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(10.0),
+                  bottomRight: Radius.circular(10.0),
+                ),
+              ),
+              child: Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Number of courses : $numberOfCours',
+                       style: MediaQuery.of(context).size.width < 600
+                            ? TextStyle(
+                                 color: Colors.black,
+                               fontWeight: FontWeight.bold,
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 30,
+                              )
+                            : TextStyle(
+                                 color: Colors.black,
+                               fontWeight: FontWeight.bold,
+                                fontSize: 18,
+                              ),
+                     
+                    ),
+                  ],
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+
+
+
+/*import 'package:flutter/material.dart';
+import 'package:pim/models/CoursR.dart';
+import 'package:pim/services/coursRecService.dart';
+import 'package:url_launcher/url_launcher.dart';
+
+class CoursPage extends StatefulWidget {
+  @override
+  _CoursPageState createState() => _CoursPageState();
+}
+
+class _CoursPageState extends State<CoursPage> {
+  late Future<List<CoursR>> coursList;
+  bool isLoading = true;
+
+  @override
+  void initState() {
+    super.initState();
+    coursList = CoursService.fetchCours();
+    coursList.then((_) {
+      setState(() {
+        isLoading = false;
+      });
+    });
+  }
+
+  void deleteCours(String id) async {
+    try {
+      await CoursService.deleteCours(id);
+      setState(() {
+        coursList = CoursService.fetchCours();
+      });
+    } catch (error) {
       print('Erreur lors de la suppression du cours: $error');
     }
   }
@@ -55,14 +408,14 @@ class _CoursPageState extends State<CoursPage> {
 
     return groupedCours;
   }
-
   Map<String, int> countCoursByChapter(Map<String, List<CoursR>> coursMap) {
-    Map<String, int> countMap = {};
-    coursMap.forEach((key, value) {
-      countMap[key] = value.length;
-    });
-    return countMap;
-  }
+  Map<String, int> countMap = {};
+  coursMap.forEach((key, value) {
+    countMap[key] = value.length;
+  });
+  return countMap;
+}
+
 
   @override
   Widget build(BuildContext context) {
@@ -95,48 +448,17 @@ class _CoursPageState extends State<CoursPage> {
                   } else if (snapshot.hasData) {
                     final coursMap = groupCoursByNomCoursR(snapshot.data!);
                     return GridView.builder(
-  padding: EdgeInsets.all(20.0),
-  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: kIsWeb ? 2 : 1, // Nombre de colonnes
-    childAspectRatio: kIsWeb ? 6 / 2 : 5 / 2, // Ratio largeur/hauteur des cellules
-    crossAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les colonnes
-    mainAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les lignes
-  ),
-  itemCount: coursMap.length,
-  itemBuilder: (context, index) {
-    final key = coursMap.keys.elementAt(index);
-    return buildGroupedContainer(key, coursMap[key]!);
-  },
-);
-/*zeyed njareb 
-return GridView.builder(
-  padding: EdgeInsets.all(20.0),
-  gridDelegate: SliverGridDelegateWithMaxCrossAxisExtent(
-    maxCrossAxisExtent: kIsWeb ? 200.0 : 150.0, // Taille maximale des éléments de la grille
-    childAspectRatio: kIsWeb ? 6 / 2 : 5 / 2, // Ratio largeur/hauteur des cellules
-    crossAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les colonnes
-    mainAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les lignes
-  ),
-  itemCount: coursMap.length,
-  itemBuilder: (context, index) {
-    final key = coursMap.keys.elementAt(index);
-    return buildGroupedContainer(key, coursMap[key]!);
-  },
-);*/
-                   /* return GridView.builder(
-                      padding: EdgeInsets.all(20.0),
+                      padding: EdgeInsets.all(10.0),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, // Nombre de colonnes
                         childAspectRatio: 5 / 2, // Ratio largeur/hauteur des cellules
-                        crossAxisSpacing: 20.0, // Espace entre les colonnes
-                        mainAxisSpacing: 20.0, // Espace entre les lignes
                       ),
                       itemCount: coursMap.length,
                       itemBuilder: (context, index) {
                         final key = coursMap.keys.elementAt(index);
                         return buildGroupedContainer(key, coursMap[key]!);
                       },
-                    );*/
+                    );
                   } else {
                     return Center(child: Text('Aucun cours trouvé'));
                   }
@@ -145,179 +467,168 @@ return GridView.builder(
       ),
     );
   }
-
   Widget buildGroupedContainer(String key, List<CoursR> coursList) {
-    Map<String, int> countMap = countCoursByChapter(groupCoursByNomCoursR(coursList));
-    int numberOfCours = countMap[key] ?? 0;
+  Map<String, int> countMap = countCoursByChapter(groupCoursByNomCoursR(coursList));
+  int numberOfCours = countMap[key] ?? 0;
 
-    return GestureDetector(
-      onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return StatefulBuilder(
-              builder: (context, setState) {
-                return AlertDialog(
-                  title: Text(key),
-                  content: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: coursList.map((cours) => ListTile(
-                        title: Row(
-                          children: [
-                            Icon(Icons.picture_as_pdf),
-                            SizedBox(width: 8),
-                            Expanded(
-                              child: TextButton(
-                                onPressed: () {
-                                  openPdf(cours.pdff);
-                                },
-                                child: Text(cours.description),
-                              ),
-                            ),
-                          ],
-                        ),
-                        trailing: ElevatedButton.icon(
-                          onPressed: () async {
-                            showDialog(
-                              context: context,
-                              builder: (BuildContext context) {
-                                return AlertDialog(
-                                  title: Text('Confirmation'),
-                                  content: Text('Êtes-vous sûr de vouloir supprimer ce cours ?'),
-                                  actions: <Widget>[
-                                    TextButton(
-                                      child: Text('Annuler'),
-                                      onPressed: () {
-                                        Navigator.of(context).pop(); // Fermer l'alerte
-                                      },
-                                    ),
-                                    TextButton(
-                                      child: Text('Confirmer'),
-                                      onPressed: () async {
-                                        Navigator.of(context).pop(); // Fermer l'alerte
-                                         deleteCours(cours.id);
-                                        setState(() {
-                                          // Mettre à jour l'état de la liste des cours dans l'alerte de dialogue
-                                          coursList.removeWhere((element) => element.id == cours.id);
-                                        });
-                                      },
-                                    ),
-                                  ],
-                                );
-                              },
-                            );
+  return GestureDetector(
+    onTap: () {
+      showDialog(
+        context: context,
+        builder: (BuildContext context) {
+          return AlertDialog(
+            title: Text(key),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: coursList.map((cours) => ListTile(
+                  title: Row( // Row here
+                    children: [
+                      Icon(Icons.picture_as_pdf), // Icon added
+                      SizedBox(width: 8), // Added space between icon and text
+                      Expanded( // Expanded added
+                        child: TextButton( // Changed from Text to TextButton
+                          onPressed: () {
+                            openPdf(cours.pdff);
                           },
-                         /* icon: Icon(Icons.delete),
-                          label: Text('Supprimer'),
-                          style: ElevatedButton.styleFrom(
-                            primary: Colors.red,
-                            onPrimary: Colors.white,*/
-                            icon: Icon(Icons.delete,size: 12.0,),
-                            label: Text('',
-                            style: TextStyle(
-                            fontSize: 10.0, // Réduisez la taille du texte
-                          ),
-                          ),
-                            style: ElevatedButton.styleFrom(
-                            primary: Colors.red,
-                            onPrimary: Colors.white,
-                          ),
+                          child: Text(cours.description),
                         ),
-                      )).toList(),
+                      ),
+                    ],
+                  ),
+                  trailing: ElevatedButton.icon(
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            title: Text('Confirmation'),
+                            content: Text('Êtes-vous sûr de vouloir supprimer ce cours ?'),
+                            actions: <Widget>[
+                              TextButton(
+                                child: Text('Annuler'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Fermer l'alerte
+                                },
+                              ),
+                              TextButton(
+                                child: Text('Confirmer'),
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // Fermer l'alerte
+                                  deleteCours(cours.id);
+                                  CoursService.fetchCours();
+                                },
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    },
+ 
+                        icon: Icon(
+    Icons.delete,
+    size: 12.0, // Réduisez la taille de l'icône
+  ),
+  label: Text(
+    'Supprimer',
+    style: TextStyle(
+      fontSize: 10.0, // Réduisez la taille du texte
+    ),
+  ),
+  style: ElevatedButton.styleFrom(
+    primary: Colors.red,
+    onPrimary: Colors.white,
+  
                     ),
                   ),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('Fermer'),
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Fermer l'alerte
-                      },
-                    ),
-                  ],
-                );
-              },
-            );
-          },
-        );
-      },
-      child: Column(
-        children: [
-          Expanded(
-            flex: 1,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 237, 46, 46),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12.0),
-                  topRight: Radius.circular(12.0),
-                ),
+                )).toList(),
               ),
-              child: Stack(
-                
-                children: [
-                  Positioned.fill(
-                    child: Opacity(
-                      opacity: 0.3,
-                      child: Image.asset(
-                        'assets/jaa.png',
-                        fit: BoxFit.fill,
-                      ),
+            ),
+            actions: <Widget>[
+              TextButton(
+                child: Text('Fermer'),
+                onPressed: () {
+                  Navigator.of(context).pop(); // Fermer l'alerte
+                },
+              ),
+            ],
+          );
+        },
+        
+      );
+    },
+    child: Column(
+      children: [
+        Expanded(
+          flex: 1,
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: const Color.fromARGB(255, 242, 134, 126),
+              borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(12.0),
+                topRight: Radius.circular(12.0),
+              ),
+            ),
+            child: Stack(
+              children: [
+                Positioned.fill(
+                  child: Opacity(
+                    opacity: 0.3,
+                    child: Image.asset(
+                      'assets/javaz.png',
+                      fit: BoxFit.fill,
                     ),
                   ),
-                  Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Chapitre $key',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 30,
-                      ),
+                ),
+                Container(
+                  alignment: Alignment.centerLeft,
+                  padding: EdgeInsets.all(8.0),
+                  child: Text(
+                    key,
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.bold,
+                      fontSize: 15,
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+        Expanded(
+          flex: 1,
+          child: Container(
+            width: double.infinity,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(10.0),
+                bottomRight: Radius.circular(10.0),
+              ),
+            ),
+            child: Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Nombre de cours : $numberOfCours',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 12,
                     ),
                   ),
                 ],
               ),
-            )
-          ),
-          Expanded(
-            flex: 1,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(10.0),
-                  bottomRight: Radius.circular(10.0),
-                ),
-              ),
-              child: Padding(
-                padding: const EdgeInsets.all(8.0),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Nombre de cours : $numberOfCours',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
             ),
           ),
-        ],
-      ),
-    );
-  }
+        ),
+      ],
+    ),
+  );
 }
-
-
-
-
+}*/
+ 
