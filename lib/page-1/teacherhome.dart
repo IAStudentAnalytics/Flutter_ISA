@@ -81,13 +81,26 @@ class _SceneteacherhomeState extends State<Sceneteacherhome> {
                               SizedBox(height: 20 * fem),
                               Padding(
                                 padding: EdgeInsets.all(16 * fem),
-                                child: Text(
-                                  "Welcome, ${userData != null && userData!['user'] != null && userData!['user']['firstName'] != null ? userData!['user']['firstName'] : 'Guest'}!",
-                                  style: TextStyle(
-                                    fontSize: 24 * fem,
-                                    fontWeight: FontWeight.bold,
-                                    color: Colors.white,
-                                  ),
+                                child: Row(
+                                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    IconButton(
+                                      icon: Icon(Icons.menu, color: Colors.white),
+                                      onPressed: () {
+                                        // Open the side menu
+                                        Scaffold.of(context).openDrawer();
+                                      },
+                                    ),
+                                    Text(
+                                      "Welcome, ${userData != null && userData!['user'] != null && userData!['user']['firstName'] != null ? userData!['user']['firstName'] : 'Guest'}!",
+                                      style: TextStyle(
+                                        fontSize: 24 * fem,
+                                        fontWeight: FontWeight.bold,
+                                        color: Colors.white,
+                                      ),
+                                    ),
+                                    SizedBox(width: 40), // Placeholder for the menu icon
+                                  ],
                                 ),
                               ),
                               Padding(
@@ -153,45 +166,45 @@ class _SceneteacherhomeState extends State<Sceneteacherhome> {
     );
   }
 
- Widget buildStatSection(BuildContext context, Map<String, dynamic> scores, double fem) {
-  List<PieChartSectionData> sections = [];
-  int index = 0;
-  List<Color> colors = [Colors.red, Colors.green, Colors.blue, Colors.yellow, Colors.purple]; // Example colors
+  Widget buildStatSection(BuildContext context, Map<String, dynamic> scores, double fem) {
+    List<PieChartSectionData> sections = [];
+    int index = 0;
+    List<Color> colors = [Colors.red, Colors.green, Colors.blue, Colors.yellow, Colors.purple]; // Example colors
 
-  scores.forEach((key, value) {
-    sections.add(PieChartSectionData(
-      color: colors[index % colors.length],
-      value: value.toDouble(),
-      title: '$key\n${value.toStringAsFixed(1)}%',
-      radius: 100,
-      titlePositionPercentageOffset: 0.55,
-      titleStyle: TextStyle(
-        fontSize: 14 * fem,
-        fontWeight: FontWeight.bold,
-        color: Colors.white,
-        backgroundColor: colors[index % colors.length]
-      ),
-    ));
-    index++;
-  });
+    scores.forEach((key, value) {
+      sections.add(PieChartSectionData(
+        color: colors[index % colors.length],
+        value: value.toDouble(),
+        title: '$key\n${value.toStringAsFixed(1)}%',
+        radius: 100,
+        titlePositionPercentageOffset: 0.55,
+        titleStyle: TextStyle(
+          fontSize: 14 * fem,
+          fontWeight: FontWeight.bold,
+          color: Colors.white,
+          backgroundColor: colors[index % colors.length]
+        ),
+      ));
+      index++;
+    });
 
-  return Padding(
-    padding: EdgeInsets.all(16 * fem),
-    child: PieChart(
-      PieChartData(
-        sections: sections,
-        centerSpaceRadius: 60,
-        sectionsSpace: 0,
-        pieTouchData: PieTouchData(
-          touchCallback: (FlTouchEvent event, PieTouchResponse? response) {
-            // Here you can handle the touch event
-            if (response != null && response.touchedSection != null) {
-              print("Touched section index: ${response.touchedSection!.touchedSectionIndex}");
-            }
-          },
+    return Padding(
+      padding: EdgeInsets.all(16 * fem),
+      child: PieChart(
+        PieChartData(
+          sections: sections,
+          centerSpaceRadius: 60,
+          sectionsSpace: 0,
+          pieTouchData: PieTouchData(
+            touchCallback: (FlTouchEvent event, PieTouchResponse? response) {
+              // Here you can handle the touch event
+              if (response != null && response.touchedSection != null) {
+                print("Touched section index: ${response.touchedSection!.touchedSectionIndex}");
+              }
+            },
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }

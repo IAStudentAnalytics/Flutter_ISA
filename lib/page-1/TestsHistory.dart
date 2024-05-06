@@ -286,7 +286,7 @@ class _TestsHistoryState extends State<TestsHistory> {
           ),
         ],
       ),
-      drawer: SideMenu(onMenuItemClicked: widget.onMenuItemClicked),
+   drawer: SideMenu(onMenuItemClicked: (int) {}),
     );
   }
 }
