@@ -42,7 +42,7 @@ class QuestionDetailsPage extends StatelessWidget {
           children: [
               Icon(Icons.arrow_back, color: Colors.black),
             SizedBox(width: 4),
-            Text('Retour'),
+            Text('Back'),
        
           ],
         ),
@@ -83,14 +83,14 @@ class QuestionDetailsPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Chapitre: ${question.chapter}',
+                  'Chapter: ${question.chapter}',
                   style: TextStyle(
                     fontSize: 14,
                     color: Colors.blue,
                   ),
                 ),
                 Text(
-                  'Votre réponse: ${selectedAnswer ?? "Non répondu"}',
+                  'Your answer: ${selectedAnswer ?? "Not answered"}',
                   style: TextStyle(
                     color: selectedAnswer == correctAnswer
                         ? Colors.green
@@ -98,7 +98,7 @@ class QuestionDetailsPage extends StatelessWidget {
                   ),
                 ),
                 Text(
-                  'Réponse correcte: $correctAnswer',
+                  'Correct answer: $correctAnswer',
                   style: TextStyle(
                     color: Colors.green,
                   ),

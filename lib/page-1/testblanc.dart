@@ -36,6 +36,7 @@ class _TestBlancState extends State<TestBlanc> {
       print('Erreur lors du chargement des questions : $error');
     }
   }
+
   void _nextQuestion() {
     setState(() {
       currentQuestionIndex++;
@@ -81,7 +82,7 @@ class _TestBlancState extends State<TestBlanc> {
             ),
           ),
           Positioned(
-            top: 0,
+            top: 22,
             left: 0,
             child: Image.asset(
               'assets/pim11.png',
@@ -96,7 +97,9 @@ class _TestBlancState extends State<TestBlanc> {
               } else if (snapshot.hasError) {
                 return Center(child: Text('Erreur : ${snapshot.error}'));
               } else if (snapshot.hasData) {
-                return buildQuiz(snapshot.data!);
+                return SingleChildScrollView(
+                  child: buildQuiz(snapshot.data!),
+                );
               } else {
                 return Center(child: CircularProgressIndicator());
               }
@@ -111,7 +114,7 @@ class _TestBlancState extends State<TestBlanc> {
     final currentQuestion = questions[currentQuestionIndex];
 
     return Container(
-      margin: EdgeInsets.only(top: 100.0),
+      margin: EdgeInsets.only(top: 100.0, bottom: 100.0),
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: Column(
@@ -143,12 +146,10 @@ class _TestBlancState extends State<TestBlanc> {
                 ),
               );
             }),
-            Spacer(),
+            SizedBox(height: 16.0),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              //crossAxisAlignment: CrossAxisAlignment.center,
               children: [
-                // Afficher le bouton "Précédent" si possible, aligné à gauche
                 if (currentQuestionIndex > 0)
                   ElevatedButton(
                     onPressed: _previousQuestion,
@@ -157,21 +158,17 @@ class _TestBlancState extends State<TestBlanc> {
                       children: [
                         Icon(Icons.arrow_back, color: Colors.black),
                         SizedBox(width: 4),
-                        Text('Précédent'),
+                        Text('Previous'),
                       ],
                     ),
                   ),
-
-                // Espace pour séparer les boutons
                 Spacer(),
-
-                // Afficher le bouton "Suivant" ou "Terminer" aligné à droite
                 if (currentQuestionIndex < questions.length - 1)
                   ElevatedButton(
                     onPressed: _nextQuestion,
                     child: Row(
                       children: [
-                        Text('Suivant'),
+                        Text('Next'),
                         SizedBox(width: 4),
                         Icon(Icons.arrow_forward, color: Colors.black),
                       ],
@@ -195,7 +192,7 @@ class _TestBlancState extends State<TestBlanc> {
                     style: ElevatedButton.styleFrom(),
                     child: Row(
                       children: [
-                        Text('Terminer'),
+                        Text('Finish'),
                         SizedBox(width: 4),
                       ],
                     ),

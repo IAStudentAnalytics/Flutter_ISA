@@ -29,7 +29,7 @@ class _PerformanceState extends State<Performance> {
 
   Future<void> fetchScores() async {
    try {
-     final response = await http.get(Uri.parse('http://10.0.2.2:50711/note/scores/${widget.studentId}'));
+     final response = await http.get(Uri.parse('http://192.168.1.54:5000/note/scores/${widget.studentId}'));
      if (response.statusCode == 200) {
        print('yessss');
        var data = jsonDecode(response.body) as Map<String, dynamic>;
@@ -87,7 +87,7 @@ class _PerformanceState extends State<Performance> {
 }
 
 Future<void> sendPredictRequest(Map<String, double?> preparedData) async {
- final url = Uri.parse('http://192.168.1.17:3000/predict');
+ final url = Uri.parse('http://192.168.1.54:5000/predict');
  final headers = {"Content-Type": "application/json"};
  final body = json.encode(preparedData);
 
