@@ -6,9 +6,15 @@ import 'package:pim/page-1/onbording.dart';
 import 'package:pim/page-1/teacherhome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Scene1 extends StatelessWidget {
+class Scene1 extends StatefulWidget {
+  @override
+  _Scene1State createState() => _Scene1State();
+}
+
+class _Scene1State extends State<Scene1> {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
+  bool _isPasswordVisible = false;
 
   Future<void> login(BuildContext context) async {
     final String email = emailController.text.trim();
@@ -44,7 +50,7 @@ class Scene1 extends StatelessWidget {
         } else if (userData['message'].contains('student')) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => SceneStudentHome(email: '',)),
+            MaterialPageRoute(builder: (_) => SceneStudentHome(email: '')),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -62,7 +68,7 @@ class Scene1 extends StatelessWidget {
       ));
     }
   }
- 
+
   @override
   Widget build(BuildContext context) {
     double baseWidth = 360;
@@ -111,7 +117,7 @@ class Scene1 extends StatelessWidget {
                             ),
                           ),
                           child: TextField(
-                            obscureText: true,
+                            obscureText: !_isPasswordVisible,
                             controller: passwordController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -231,6 +237,21 @@ class Scene1 extends StatelessWidget {
                             height: 40 * fem,
                           ),
                         ),
+                      ),
+                    ),
+                  ),
+                  Positioned(
+                    right: 30 * fem,
+                    top: 60 * fem,
+                    child: IconButton(
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                      icon: Icon(
+                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                        color: Color(0xff475569),
                       ),
                     ),
                   ),

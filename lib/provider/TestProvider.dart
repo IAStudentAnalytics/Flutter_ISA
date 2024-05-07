@@ -3,8 +3,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:flutter/foundation.dart';
 import 'package:pim/models/test.dart';
-
-const String baseUrl = 'http://172.16.12.109:5000';
+const String baseUrl = 'http://172.16.1.188:5000';
 
 class TestProvider extends ChangeNotifier {
   Test? test;
