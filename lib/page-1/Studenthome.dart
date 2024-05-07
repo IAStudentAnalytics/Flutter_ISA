@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart'; // Importer le package fl_chart
 import 'package:pim/models/question.dart';
+
+import 'package:pim/page-1/resultatQuiz.dart';
 import 'package:pim/page-1/test.dart';
 import 'side_menu.dart'; // Import the side_menu.dart file
 import 'package:intl/intl.dart';
@@ -41,7 +43,7 @@ class TestInfo {
 
 Future<List<TestInfo>> getAllTests() async {
   final response =
-      await http.get(Uri.parse('http://192.168.1.19:5000/test/getAllTests'));
+      await http.get(Uri.parse('http://172.16.1.188:5000/test/getAllTests'));
   print('Response body: ${response.body}');
 
   if (response.statusCode == 200) {
@@ -53,9 +55,9 @@ Future<List<TestInfo>> getAllTests() async {
 }
 
 Future<List<Question>> getQuestionsByTestId(String? testId) async {
-  // Remplacez 'http://your-api-url.com' par l'URL réelle de votre API.
+
   final response =
-      await http.get(Uri.parse('http://192.168.1.19:5000/test/tests/$testId/'));
+      await http.get(Uri.parse('http://172.16.1.188:5000/test/tests/$testId/'));
 
   if (response.statusCode == 200) {
     // Convertir la réponse en JSON et extraire les questions.
@@ -73,7 +75,7 @@ Future<List<Question>> getQuestionsByTestId(String? testId) async {
 
 Future<List<String>> getChaptersByTestId(String testId) async {
   final response = await http
-      .get(Uri.parse('http://192.168.1.19:5000/test/tests/$testId/chapters'));
+      .get(Uri.parse('http://172.16.1.188:5000/test/tests/$testId/chapters'));
 
   if (response.statusCode == 200) {
     List<dynamic> chaptersJson = json.decode(response.body);
@@ -127,7 +129,7 @@ class SceneStudentHome extends StatelessWidget {
                   children: [
                     SizedBox(height: 25 * fem),
                     Text(
-                      "Welcome, $userName",
+                      "Home",
                       style: TextStyle(
                         fontSize: 25 * fem,
                         fontWeight: FontWeight.w700,
@@ -157,6 +159,7 @@ class SceneStudentHome extends StatelessWidget {
 
                             return SingleChildScrollView(
                               child: Column(
+                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   ListView.builder(
                                     shrinkWrap: true,
@@ -168,25 +171,45 @@ class SceneStudentHome extends StatelessWidget {
                                     },
                                   ),
                                   TableCalendar(
-                                    firstDay: DateTime.utc(2020, 10, 16),
-                                    lastDay: DateTime.utc(2030, 3, 14),
-                                    focusedDay: DateTime.now(),
-                                    eventLoader: (day) {
-                                      return testsByDate[DateTime(
-                                              day.year, day.month, day.day)] ??
-                                          [];
-                                    },
-                                    calendarStyle: CalendarStyle(
-                                      todayDecoration: BoxDecoration(
-                                        color: Colors.purpleAccent,
-                                        shape: BoxShape.circle,
-                                      ),
-                                      markerDecoration: BoxDecoration(
-                                        color: Colors.red,
-                                        shape: BoxShape.circle,
-                                      ),
-                                    ),
-                                  ),
+  firstDay: DateTime.utc(2020, 10, 16),
+  lastDay: DateTime.utc(2030, 3, 14),
+  focusedDay: DateTime.now(),
+  eventLoader: (day) {
+    // Assuming 'testsByDate' is a Map<DateTime, List<dynamic>>
+    return testsByDate[DateTime(day.year, day.month, day.day)] ?? [];
+  },
+  calendarBuilders: CalendarBuilders(
+    markerBuilder: (context, date, events) {
+      if (events.isNotEmpty) {
+        bool isPast = date.isBefore(DateTime.now());
+        return Positioned(
+          right: 1,
+          bottom: 1,
+          child: Container(
+            decoration: BoxDecoration(
+              shape: BoxShape.circle,
+              color: isPast ? Colors.red : Colors.green, // Red for past, green for future
+            ),
+            width: 7,
+            height: 7,
+          ),
+        );
+      }
+      return null;
+    },
+  ),
+  calendarStyle: CalendarStyle(
+    todayDecoration: BoxDecoration(
+      color: Colors.purpleAccent,
+      shape: BoxShape.circle,
+    ),
+    markerDecoration: BoxDecoration(
+      color: Colors.red,
+      shape: BoxShape.circle,
+    ),
+  ),
+),
+
                                 ],
                               ),
                             );
@@ -206,65 +229,72 @@ class SceneStudentHome extends StatelessWidget {
         drawer: SideMenu(onMenuItemClicked: (int) {  }),
     );
   }
+Widget buildTestButton(BuildContext context, TestInfo test, double fem) {
+  // Determine if the test date is in the past, today, or in the future
+  DateTime now = DateTime.now();
+  bool isToday = test.date != null && 
+                 test.date!.year == now.year && 
+                 test.date!.month == now.month && 
+                 test.date!.day == now.day;
+  bool isPast = test.date != null && test.date!.isBefore(DateTime(now.year, now.month, now.day));
 
-  Widget buildTestButton(BuildContext context, TestInfo test, double fem) {
-    // Check if the test date is today.
-    bool isToday = test.date != null &&
-        DateTime.now().year == test.date!.year &&
-        DateTime.now().month == test.date!.month &&
-        DateTime.now().day == test.date!.day;
+  // Set button color based on whether it is today
+  Color buttonColor = isToday ? Color(0xff9b59b6) : Colors.grey;
 
-    return Container(
-      margin: EdgeInsets.only(bottom: 10),
-      child: FutureBuilder<List<String>>(
-        // Use the getChaptersByTestId method and pass the test ID.
-        future: getChaptersByTestId(test.id ?? ''),
-        builder: (context, snapshot) {
-          // Initialize an empty list of chapters to display.
-          List<String> chapters = snapshot.data ?? [];
+  return Container(
+    margin: EdgeInsets.only(bottom: 10),
+    child: FutureBuilder<List<String>>(
+      future: getChaptersByTestId(test.id ?? ''),
+      builder: (context, snapshot) {
+        List<String> chapters = snapshot.data ?? [];
 
-          return ElevatedButton(
-            onPressed: isToday
-                ? () async {
+        return Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Expanded(
+              child: ElevatedButton(
+                onPressed: isToday ? () async {  // Only enable button if today
                     try {
-                      // Récupérer les questions pour le test sélectionné.
-                      // Assurez-vous que cette fonction renvoie une liste de 'Question'.
-                      List<Question> questions =
-                          await getQuestionsByTestId(test.id);
-
-                      // Naviguer vers 'TestPage' avec les questions récupérées.
+                      List<Question> questions = await getQuestionsByTestId(test.id!);
                       Navigator.of(context).push(MaterialPageRoute(
-                        builder: (_) =>
-                            TestPage(questions: questions, testId: test.id!),
+                        builder: (_) => TestPage(questions: questions, testId: test.id!),
                       ));
                     } catch (e) {
-                      // Gérer l'erreur de récupération ici.
-                      // Par exemple, afficher une Snackbar avec le message d'erreur.
                       ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                        content: Text(
-                            'Error: Unable to load questions for this test.'),
+                        content: Text('Error: Unable to load questions for this test.'),
                       ));
                     }
-                  }
-                : null, // If the date is not today or chapters are not loaded, the button is disabled.
-            child: Text(
-              "${test.description}\nDate: ${test.date != null ? DateFormat('yyyy-MM-dd').format(test.date!) : 'No date provided'}\nChapters: ${chapters.join(', ')}",
-            ),
-            style: ElevatedButton.styleFrom(
-              primary: isToday
-                  ? Color(0xff9b59b6)
-                  : Colors.grey, // Blue if the date is today, otherwise grey.
-              onPrimary: Colors.white,
-              textStyle: TextStyle(fontSize: 16 * fem),
-              padding: EdgeInsets.symmetric(
-                  horizontal: 30 * fem, vertical: 20 * fem),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(5 * fem),
+                } : null,
+                child: Text(
+                  "${test.description}\nDate: ${test.date != null ? DateFormat('yyyy-MM-dd').format(test.date!) : 'No date provided'}\nChapters: ${chapters.join(', ')}",
+                  style: TextStyle(fontSize: 16 * fem),
+                ),
+                style: ElevatedButton.styleFrom(
+                  primary: buttonColor,
+                  onPrimary: Colors.white,
+                  padding: EdgeInsets.symmetric(horizontal: 30 * fem, vertical: 20 * fem),
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(5 * fem),
+                  ),
+                ),
               ),
             ),
-          );
-        },
-      ),
-    );
-  }
+            if (isPast)  // Show history icon only if the date is in the past
+              IconButton(
+                icon: Icon(Icons.history, size: 24 * fem),
+                onPressed: () {
+                  Navigator.of(context).push(MaterialPageRoute(
+                    builder: (_) => ResultQuiz(studentId: '65df009a796124616d1ecdce', testId: test.id!),
+                  ));
+                },
+              ),
+          ],
+        );
+      },
+    ),
+  );
+}
+
+
+
 }
