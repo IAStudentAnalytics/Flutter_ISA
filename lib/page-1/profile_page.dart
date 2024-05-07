@@ -10,8 +10,9 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   late SharedPreferences prefs;
-  Map<String, dynamic>? user; // Direct reference to user data for easier access
-  String? apiUrl; // API URL to be used for updating profile based on role
+  Map<String, dynamic>? user;
+  String? apiUrl;
+  bool isUpdating = false;
 
   @override
   void initState() {
@@ -26,12 +27,9 @@ class _ProfilePageState extends State<ProfilePage> {
       final Map<String, dynamic> data = json.decode(userDataString);
       setState(() {
         user = data['user'];
-        // Determine the API URL based on the message
-        if (data['message'].contains('teacher')) {
-          apiUrl = 'http://192.168.1.19:5000/api/teachers/${user?['_id']}';
-        } else if (data['message'].contains('student')) {
-          apiUrl = 'http://192.168.1.19:5000/api/students/${user?['_id']}';
-        }
+        apiUrl = data['message'].contains('teacher') ? 
+          'http://192.168.1.19:5000/api/teachers/${user?['_id']}' : 
+          'http://192.168.1.19:5000/api/students/${user?['_id']}';
       });
     }
   }
@@ -40,24 +38,36 @@ class _ProfilePageState extends State<ProfilePage> {
     showModalBottomSheet(
       context: context,
       isScrollControlled: true,
+      backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return Padding(
-          padding: EdgeInsets.only(
-            top: 20,
-            left: 20,
-            right: 20,
-            bottom: MediaQuery.of(context).viewInsets.bottom + 20),
+        return Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.only(
+              topLeft: Radius.circular(25),
+              topRight: Radius.circular(25)
+            )
+          ),
+          padding: EdgeInsets.all(20),
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
                 ..._buildTextFields(),
+                SizedBox(height: 20),
                 ElevatedButton(
                   onPressed: () {
                     _saveUpdatedProfile();
                     Navigator.pop(context);
                   },
-                  child: Text('Save Changes'),
+                  child: isUpdating ? CircularProgressIndicator(color: Colors.white) : Text('Save Changes'),
+                  style: ElevatedButton.styleFrom(
+                    primary: Colors.deepPurple,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(30)
+                    ),
+                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 12)
+                  ),
                 )
               ],
             ),
@@ -69,45 +79,38 @@ class _ProfilePageState extends State<ProfilePage> {
 
   List<Widget> _buildTextFields() {
     return [
-      TextField(
-        controller: TextEditingController(text: user?['firstName']),
-        decoration: InputDecoration(labelText: 'First Name'),
-      ),
-      TextField(
-        controller: TextEditingController(text: user?['lastName']),
-        decoration: InputDecoration(labelText: 'Last Name'),
-      ),
-      TextField(
-        controller: TextEditingController(text: user?['email']),
-        decoration: InputDecoration(labelText: 'Email'),
-      ),
-      TextField(
-        controller: TextEditingController(),
-        decoration: InputDecoration(labelText: 'Password'),
-        obscureText: true,
-      ),
-      TextField(
-        controller: TextEditingController(text: user?['cin'].toString()),
-        decoration: InputDecoration(labelText: 'CIN'),
-        keyboardType: TextInputType.number,
-      ),
-      TextField(
-        controller: TextEditingController(text: user?['class']),
-        decoration: InputDecoration(labelText: 'Class'),
-      ),
-      if (user?.containsKey('idTea') ?? false) TextField(
-        controller: TextEditingController(text: user?['idTea'].toString()),
-        decoration: InputDecoration(labelText: 'Teacher ID'),
-        readOnly: true,
-      ),
-      if (user?.containsKey('field') ?? false) TextField(
-        controller: TextEditingController(text: user?['field']),
-        decoration: InputDecoration(labelText: 'Field'),
-      ),
+      _buildTextField('First Name', user?['firstName']),
+      _buildTextField('Last Name', user?['lastName']),
+      _buildTextField('Email', user?['email']),
+      _buildTextField('Password', '', isPassword: true),
+      _buildTextField('CIN', user?['cin'].toString(), isNumber: true),
+      _buildTextField('Class', user?['class']),
+      if (user?.containsKey('idTea') ?? false)
+        _buildTextField('Teacher ID', user?['idTea'].toString(), isReadOnly: true),
+      if (user?.containsKey('field') ?? false)
+        _buildTextField('Field', user?['field']),
     ];
   }
 
+  Widget _buildTextField(String label, String? value, {bool isPassword = false, bool isNumber = false, bool isReadOnly = false}) {
+    return TextField(
+      controller: TextEditingController(text: value),
+      decoration: InputDecoration(
+        labelText: label,
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
+        filled: true,
+        fillColor: Colors.grey[200],
+      ),
+      obscureText: isPassword,
+      readOnly: isReadOnly,
+      keyboardType: isNumber ? TextInputType.number : TextInputType.text,
+    );
+  }
+
   void _saveUpdatedProfile() async {
+    setState(() {
+      isUpdating = true;
+    });
     try {
       final response = await http.put(
         Uri.parse(apiUrl ?? ''),
@@ -126,6 +129,10 @@ class _ProfilePageState extends State<ProfilePage> {
       }
     } catch (e) {
       ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error updating profile: $e')));
+    } finally {
+      setState(() {
+        isUpdating = false;
+      });
     }
   }
 
@@ -134,21 +141,33 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Profile", style: Theme.of(context).textTheme.headline6),
+        backgroundColor: Colors.deepPurple,
       ),
       body: SingleChildScrollView(
         child: Container(
-          padding: const EdgeInsets.all(16.0),
+          padding: EdgeInsets.all(16.0),
           child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
             children: [
               CircleAvatar(
                 backgroundImage: NetworkImage(user?['avatarUrl'] ?? "https://avatars.dicebear.com/api/male/guest.svg"),
-                radius: 60,
+                radius: 80,
               ),
-              Text("Hello, ${user?['firstName'] ?? 'Guest'}!", style: Theme.of(context).textTheme.headline6),
+              SizedBox(height: 20),
+              Text("Hello, ${user?['firstName'] ?? 'Guest'}!", style: Theme.of(context).textTheme.headline5),
               Text(user?['email'] ?? '', style: Theme.of(context).textTheme.bodyText1),
+              SizedBox(height: 20),
               ElevatedButton(
                 onPressed: () => _updateProfile(context),
                 child: Text('Edit Profile'),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.deepPurple, // background
+                  onPrimary: Colors.white, // foreground
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15)
+                ),
               ),
             ],
           ),
