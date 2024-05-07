@@ -36,7 +36,7 @@ class _ResultQuizState extends State<ResultQuiz> {
         return jsonResponse['totalScore'].toString();
         // Assuming 'totalScore' is the key in the JSON response
       } else {
-        return 'Request failed with status: ${response.statusCode}.';
+        return 'Not passed'; 
       }
     } catch (e) {
       return 'Error occurred: $e';
@@ -183,7 +183,9 @@ class _ResultQuizState extends State<ResultQuiz> {
                                 return Center(
                                     child: Text('Error: ${snapshot.error}',
                                         style: TextStyle(
-                                            fontSize: 16, color: Colors.red)));
+                                            fontSize: 16,
+                                            color: Color.fromARGB(
+                                                255, 100, 10, 155))));
                               } else {
                                 int score =
                                     int.tryParse(snapshot.data ?? '0') ?? 0;
@@ -200,8 +202,13 @@ class _ResultQuizState extends State<ResultQuiz> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Text(
-                                      "Your score in the test is: ${snapshot.data}",
+                                      snapshot.hasData
+                                          ? "Your score in the test is: ${snapshot.data}"
+                                          : snapshot.hasError
+                                              ? "You have not taken this test."
+                                              : "Loading...", // Affiche "Loading..." pendant le chargement des données
                                       style: TextStyle(
+                                        decoration: TextDecoration.underline,
                                         color: Colors.black,
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
@@ -211,7 +218,8 @@ class _ResultQuizState extends State<ResultQuiz> {
                                     Text(
                                       performanceText,
                                       style: TextStyle(
-                                        color: Colors.red,
+                                        color: const Color.fromARGB(
+                                            255, 155, 18, 8),
                                         fontSize: 24,
                                         fontWeight: FontWeight.bold,
                                       ),
@@ -227,10 +235,10 @@ class _ResultQuizState extends State<ResultQuiz> {
                                         ));
                                         // Add navigation or action here
                                       },
-                                      child: Text('Go to Performance',
+                                      child: Text('Check My Performance',
                                           style: TextStyle(fontSize: 16)),
                                       style: ElevatedButton.styleFrom(
-                                        primary: Colors.blue,
+                                        primary: Color.fromARGB(255, 130, 2, 8),
                                         onPrimary: Colors.white,
                                       ),
                                     ),
@@ -242,26 +250,33 @@ class _ResultQuizState extends State<ResultQuiz> {
                         ),
                       ),
                       Positioned(
-                        left: screenWidth * 0.2,
-                        top: 350,
+                        left: screenWidth * 0.1,
+                        // Décaler vers la gauche de 20
+                        top: 360,
                         child: SizedBox(
-                          width: 114,
-                          child: Text(
-                            'Recommendation',
-                            textAlign: TextAlign.center,
-                            style: TextStyle(
-                              color: Colors.black,
-                              fontSize: 12,
-                              fontFamily: 'Roboto',
-                              fontWeight: FontWeight.w700,
-                              height: 0,
+                          width: screenWidth -
+                              10, // Soustraire 40 pour tenir compte du décalage de 20 à gauche et à droite
+                          child: Padding(
+                            padding: const EdgeInsets.symmetric(
+                                horizontal:
+                                    17), // Décaler de 20 à gauche et à droite
+                            child: Text(
+                              'You can consult these videos to improve your weaknesses',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 20,
+                                fontFamily: 'Roboto',
+                                fontWeight: FontWeight.w700,
+                                height: 0,
+                              ),
                             ),
                           ),
                         ),
                       ),
                       Positioned(
-                        left: screenWidth * 0.2,
-                        top: 390,
+                        left: screenWidth * 0.15,
+                        top: 430,
                         child: Material(
                           // Envelopper avec Material
                           child: Container(
@@ -282,7 +297,7 @@ class _ResultQuizState extends State<ResultQuiz> {
                                   crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
                                     Padding(
-                                      padding: const EdgeInsets.all(8.0),
+                                      padding: const EdgeInsets.all(0.8),
                                       child: Text(
                                         chapter,
                                         style: TextStyle(
@@ -330,72 +345,6 @@ class _ResultQuizState extends State<ResultQuiz> {
                           ),
                         ),
                       ),
-                      /*Positioned(
-                        left: screenWidth * 0.2,
-                        top: 390,
-                        child: Container(
-                          width: 325,
-                          height: 350,
-                          decoration: ShapeDecoration(
-                            color: Color(0xB5D2D2D2),
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(13),
-                            ),
-                          ),
-                          child: ListView(
-                            children:
-                                recommendedVideos.entries.map<Widget>((entry) {
-                              String chapter = entry.key;
-                              List<dynamic> videos = entry.value;
-                              return Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: [
-                                  Padding(
-                                    padding: const EdgeInsets.all(8.0),
-                                    child: Text(
-                                      chapter,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 18.0,
-                                      ),
-                                    ),
-                                  ),
-                                  Column(
-                                    children: videos.map<Widget>((video) {
-                                      return ListTile(
-                                        title: Text(video['videoTitle']),
-                                        subtitle: GestureDetector(
-                                          child: Text(
-                                            video['videoLink'],
-                                            style: TextStyle(
-                                                color: Colors.blue,
-                                                decoration:
-                                                    TextDecoration.underline),
-                                          ),
-                                          onTap: () async {
-                                            if (await canLaunch(
-                                                video['videoLink'])) {
-                                              await launch(video['videoLink']);
-                                            } else {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(
-                                                SnackBar(
-                                                  content: Text(
-                                                      'Impossible d\'ouvrir le lien ${video['videoLink']}'),
-                                                ),
-                                              );
-                                            }
-                                          },
-                                        ),
-                                      );
-                                    }).toList(),
-                                  ),
-                                ],
-                              );
-                            }).toList(),
-                          ),
-                        ),
-                      ),*/
                       Positioned(
                         left: 318,
                         top: 169,

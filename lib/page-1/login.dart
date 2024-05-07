@@ -222,7 +222,7 @@ class _Scene1State extends State<Scene1> {
                   ),
                   Positioned(
                     left: 30 * fem,
-                    top: 215 * fem,
+                    top: 170 * fem,
                     child: Align(
                       child: SizedBox(
                         width: 298 * fem,
