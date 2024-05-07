@@ -48,6 +48,8 @@ dependencies:
   universal_html: ^2.0.8
   provider: ^5.0.0
   webview_flutter: ^4.5.0
+  flutter_translate: ^4.0.4
+  flutter_localization: ^0.2.0
   
   
 

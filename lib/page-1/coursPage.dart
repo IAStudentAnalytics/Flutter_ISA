@@ -31,7 +31,7 @@ class _CoursPageState extends State<CoursPage> {
         coursList = CoursService.fetchCours();
       });
     } catch (error) {
-      print('Erreur lors de la suppression du cours: $error');
+      print('Error deleting course: $error');
     }
   }
 
@@ -39,7 +39,7 @@ class _CoursPageState extends State<CoursPage> {
     if (await canLaunch(pdfUrl)) {
       await launch(pdfUrl);
     } else {
-      print('Erreur : Impossible d\'ouvrir l\'URL $pdfUrl');
+      print('Error: Unable to open URL $pdfUrl');
     }
   }
 
@@ -68,7 +68,7 @@ class _CoursPageState extends State<CoursPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Cours'),
+        title: Text('List of Courses'),
         backgroundColor: Color.fromARGB(255, 237, 46, 46),
       ),
       body: Container(
@@ -91,23 +91,27 @@ class _CoursPageState extends State<CoursPage> {
                   if (snapshot.connectionState == ConnectionState.waiting) {
                     return Center(child: CircularProgressIndicator());
                   } else if (snapshot.hasError) {
-                    return Center(child: Text('Erreur : ${snapshot.error}'));
+                    return Center(child: Text('error : ${snapshot.error}'));
                   } else if (snapshot.hasData) {
                     final coursMap = groupCoursByNomCoursR(snapshot.data!);
                     return GridView.builder(
-  padding: EdgeInsets.all(20.0),
-  gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-    crossAxisCount: kIsWeb ? 2 : 1, // Nombre de colonnes
-    childAspectRatio: kIsWeb ? 6 / 2 : 5 / 2, // Ratio largeur/hauteur des cellules
-    crossAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les colonnes
-    mainAxisSpacing: kIsWeb ? 20.0 : 10.0, // Espace entre les lignes
-  ),
-  itemCount: coursMap.length,
-  itemBuilder: (context, index) {
-    final key = coursMap.keys.elementAt(index);
-    return buildGroupedContainer(key, coursMap[key]!);
-  },
-);
+                      padding: EdgeInsets.all(20.0),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: kIsWeb ? 2 : 1, // Nombre de colonnes
+                        childAspectRatio: kIsWeb
+                            ? 6 / 2
+                            : 5 / 2, // Ratio largeur/hauteur des cellules
+                        crossAxisSpacing:
+                            kIsWeb ? 20.0 : 10.0, // Espace entre les colonnes
+                        mainAxisSpacing:
+                            kIsWeb ? 20.0 : 10.0, // Espace entre les lignes
+                      ),
+                      itemCount: coursMap.length,
+                      itemBuilder: (context, index) {
+                        final key = coursMap.keys.elementAt(index);
+                        return buildGroupedContainer(key, coursMap[key]!);
+                      },
+                    );
 /*zeyed njareb 
 return GridView.builder(
   padding: EdgeInsets.all(20.0),
@@ -123,7 +127,7 @@ return GridView.builder(
     return buildGroupedContainer(key, coursMap[key]!);
   },
 );*/
-                   /* return GridView.builder(
+                    /* return GridView.builder(
                       padding: EdgeInsets.all(20.0),
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2, // Nombre de colonnes
@@ -138,7 +142,7 @@ return GridView.builder(
                       },
                     );*/
                   } else {
-                    return Center(child: Text('Aucun cours trouvé'));
+                    return Center(child: Text('No courses found'));
                   }
                 },
               ),
@@ -147,22 +151,26 @@ return GridView.builder(
   }
 
   Widget buildGroupedContainer(String key, List<CoursR> coursList) {
-    Map<String, int> countMap = countCoursByChapter(groupCoursByNomCoursR(coursList));
+    Map<String, int> countMap =
+        countCoursByChapter(groupCoursByNomCoursR(coursList));
     int numberOfCours = countMap[key] ?? 0;
 
     return GestureDetector(
       onTap: () {
-        showDialog(
-          context: context,
-          builder: (BuildContext context) {
-            return StatefulBuilder(
-              builder: (context, setState) {
-                return AlertDialog(
-                  title: Text(key),
-                  content: SingleChildScrollView(
-                    child: Column(
-                      mainAxisSize: MainAxisSize.min,
-                      children: coursList.map((cours) => ListTile(
+showDialog(
+  context: context,
+  builder: (BuildContext context) {
+    return StatefulBuilder(
+      builder: (context, setState) {
+        return AlertDialog(
+          title: Text(key),
+          contentPadding: EdgeInsets.symmetric(vertical: 16.0, horizontal: 2.0), // Ajustez les marges intérieures
+          content: SingleChildScrollView(
+            scrollDirection: Axis.vertical, // Activez le défilement vertical
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: coursList
+                  .map((cours) => ListTile(
                         title: Row(
                           children: [
                             Icon(Icons.picture_as_pdf),
@@ -184,22 +192,24 @@ return GridView.builder(
                               builder: (BuildContext context) {
                                 return AlertDialog(
                                   title: Text('Confirmation'),
-                                  content: Text('Êtes-vous sûr de vouloir supprimer ce cours ?'),
+                                  content: Text(
+                                      'Are you sure you want to delete this course?'),
                                   actions: <Widget>[
                                     TextButton(
-                                      child: Text('Annuler'),
+                                      child: Text('Cancel'),
                                       onPressed: () {
-                                        Navigator.of(context).pop(); // Fermer l'alerte
+                                        Navigator.of(context).pop();
                                       },
                                     ),
                                     TextButton(
-                                      child: Text('Confirmer'),
+                                      child: Text('Confirm'),
                                       onPressed: () async {
-                                        Navigator.of(context).pop(); // Fermer l'alerte
-                                         deleteCours(cours.id);
+                                        Navigator.of(context).pop();
+                                        deleteCours(cours.id);
                                         setState(() {
-                                          // Mettre à jour l'état de la liste des cours dans l'alerte de dialogue
-                                          coursList.removeWhere((element) => element.id == cours.id);
+                                          coursList.removeWhere(
+                                              (element) =>
+                                                  element.id == cours.id);
                                         });
                                       },
                                     ),
@@ -208,80 +218,80 @@ return GridView.builder(
                               },
                             );
                           },
-                         /* icon: Icon(Icons.delete),
-                          label: Text('Supprimer'),
+                          icon: Icon(Icons.delete, size: 20.0),
+                          label: Text(
+                            'Delete',
+                            style: TextStyle(fontSize: 10.0),
+                          ),
                           style: ElevatedButton.styleFrom(
-                            primary: Colors.red,
-                            onPrimary: Colors.white,*/
-                            icon: Icon(Icons.delete,size: 12.0,),
-                            label: Text('',
-                            style: TextStyle(
-                            fontSize: 10.0, // Réduisez la taille du texte
-                          ),
-                          ),
-                            style: ElevatedButton.styleFrom(
-                            primary: Colors.red,
-                            onPrimary: Colors.white,
+                            onPrimary: Color.fromARGB(255, 142, 1, 1),
                           ),
                         ),
-                      )).toList(),
-                    ),
-                  ),
-                  actions: <Widget>[
-                    TextButton(
-                      child: Text('Fermer'),
-                      onPressed: () {
-                        Navigator.of(context).pop(); // Fermer l'alerte
-                      },
-                    ),
-                  ],
-                );
+                      ))
+                  .toList(),
+            ),
+          ),
+          actions: <Widget>[
+            TextButton(
+              child: Text('Close'),
+              onPressed: () {
+                Navigator.of(context).pop();
               },
-            );
-          },
+            ),
+          ],
         );
+      },
+    );
+  },
+);
+
       },
       child: Column(
         children: [
           Expanded(
-            flex: 1,
-            child: Container(
-              width: double.infinity,
-              decoration: BoxDecoration(
-                color: Color.fromARGB(255, 237, 46, 46),
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(12.0),
-                  topRight: Radius.circular(12.0),
+              flex: 1,
+              child: Container(
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  color: Color.fromARGB(255, 175, 12, 12),
+                  borderRadius: BorderRadius.only(
+                    topLeft: Radius.circular(12.0),
+                    topRight: Radius.circular(12.0),
+                  ),
                 ),
-              ),
-              child: Stack(
-                
-                children: [
-                  Positioned.fill(
-                    child: Opacity(
-                      opacity: 0.3,
-                      child: Image.asset(
-                        'assets/jaa.png',
-                        fit: BoxFit.fill,
+                child: Stack(
+                  children: [
+                    Positioned.fill(
+                      child: Opacity(
+                        opacity: 0.3,
+                        child: Image.asset(
+                          'assets/jaa.png',
+                          fit: BoxFit.fill,
+                        ),
                       ),
                     ),
-                  ),
-                  Container(
-                    alignment: Alignment.center,
-                    padding: EdgeInsets.all(8.0),
-                    child: Text(
-                      'Chapitre $key',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontWeight: FontWeight.w900,
-                        fontSize: 30,
+                    Container(
+                      alignment: Alignment.center,
+                      padding: EdgeInsets.all(8.0),
+                      child: Text(
+                        'Chapitre $key',
+                        style: MediaQuery.of(context).size.width < 600
+                            ? TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 20,
+                              )
+                            : TextStyle(
+                                color: Colors.white,
+                                fontWeight: FontWeight.w900,
+                                fontSize: 30,
+                              ),
                       ),
                     ),
-                  ),
-                ],
-              ),
-            )
-          ),
+                  ],
+                ),
+              )),
           Expanded(
             flex: 1,
             child: Container(
@@ -300,12 +310,22 @@ return GridView.builder(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     Text(
-                      'Nombre de cours : $numberOfCours',
-                      style: TextStyle(
-                        color: Colors.black,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
+                      'Number of courses : $numberOfCours',
+                       style: MediaQuery.of(context).size.width < 600
+                            ? TextStyle(
+                                 color: Colors.black,
+                               fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                                fontSize:
+                                    MediaQuery.of(context).size.width / 30,
+                              )
+                            : TextStyle(
+                                 color: Colors.black,
+                               fontWeight: FontWeight.bold,
+                                decoration: TextDecoration.underline,
+                                fontSize: 18,
+                              ),
+                     
                     ),
                   ],
                 ),
