@@ -60,9 +60,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     _saveUpdatedProfile();
                     Navigator.pop(context);
                   },
-                  child: isUpdating ? CircularProgressIndicator(color: Colors.white) : Text('Save Changes'),
+                  child: isUpdating ? CircularProgressIndicator(color: Color.fromARGB(255, 248, 247, 247)) : Text('Save Changes'),
                   style: ElevatedButton.styleFrom(
-                    primary: Colors.deepPurple,
+                    primary: Color.fromARGB(255, 51, 21, 21),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30)
                     ),
@@ -141,7 +141,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Profile", style: Theme.of(context).textTheme.headline6),
-        backgroundColor: Colors.deepPurple,
+        backgroundColor: Color.fromARGB(255, 153, 40, 40),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -161,12 +161,12 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () => _updateProfile(context),
                 child: Text('Edit Profile'),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.deepPurple, // background
+                  primary: Color.fromARGB(255, 139, 32, 32), // background
                   onPrimary: Colors.white, // foreground
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30)
                   ),
-                  padding: EdgeInsets.symmetric(horizontal: 30, vertical: 15)
+                  padding: EdgeInsets.symmetric(horizontal: 45, vertical: 25)
                 ),
               ),
             ],
