@@ -87,7 +87,7 @@ class _PerformanceState extends State<Performance> {
 }
 
 Future<void> sendPredictRequest(Map<String, double?> preparedData) async {
- final url = Uri.parse('http://192.168.1.54:5000/predict');
+ final url = Uri.parse('http://192.168.1.19:5000/predict');
  final headers = {"Content-Type": "application/json"};
  final body = json.encode(preparedData);
 
