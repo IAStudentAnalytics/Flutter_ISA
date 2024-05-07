@@ -24,7 +24,7 @@ class _SceneteacherhomeState extends State<Sceneteacherhome> {
   }
 
   Future<Map<String, dynamic>> _getAllScoresByChapter() async {
-    final apiUrl = 'http://192.168.1.54:5000/note/all-scores';
+    final apiUrl = 'http://172.16.1.188:5000/note/all-scores';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200 && response.body.isNotEmpty) {
       return json.decode(response.body);

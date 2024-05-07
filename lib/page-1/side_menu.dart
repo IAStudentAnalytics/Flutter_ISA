@@ -3,7 +3,9 @@ import 'package:pim/page-1/CalendarScreen.dart';
 import 'package:pim/page-1/compilateur.dart';
 import 'package:pim/page-1/login.dart';
 import 'package:pim/page-1/quizzteacher.dart';
-import 'package:pim/page-1/resultquiz-FFc.dart';
+import 'package:pim/page-1/rec.dart';
+import 'package:pim/page-1/resultatQuiz.dart';
+
 import 'package:pim/page-1/teacherhome.dart';
 import 'package:pim/page-1/javabot.dart';
 import 'package:pim/page-1/performance.dart';
@@ -54,18 +56,11 @@ class SideMenu extends StatelessWidget {
                   Icons.question_answer,
                   () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Scenequizzteacher()),
+                    MaterialPageRoute(
+                        builder: (context) => Scenequizzteacher()),
                   ),
                 ),
-                _buildMenuItem(
-                  context,
-                  'Result',
-                  Icons.score,
-                  () => Navigator.push(
-                    context,
-                    MaterialPageRoute(builder: (context) => ResultQuiz()),
-                  ),
-                ),
+           
                 _buildMenuItem(
                   context,
                   'Java Compiler',
@@ -81,10 +76,11 @@ class SideMenu extends StatelessWidget {
                   Icons.show_chart,
                   () => Navigator.push(
                     context,
-                    MaterialPageRoute(builder: (context) => Performance(studentId: '65defb8f796124616d1ecdc2')),
+                    MaterialPageRoute(
+                        builder: (context) =>
+                            Performance(studentId: '65defb8f796124616d1ecdc2')),
                   ),
                 ),
-                
                 _buildMenuItem(
                   context,
                   'Add Course',
@@ -112,7 +108,16 @@ class SideMenu extends StatelessWidget {
                     MaterialPageRoute(builder: (context) => TestBlanc()),
                   ),
                 ),
-                
+                _buildMenuItem(
+                  context,
+                  'Recommandation',
+                  Icons.description,
+                  () => Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                        builder: (context) => RecommendedVideosPage()),
+                  ),
+                ),
                 _buildMenuItem(
                   context,
                   'Logout',
@@ -147,7 +152,10 @@ class SideMenu extends StatelessWidget {
             ),
             decoration: BoxDecoration(
               gradient: LinearGradient(
-                colors: [Color.fromARGB(113, 236, 131, 131), Color.fromARGB(255, 124, 23, 16)],
+                colors: [
+                  Color.fromARGB(113, 236, 131, 131),
+                  Color.fromARGB(255, 124, 23, 16)
+                ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
               ),

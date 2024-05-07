@@ -3,8 +3,6 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:pim/models/question.dart';
 
-
-
 class QAPage extends StatefulWidget {
   final Question question;
   final Function(String) onNext;
@@ -54,7 +52,8 @@ class _QAPageState extends State<QAPage> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    return Column(
+    return SingleChildScrollView(
+  child: Column(
       children: [
         Container(
           width: 411,
@@ -204,9 +203,9 @@ class _QAPageState extends State<QAPage> {
               ),
               Positioned(
                 left:
-                    50, // Ajustez les valeurs en fonction de l'emplacement souhaité
+                    30, // Ajustez les valeurs en fonction de l'emplacement souhaité
                 top:
-                    500, // Ajustez les valeurs en fonction de l'emplacement souhaité
+                    400, // Ajustez les valeurs en fonction de l'emplacement souhaité
                 child: Container(
                   width: 300,
                   // Définissez la largeur souhaitée pour le TextField
@@ -228,18 +227,19 @@ class _QAPageState extends State<QAPage> {
               ),
               Positioned(
                 left: 120,
-                top: 700,
+                top: 570,
                 child: Transform(
                   transform: Matrix4.identity()
                     ..translate(0.0, 0.0)
-                    ..rotateZ(-0.03),
+                    ..rotateZ(-0.00),
                   child: SizedBox(
                     width: 150,
-                    height: 5,
+                    height: 40,
                     child: ElevatedButton(
                       onPressed: () {
-                        widget.onNext(_controller
-                            .text); // L'appel est maintenant dans une fonction callback
+                         widget.onNext(_controller.text);
+                        
+                            // L'appel est maintenant dans une fonction callback
                       },
                       style: ElevatedButton.styleFrom(
                         primary: Color(0xFFFFF9F9), // Fond du bouton
@@ -266,10 +266,10 @@ class _QAPageState extends State<QAPage> {
                         color: const Color.fromARGB(255, 0, 0, 0))),
               ),
               Positioned(
-                left: 40,
+                left: 30,
                 top: 300,
                 child: Container(
-                  width: 316,
+                  width: 310,
                   decoration: const ShapeDecoration(
                     color: Colors.white,
                     shape: RoundedRectangleBorder(
@@ -302,6 +302,7 @@ class _QAPageState extends State<QAPage> {
           ),
         ),
       ],
+    )
     );
   }
 }

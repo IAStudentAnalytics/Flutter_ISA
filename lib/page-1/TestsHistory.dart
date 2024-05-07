@@ -16,7 +16,7 @@ class TestsHistory extends StatefulWidget {
 
 class _TestsHistoryState extends State<TestsHistory> {
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-  late Test updatedTest ;
+  late Test updatedTest;
 
   @override
   void initState() {
@@ -119,7 +119,8 @@ class _TestsHistoryState extends State<TestsHistory> {
               Expanded(
                 child: testProvider.tests.isEmpty
                     ? Center(
-                        child: CircularProgressIndicator(), // Show loading indicator
+                        child:
+                            CircularProgressIndicator(), // Show loading indicator
                       )
                     : Consumer<TestProvider>(
                         builder: (context, testProvider, child) {
@@ -128,15 +129,18 @@ class _TestsHistoryState extends State<TestsHistory> {
                             itemBuilder: (context, index) {
                               final Test test = testProvider.tests[index];
                               return Card(
-                                margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
+                                margin: EdgeInsets.symmetric(
+                                    vertical: 5, horizontal: 10),
                                 child: Row(
                                   children: [
                                     Expanded(
                                       child: GestureDetector(
                                         onTap: () async {
-                                          String uniqueCode = generateUniqueCode() ?? '';
+                                          String uniqueCode =
+                                              generateUniqueCode() ?? '';
                                           final qrImageData = await QrPainter(
-                                            data: 'Test :${test.title},Date : ${test.testDate}, Access Code : $uniqueCode',
+                                            data:
+                                                'Test :${test.title},Date : ${test.testDate}, Access Code : $uniqueCode',
                                             version: QrVersions.auto,
                                             gapless: false,
                                           ).toImageData(200);
@@ -147,22 +151,32 @@ class _TestsHistoryState extends State<TestsHistory> {
                                             builder: (context) => AlertDialog(
                                               title: Text(test.title),
                                               content: Column(
-                                                crossAxisAlignment: CrossAxisAlignment.start,
+                                                crossAxisAlignment:
+                                                    CrossAxisAlignment.start,
                                                 mainAxisSize: MainAxisSize.min,
                                                 children: [
-                                                  Text('Description: ${test.description}'),
-                                                  Text('Date: ${test.testDate.toString()}'),
-                                                  Text('Duration: ${test.duration.toString()}'),
-                                                  Text('Questions: ${test.questions.length}'),
+                                                  Text(
+                                                      'Description: ${test.description}'),
+                                                  Text(
+                                                      'Date: ${test.testDate.toString()}'),
+                                                  Text(
+                                                      'Duration: ${test.duration.toString()}'),
+                                                  Text(
+                                                      'Questions: ${test.questions.length}'),
                                                   // Add more details as needed
                                                   Padding(
-                                                    padding: EdgeInsets.symmetric(vertical: 8.0),
+                                                    padding:
+                                                        EdgeInsets.symmetric(
+                                                            vertical: 8.0),
                                                     child: Center(
                                                       child: SizedBox(
-                                                        width: 100, // Adjust the width as needed
-                                                        height: 100, // Adjust the height as needed
+                                                        width:
+                                                            100, // Adjust the width as needed
+                                                        height:
+                                                            100, // Adjust the height as needed
                                                         child: Image.memory(
-                                                            qrImageData!.buffer.asUint8List()), // Display the QR code image
+                                                            qrImageData!.buffer
+                                                                .asUint8List()), // Display the QR code image
                                                       ),
                                                     ),
                                                   ),
@@ -181,7 +195,8 @@ class _TestsHistoryState extends State<TestsHistory> {
                                         },
                                         child: ListTile(
                                           title: Text(test.title),
-                                          subtitle: Text(test.testDate.toString()),
+                                          subtitle:
+                                              Text(test.testDate.toString()),
                                         ),
                                       ),
                                     ),
@@ -193,11 +208,13 @@ class _TestsHistoryState extends State<TestsHistory> {
                                           context: context,
                                           builder: (context) => AlertDialog(
                                             title: Text('Confirm Deletion'),
-                                            content: Text('Are you sure you want to delete this test?'),
+                                            content: Text(
+                                                'Are you sure you want to delete this test?'),
                                             actions: [
                                               TextButton(
                                                 onPressed: () {
-                                                  Navigator.pop(context); // Close dialog
+                                                  Navigator.pop(
+                                                      context); // Close dialog
                                                 },
                                                 child: Text('Cancel'),
                                               ),
@@ -206,9 +223,11 @@ class _TestsHistoryState extends State<TestsHistory> {
                                                   // Perform deletion logic here
                                                   // Remove the test from the list
                                                   setState(() {
-                                                    testProvider.removeTest(test.id!);
+                                                    testProvider
+                                                        .removeTest(test.id!);
                                                   });
-                                                  Navigator.pop(context); // Close dialog
+                                                  Navigator.pop(
+                                                      context); // Close dialog
                                                 },
                                                 child: Text('Delete'),
                                               ),
@@ -226,48 +245,57 @@ class _TestsHistoryState extends State<TestsHistory> {
                                           builder: (context) => AlertDialog(
                                             title: Text('Modify Test'),
                                             content: Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               mainAxisSize: MainAxisSize.min,
                                               children: [
                                                 TextFormField(
-                                                initialValue: test.title,
-                                                decoration: InputDecoration(labelText: 'Title'),
-                                                onChanged: (value) {
-                                                  // Update the title of the selected test
-                                                  setState(() {
-                                                    updatedTest.title = value;
-                                                  });
-                                                },
-                                              ),
-                                              TextFormField(
-                                                initialValue: test.description,
-                                                decoration: InputDecoration(labelText: 'Description'),
-                                                onChanged: (value) {
-                                                  // Update the description of the selected test
-                                                  setState(() {
-                                                    updatedTest.description = value;
-                                                  });
-                                                },
-                                              ),
-                                              SizedBox(width: 10),
-                                              Row(
-                                                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                                children: [
-                                                  ElevatedButton(
-                                                    onPressed: () {
+                                                  initialValue: test.title,
+                                                  decoration: InputDecoration(
+                                                      labelText: 'Title'),
+                                                  onChanged: (value) {
+                                                    // Update the title of the selected test
+                                                    setState(() {
+                                                      updatedTest.title = value;
+                                                    });
+                                                  },
+                                                ),
+                                                TextFormField(
+                                                  initialValue:
+                                                      test.description,
+                                                  decoration: InputDecoration(
+                                                      labelText: 'Description'),
+                                                  onChanged: (value) {
+                                                    // Update the description of the selected test
+                                                    setState(() {
+                                                      updatedTest.description =
+                                                          value;
+                                                    });
+                                                  },
+                                                ),
+                                                SizedBox(width: 10),
+                                                Row(
+                                                  mainAxisAlignment:
+                                                      MainAxisAlignment
+                                                          .spaceBetween,
+                                                  children: [
+                                                    ElevatedButton(
+                                                      onPressed: () {
                                                         Navigator.pop(context);
                                                       },
-                                                    child: Text('Save'),
-                                                  ),
-                                                  SizedBox(width: 2), // Add padding between the buttons
-                                                  ElevatedButton(
-                                                    onPressed: () {
-                                                      Navigator.pop(context);
-                                                    },
-                                                    child: Text('Cancel'),
-                                                  ),
-                                                ],
-                                              )
+                                                      child: Text('Save'),
+                                                    ),
+                                                    SizedBox(
+                                                        width:
+                                                            2), // Add padding between the buttons
+                                                    ElevatedButton(
+                                                      onPressed: () {
+                                                        Navigator.pop(context);
+                                                      },
+                                                      child: Text('Cancel'),
+                                                    ),
+                                                  ],
+                                                )
                                               ],
                                             ),
                                           ),

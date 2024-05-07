@@ -92,7 +92,8 @@ class _QuizState extends State<Quiz> {
   Widget build(BuildContext context) {
     double screenWidth = MediaQuery.of(context).size.width;
     double screenHeight = MediaQuery.of(context).size.height;
-    return Column(
+return SingleChildScrollView(
+  child: Column(
       children: [
         Container(
           
@@ -221,8 +222,8 @@ class _QuizState extends State<Quiz> {
                 ),
               ),
               Positioned(
-                left: 40,
-                top: 300,
+                left: 28,
+                top: screenHeight*0.35,
                 child: Container(
                   width: 316,
                   decoration: const ShapeDecoration(
@@ -265,7 +266,7 @@ class _QuizState extends State<Quiz> {
               ),
               Positioned(
                 left: 40,
-                top: 400,
+                top: screenHeight * 0.45,
                 child: SizedBox(
                   width: 316,
                   child: Column(
@@ -278,7 +279,7 @@ class _QuizState extends State<Quiz> {
               ),
                 Positioned(
                 left: 120,
-                top: 650,
+                top: screenHeight*0.8,
                 child: Transform(
                   transform: Matrix4.identity()
                     ..translate(0.0, 0.0)
@@ -308,6 +309,7 @@ class _QuizState extends State<Quiz> {
           ),
         ),
       ],
-    );
+    ),
+);
   }
 }

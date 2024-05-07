@@ -21,7 +21,7 @@ class Scene1 extends StatelessWidget {
       return;
     }
 
-    final String apiUrl = 'http://192.168.1.54:5000/api/user/login';
+    final String apiUrl = 'http://172.16.1.188:5000/api/user/login';
 
     try {
       final response = await http.post(
