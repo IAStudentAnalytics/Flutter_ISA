@@ -27,8 +27,8 @@ class _ProfilePageState extends State<ProfilePage> {
       final Map<String, dynamic> data = json.decode(userDataString);
       setState(() {
         user = data['user'];
-        apiUrl = data['message'].contains('teacher') ? 
-          'http://192.168.1.19:5000/api/teachers/${user?['_id']}' : 
+        apiUrl = data['message'].contains('teacher') ?
+          'http://192.168.1.19:5000/api/teachers/${user?['_id']}' :
           'http://192.168.1.19:5000/api/students/${user?['_id']}';
       });
     }
@@ -40,16 +40,22 @@ class _ProfilePageState extends State<ProfilePage> {
       isScrollControlled: true,
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
-        return Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.only(
-              topLeft: Radius.circular(25),
-              topRight: Radius.circular(25)
-            )
-          ),
-          padding: EdgeInsets.all(20),
-          child: SingleChildScrollView(
+        return AnimatedPadding(
+         // padding: MediaQuery.of(context).viewInsets.add(EdgeInsets.symmetric(horizontal: 20, vertical: 24)),
+          duration: Duration(milliseconds: 100),
+           padding: EdgeInsets.only(
+          left: 20,
+          right: 20,
+          top: 20,
+          // Adjust the bottom padding based on the keyboard's presence
+          bottom: MediaQuery.of(context).viewInsets.bottom + 30
+        ),
+          curve: Curves.easeOut,
+          child: Container(
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20),
+            ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: <Widget>[
@@ -60,9 +66,9 @@ class _ProfilePageState extends State<ProfilePage> {
                     _saveUpdatedProfile();
                     Navigator.pop(context);
                   },
-                  child: isUpdating ? CircularProgressIndicator(color: Color.fromARGB(255, 248, 247, 247)) : Text('Save Changes'),
+                  child: isUpdating ? CircularProgressIndicator(color: const Color.fromARGB(255, 5, 5, 5)) : Text('Save Changes'),
                   style: ElevatedButton.styleFrom(
-                    primary: Color.fromARGB(255, 51, 21, 21),
+                    primary: Color.fromARGB(155, 30, 125, 226),
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(30)
                     ),
@@ -74,6 +80,40 @@ class _ProfilePageState extends State<ProfilePage> {
           ),
         );
       }
+    );
+  }
+
+  void _showInformationDialog() {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+          elevation: 16,
+          child: Container(
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: <Widget>[
+                Text(
+                  "About the App",
+                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+                ),
+                SizedBox(height: 20),
+                Text(
+                  "An educational platform for teachers and students to manage resources, tests, and performance. Teachers create tests and manage students, while students access study materials, take tests, and track progress.",
+                  style: TextStyle(fontSize: 16),
+                ),
+                SizedBox(height: 20),
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text("Close", style: TextStyle(color: Colors.redAccent)),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 
@@ -141,7 +181,7 @@ class _ProfilePageState extends State<ProfilePage> {
     return Scaffold(
       appBar: AppBar(
         title: Text("Profile", style: Theme.of(context).textTheme.headline6),
-        backgroundColor: Color.fromARGB(255, 153, 40, 40),
+        backgroundColor: Color.fromARGB(255, 95, 27, 27),
       ),
       body: SingleChildScrollView(
         child: Container(
@@ -161,7 +201,20 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () => _updateProfile(context),
                 child: Text('Edit Profile'),
                 style: ElevatedButton.styleFrom(
-                  primary: Color.fromARGB(255, 139, 32, 32), // background
+                  primary: Color.fromARGB(255, 163, 42, 42), // background
+                  onPrimary: Colors.white, // foreground
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(30)
+                  ),
+                  padding: EdgeInsets.symmetric(horizontal: 45, vertical: 25)
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _showInformationDialog,
+                child: Text('Information'),
+                style: ElevatedButton.styleFrom(
+                  primary: Colors.blueGrey, // background
                   onPrimary: Colors.white, // foreground
                   shape: RoundedRectangleBorder(
                     borderRadius: BorderRadius.circular(30)
