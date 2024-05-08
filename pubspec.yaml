@@ -58,6 +58,7 @@ dependencies:
   universal_html: ^2.0.8
   line_awesome_flutter: ^2.0.0
   get: ^4.6.6
+  permission_handler: ^11.3.1
   
 dev_dependencies:
   flutter_launcher_icons: ^0.13.1

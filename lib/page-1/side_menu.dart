@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:io'; // Ajoutez cette ligne
+
 import 'package:flutter/material.dart';
 import 'package:pim/page-1/teacherhome.dart';
 import 'package:pim/page-1/javabot.dart';
@@ -9,7 +12,6 @@ import 'package:pim/page-1/testblanc.dart';
 import 'package:pim/page-1/login.dart';
 import 'package:pim/page-1/Studenthome.dart';
 import 'package:pim/page-1/Profile_page.dart';
-import 'dart:convert';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class SideMenu extends StatefulWidget {
@@ -20,7 +22,7 @@ class SideMenu extends StatefulWidget {
 }
 
 class _SideMenuState extends State<SideMenu> {
-  late List<Widget> menuItems;
+  late List<Widget> menuItems = [];
 
   @override
   void initState() {
@@ -33,13 +35,10 @@ class _SideMenuState extends State<SideMenu> {
     final String? userDataString = prefs.getString('userData');
     if (userDataString != null) {
       final userData = json.decode(userDataString);
-      String role = userData['message'].contains('teacher') ? 'teacher' : 'student';
+      final message = userData['message'];
+      String role = message != null && message.contains('teacher') ? 'teacher' : 'student';
       setState(() {
         menuItems = _buildMenuItems(context, role);
-      });
-    } else {
-      setState(() {
-        menuItems = [];
       });
     }
   }
@@ -170,15 +169,6 @@ class _SideMenuState extends State<SideMenu> {
       ),
     );
   }
-  Future<Map<String, dynamic>> _getUserDataFromSharedPreferences() async {
-  final SharedPreferences prefs = await SharedPreferences.getInstance();
-  final String? userDataString = prefs.getString('userData');
-  if (userDataString != null) {
-    return json.decode(userDataString);
-  }
-  return {};
-}
-
 
   Widget _buildProfileHeader(BuildContext context) {
     return FutureBuilder<Map<String, dynamic>>(
@@ -192,11 +182,17 @@ class _SideMenuState extends State<SideMenu> {
           final userData = snapshot.data;
           final userName = userData?['user']?['firstName'] ?? 'Guest';
           final userEmail = userData?['user']?['email'] ?? 'user@example.com';
+          final profileImagePath = userData?['user']?['profileImage'];
+
+          // Modification ici pour charger l'image depuis le chemin du fichier
+          final profileImage = File(profileImagePath ?? '');
+
           return UserAccountsDrawerHeader(
             accountName: Text("Welcome, $userName!"),
             accountEmail: Text(userEmail),
             currentAccountPicture: CircleAvatar(
-              child: Icon(Icons.person),
+              backgroundImage: profileImagePath != null ? FileImage(profileImage) : null,
+              child: profileImagePath == null ? Icon(Icons.person) : null,
             ),
             decoration: BoxDecoration(
               gradient: LinearGradient(
@@ -215,5 +211,14 @@ class _SideMenuState extends State<SideMenu> {
         }
       },
     );
+  }
+
+  Future<Map<String, dynamic>> _getUserDataFromSharedPreferences() async {
+    final SharedPreferences prefs = await SharedPreferences.getInstance();
+    final String? userDataString = prefs.getString('userData');
+    if (userDataString != null) {
+      return json.decode(userDataString);
+    }
+    return {};
   }
 }

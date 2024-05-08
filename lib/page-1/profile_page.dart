@@ -1,6 +1,12 @@
+import 'dart:async';
 import 'dart:convert';
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:image_picker/image_picker.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfilePage extends StatefulWidget {
@@ -13,6 +19,7 @@ class _ProfilePageState extends State<ProfilePage> {
   Map<String, dynamic>? user;
   String? apiUrl;
   bool isUpdating = false;
+  File? _image;
 
   @override
   void initState() {
@@ -27,9 +34,9 @@ class _ProfilePageState extends State<ProfilePage> {
       final Map<String, dynamic> data = json.decode(userDataString);
       setState(() {
         user = data['user'];
-        apiUrl = data['message'].contains('teacher') ?
-          'http://192.168.1.19:5000/api/teachers/${user?['_id']}' :
-          'http://192.168.1.19:5000/api/students/${user?['_id']}';
+        apiUrl = data['message'].contains('teacher')
+            ? 'http://192.168.1.19:5000/api/teachers/${user?['_id']}'
+            : 'http://192.168.1.19:5000/api/students/${user?['_id']}';
       });
     }
   }
@@ -41,15 +48,12 @@ class _ProfilePageState extends State<ProfilePage> {
       backgroundColor: Colors.transparent,
       builder: (BuildContext context) {
         return AnimatedPadding(
-         // padding: MediaQuery.of(context).viewInsets.add(EdgeInsets.symmetric(horizontal: 20, vertical: 24)),
           duration: Duration(milliseconds: 100),
-           padding: EdgeInsets.only(
-          left: 20,
-          right: 20,
-          top: 20,
-          // Adjust the bottom padding based on the keyboard's presence
-          bottom: MediaQuery.of(context).viewInsets.bottom + 30
-        ),
+          padding: EdgeInsets.only(
+              left: 20,
+              right: 20,
+              top: 20,
+              bottom: MediaQuery.of(context).viewInsets.bottom + 30),
           curve: Curves.easeOut,
           child: Container(
             decoration: BoxDecoration(
@@ -66,20 +70,22 @@ class _ProfilePageState extends State<ProfilePage> {
                     _saveUpdatedProfile();
                     Navigator.pop(context);
                   },
-                  child: isUpdating ? CircularProgressIndicator(color: const Color.fromARGB(255, 5, 5, 5)) : Text('Save Changes'),
+                  child: isUpdating
+                      ? CircularProgressIndicator(
+                          color: const Color.fromARGB(255, 5, 5, 5))
+                      : Text('Save Changes'),
                   style: ElevatedButton.styleFrom(
-                    primary: Color.fromARGB(155, 30, 125, 226),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(30)
-                    ),
-                    padding: EdgeInsets.symmetric(horizontal: 50, vertical: 12)
-                  ),
+                      primary: Color.fromARGB(155, 30, 125, 226),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(30)),
+                      padding:
+                          EdgeInsets.symmetric(horizontal: 50, vertical: 12)),
                 )
               ],
             ),
           ),
         );
-      }
+      },
     );
   }
 
@@ -132,7 +138,8 @@ class _ProfilePageState extends State<ProfilePage> {
     ];
   }
 
-  Widget _buildTextField(String label, String? value, {bool isPassword = false, bool isNumber = false, bool isReadOnly = false}) {
+  Widget _buildTextField(String label, String? value,
+      {bool isPassword = false, bool isNumber = false, bool isReadOnly = false}) {
     return TextField(
       controller: TextEditingController(text: value),
       decoration: InputDecoration(
@@ -147,7 +154,7 @@ class _ProfilePageState extends State<ProfilePage> {
     );
   }
 
-  void _saveUpdatedProfile() async {
+  Future<void> _saveUpdatedProfile() async {
     setState(() {
       isUpdating = true;
     });
@@ -162,18 +169,72 @@ class _ProfilePageState extends State<ProfilePage> {
         setState(() {
           user = json.decode(response.body);
           prefs.setString('userData', jsonEncode({'user': user}));
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Profile successfully updated')));
+          ScaffoldMessenger.of(context)
+              .showSnackBar(SnackBar(content: Text('Profile successfully updated')));
         });
       } else {
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Failed to update profile')));
+        ScaffoldMessenger.of(context)
+            .showSnackBar(SnackBar(content: Text('Failed to update profile')));
       }
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text('Error updating profile: $e')));
+      ScaffoldMessenger.of(context)
+          .showSnackBar(SnackBar(content: Text('Error updating profile: $e')));
     } finally {
       setState(() {
         isUpdating = false;
       });
     }
+  }
+
+  Future<void> _getImage() async {
+    final status = await Permission.storage.request();
+    if (status.isGranted) {
+      final image = await ImagePicker().getImage(source: ImageSource.gallery);
+      setState(() {
+        if (image != null) {
+          _image = File(image.path);
+        } else {
+          print('No image selected.');
+        }
+      });
+    } else {
+      print('Permission denied');
+    }
+  }
+
+  Future<void> _saveImageLocally() async {
+    final directory = await getApplicationDocumentsDirectory();
+    final imageFile = File('${directory.path}/profile.png');
+    await imageFile.writeAsBytes(_image!.readAsBytesSync());
+
+    setState(() {
+      user?['profileImage'] = imageFile.path;
+    });
+
+    prefs.setString('userData', jsonEncode({'user': user}));
+
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text('Profile picture saved')));
+  }
+
+  Widget _buildProfileImage() {
+    final String? profileImagePath = user?['profileImage'];
+
+    if (profileImagePath != null && File(profileImagePath).existsSync()) {
+      return CircleAvatar(
+        backgroundImage: FileImage(File(profileImagePath)),
+        radius: 80,
+      );
+    }
+
+    return GestureDetector(
+      onTap: _getImage,
+      child: CircleAvatar(
+        child: _image != null ? null : Icon(Icons.add),
+        backgroundImage: _image != null ? FileImage(_image!) : null,
+        radius: 80,
+      ),
+    );
   }
 
   @override
@@ -189,10 +250,7 @@ class _ProfilePageState extends State<ProfilePage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              CircleAvatar(
-                backgroundImage: NetworkImage(user?['avatarUrl'] ?? "https://avatars.dicebear.com/api/male/guest.svg"),
-                radius: 80,
-              ),
+              _buildProfileImage(),
               SizedBox(height: 20),
               Text("Hello, ${user?['firstName'] ?? 'Guest'}!", style: Theme.of(context).textTheme.headline5),
               Text(user?['email'] ?? '', style: Theme.of(context).textTheme.bodyText1),
@@ -201,26 +259,25 @@ class _ProfilePageState extends State<ProfilePage> {
                 onPressed: () => _updateProfile(context),
                 child: Text('Edit Profile'),
                 style: ElevatedButton.styleFrom(
-                  primary: Color.fromARGB(255, 163, 42, 42), // background
-                  onPrimary: Colors.white, // foreground
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 45, vertical: 25)
-                ),
+                    primary: Color.fromARGB(255, 163, 42, 42),
+                    onPrimary: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    padding: EdgeInsets.symmetric(horizontal: 45, vertical: 25)),
               ),
               SizedBox(height: 20),
               ElevatedButton(
                 onPressed: _showInformationDialog,
                 child: Text('Information'),
                 style: ElevatedButton.styleFrom(
-                  primary: Colors.blueGrey, // background
-                  onPrimary: Colors.white, // foreground
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(30)
-                  ),
-                  padding: EdgeInsets.symmetric(horizontal: 45, vertical: 25)
-                ),
+                    primary: Colors.blueGrey,
+                    onPrimary: Colors.white,
+                    shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
+                    padding: EdgeInsets.symmetric(horizontal: 45, vertical: 25)),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: _saveImageLocally,
+                child: Text('Save Image'),
               ),
             ],
           ),
