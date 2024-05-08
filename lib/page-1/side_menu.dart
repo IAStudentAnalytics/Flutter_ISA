@@ -1,5 +1,5 @@
 import 'dart:convert';
-import 'dart:io'; // Ajoutez cette ligne
+import 'dart:io';
 
 import 'package:flutter/material.dart';
 import 'package:pim/page-1/teacherhome.dart';
@@ -136,23 +136,24 @@ class _SideMenuState extends State<SideMenu> {
     );
   }
 
-  void logout(BuildContext context) async {
+   void logout(BuildContext context) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
-    await prefs.clear();
+    await prefs.clear();  // Effacer toutes les données SharedPreferences
 
+    // Naviguer vers la page de connexion et supprimer toutes les routes précédentes
     Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => Scene1()),
+      MaterialPageRoute(builder: (context) => Scene1()), 
       (Route<dynamic> route) => false,
     );
   }
 
   void _navigateToHome(BuildContext context) {
+    // Naviguer vers la page d'accueil
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(builder: (_) => Scene1()),
     );
   }
-
   @override
   Widget build(BuildContext context) {
     return Drawer(

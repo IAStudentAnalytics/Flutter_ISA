@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'dart:convert';
 import 'package:http/http.dart' as http;
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:fl_chart/fl_chart.dart';
 import 'side_menu.dart';
+import 'package:fl_chart/fl_chart.dart';
 
 class Sceneteacherhome extends StatefulWidget {
   @override
@@ -12,6 +12,7 @@ class Sceneteacherhome extends StatefulWidget {
 
 class _SceneteacherhomeState extends State<Sceneteacherhome> {
   Map<String, dynamic>? userData;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<void> _getUserDataFromSharedPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -46,6 +47,7 @@ class _SceneteacherhomeState extends State<Sceneteacherhome> {
     final double fem = screenWidth / 411;
 
     return Scaffold(
+      key: _scaffoldKey,
       body: SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: screenHeight),
@@ -87,7 +89,8 @@ class _SceneteacherhomeState extends State<Sceneteacherhome> {
                                     IconButton(
                                       icon: Icon(Icons.menu, color: Colors.white),
                                       onPressed: () {
-                                        Scaffold.of(context).openDrawer();
+                                        // Open the side menu
+                                        _scaffoldKey.currentState!.openDrawer();
                                       },
                                     ),
                                     Text(
@@ -98,7 +101,7 @@ class _SceneteacherhomeState extends State<Sceneteacherhome> {
                                         color: Colors.white,
                                       ),
                                     ),
-                                    SizedBox(width: 40),
+                                    SizedBox(width: 40), // Placeholder for the menu icon
                                   ],
                                 ),
                               ),
@@ -165,73 +168,45 @@ class _SceneteacherhomeState extends State<Sceneteacherhome> {
     );
   }
 
-  Widget buildStatSection(BuildContext context, Map<String, dynamic>? scores, double fem) {
-  if (scores == null || scores.isEmpty) {
-    // Return a placeholder or message if scores are empty or null
-    return Center(
-      child: Text("No data available for display", style: TextStyle(fontSize: 16 * fem)),
-    );
-  }
+  Widget buildStatSection(BuildContext context, Map<String, dynamic> scores, double fem) {
+    List<PieChartSectionData> sections = [];
+    int index = 0;
+    List<Color> colors = [Colors.red, Colors.green, Colors.blue, Colors.yellow, Colors.purple]; // Example colors
 
-  double totalScore = scores.values.fold(0.0, (sum, score) => sum + (score ?? 0.0));
-  List<PieChartSectionData> sections = [];
-  int index = 0;
-  List<Color> colors = [Colors.red, Colors.green, Colors.blue, Colors.yellow, Colors.purple];
-
-  if (totalScore == 0) {
-    // Even if total score is zero, we display all chapters with 0%
-    scores.forEach((key, _) {
-      sections.add(PieChartSectionData(
-        color: colors[index % colors.length],
-        value: 100 / scores.length, // Distribute space equally
-        title: '$key\n0%',
-        radius: 100,
-        titlePositionPercentageOffset: 0.55,
-        titleStyle: TextStyle(
-          fontSize: 14 * fem,
-          fontWeight: FontWeight.bold,
-          color: Colors.white,
-          backgroundColor: colors[index % colors.length],
-        ),
-      ));
-      index++;
-    });
-  } else {
     scores.forEach((key, value) {
-      double percentage = (value / totalScore) * 100;
       sections.add(PieChartSectionData(
         color: colors[index % colors.length],
-        value: percentage,
-        title: '$key\n${percentage.toStringAsFixed(1)}%',
+        value: value.toDouble(),
+        title: '$key\n${value.toStringAsFixed(1)}%',
         radius: 100,
         titlePositionPercentageOffset: 0.55,
         titleStyle: TextStyle(
           fontSize: 14 * fem,
           fontWeight: FontWeight.bold,
           color: Colors.white,
-          backgroundColor: colors[index % colors.length],
+          backgroundColor: colors[index % colors.length]
         ),
       ));
       index++;
     });
-  }
 
-  return Padding(
-    padding: EdgeInsets.all(16 * fem),
-    child: PieChart(
-      PieChartData(
-        sections: sections,
-        centerSpaceRadius: 60,
-        sectionsSpace: 0,
-        pieTouchData: PieTouchData(
-          touchCallback: (FlTouchEvent event, PieTouchResponse? response) {
-            if (response != null && response.touchedSection != null) {
-              print("Touched section index: ${response.touchedSection!.touchedSectionIndex}");
-            }
-          },
+    return Padding(
+      padding: EdgeInsets.all(16 * fem),
+      child: PieChart(
+        PieChartData(
+          sections: sections,
+          centerSpaceRadius: 60,
+          sectionsSpace: 0,
+          pieTouchData: PieTouchData(
+            touchCallback: (FlTouchEvent event, PieTouchResponse? response) {
+              // Here you can handle the touch event
+              if (response != null && response.touchedSection != null) {
+                print("Touched section index: ${response.touchedSection!.touchedSectionIndex}");
+              }
+            },
+          ),
         ),
       ),
-    ),
-  );
-}
+    );
+  }
 }
