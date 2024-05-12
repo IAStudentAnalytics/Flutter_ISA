@@ -5,6 +5,7 @@ class Test {
   late final String description;
   final DateTime testDate;
   final int duration;
+  final String studentsClass;
 
   Test({
     this.id,
@@ -13,6 +14,7 @@ class Test {
     required this.description,
     required this.testDate,
     required this.duration,
+    required this.studentsClass,
   });
 
   factory Test.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Test {
       description: json['description'],
       testDate: DateTime.parse(json['testDate']),
       duration: json['duration'],
+      studentsClass: json['studentsClass']
     );
   }
 
@@ -34,6 +37,7 @@ class Test {
       'description': description,
       'testDate': testDate.toIso8601String(),
       'duration': duration,
+      'studentsClass': studentsClass,
     };
   }
 }
@@ -47,7 +51,6 @@ class Question {
   final List<String>? options;
   final String? chapitre;
   final String type;
-  final String? image;
 
   Question({
     this.id,
@@ -58,7 +61,6 @@ class Question {
     this.options,
     this.chapitre,
     required this.type,
-    this.image,
   });
 
   factory Question.fromJson(Map<String, dynamic> json) {
@@ -71,7 +73,6 @@ class Question {
       options: List<String>.from(json['options']),
       chapitre: json['chapitre'],
       type: json['type'],
-      image: json['image'],
     );
   }
 
@@ -85,7 +86,6 @@ class Question {
       'options': options,
       'chapitre': chapitre,
       'type': type,
-      'image': image,
     };
   }
 }

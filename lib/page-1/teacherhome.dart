@@ -12,6 +12,7 @@ class Sceneteacherhome extends StatefulWidget {
 
 class _SceneteacherhomeState extends State<Sceneteacherhome> {
   Map<String, dynamic>? userData;
+  GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
 
   Future<void> _getUserDataFromSharedPreferences() async {
     final SharedPreferences prefs = await SharedPreferences.getInstance();
@@ -24,7 +25,7 @@ class _SceneteacherhomeState extends State<Sceneteacherhome> {
   }
 
   Future<Map<String, dynamic>> _getAllScoresByChapter() async {
-    final apiUrl = 'http://172.16.1.188:5000/note/all-scores';
+    final apiUrl = 'http://192.168.115.51:5000/note/all-scores';
     final response = await http.get(Uri.parse(apiUrl));
     if (response.statusCode == 200 && response.body.isNotEmpty) {
       return json.decode(response.body);
@@ -46,6 +47,7 @@ class _SceneteacherhomeState extends State<Sceneteacherhome> {
     final double fem = screenWidth / 411;
 
     return Scaffold(
+      key: _scaffoldKey,
       body: SingleChildScrollView(
         child: ConstrainedBox(
           constraints: BoxConstraints(minHeight: screenHeight),
@@ -88,7 +90,7 @@ class _SceneteacherhomeState extends State<Sceneteacherhome> {
                                       icon: Icon(Icons.menu, color: Colors.white),
                                       onPressed: () {
                                         // Open the side menu
-                                        Scaffold.of(context).openDrawer();
+                                        _scaffoldKey.currentState!.openDrawer();
                                       },
                                     ),
                                     Text(

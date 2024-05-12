@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pim/apiConstants.dart';
 import 'dart:convert';
 
 import 'package:pim/page-1/performance.dart';
@@ -27,7 +28,7 @@ class _ResultQuizState extends State<ResultQuiz> {
 
   Future<String> fetchTotalScore() async {
     var url = Uri.parse(
-        'http://172.16.1.188:5000/note/totales/${widget.testId}/${widget.studentId}');
+        '${APIConstants.baseURL}/note/totales/${widget.testId}/${widget.studentId}');
 
     try {
       var response = await http.get(url);

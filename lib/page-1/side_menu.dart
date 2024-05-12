@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pim/page-1/logout.dart';
 import 'package:pim/page-1/teacherhome.dart';
 import 'package:pim/page-1/javabot.dart';
 import 'package:pim/page-1/compilateur.dart';
@@ -49,8 +50,11 @@ class _SideMenuState extends State<SideMenu> {
       _buildMenuItem(
         context,
         'Home',
-        Icons.home,
-        () => _navigateToHome(context),
+       Icons.code,
+        () => Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => Sceneteacherhome()),
+        ),
       ),
       _buildMenuItem(
         context,
@@ -141,9 +145,9 @@ class _SideMenuState extends State<SideMenu> {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     await prefs.clear();
 
-    Navigator.of(context).pushAndRemoveUntil(
-      MaterialPageRoute(builder: (context) => Scene1()),
-      (Route<dynamic> route) => false,
+    Navigator.pushReplacement(
+      context,
+      MaterialPageRoute(builder: (_) => Scene2()),
     );
   }
 

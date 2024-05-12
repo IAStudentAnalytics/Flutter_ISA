@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'dart:math' as math;
 import 'package:fl_chart/fl_chart.dart'; // Importer le package fl_chart
+import 'package:pim/apiConstants.dart';
 import 'package:pim/models/question.dart';
 
 import 'package:pim/page-1/resultatQuiz.dart';
@@ -43,7 +44,7 @@ class TestInfo {
 
 Future<List<TestInfo>> getAllTests() async {
   final response =
-      await http.get(Uri.parse('http://172.16.1.188:5000/test/getAllTests'));
+      await http.get(Uri.parse('${APIConstants.baseURL}/test/getAllTests'));
   print('Response body: ${response.body}');
 
   if (response.statusCode == 200) {
@@ -56,7 +57,7 @@ Future<List<TestInfo>> getAllTests() async {
 
 Future<List<Question>> getQuestionsByTestId(String? testId) async {
   final response =
-      await http.get(Uri.parse('http://172.16.1.188:5000/test/tests/$testId/'));
+      await http.get(Uri.parse('${APIConstants.baseURL}/test/tests/$testId/'));
 
   if (response.statusCode == 200) {
     // Convertir la réponse en JSON et extraire les questions.

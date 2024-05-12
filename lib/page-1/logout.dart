@@ -1,20 +1,15 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pim/apiConstants.dart';
 import 'package:pim/page-1/Studenthome.dart';
 import 'package:pim/page-1/onbording.dart';
 import 'package:pim/page-1/teacherhome.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Scene1 extends StatefulWidget {
-  @override
-  _Scene1State createState() => _Scene1State();
-}
-
-class _Scene1State extends State<Scene1> {
+class Scene2 extends StatelessWidget {
   final TextEditingController emailController = TextEditingController();
   final TextEditingController passwordController = TextEditingController();
-  bool _isPasswordVisible = false;
 
   Future<void> login(BuildContext context) async {
     final String email = emailController.text.trim();
@@ -27,7 +22,7 @@ class _Scene1State extends State<Scene1> {
       return;
     }
 
-    final String apiUrl = 'http://192.168.115.51:5000/api/user/login';
+    final String apiUrl = '${APIConstants.baseURL}/api/user/login';
 
     try {
       final response = await http.post(
@@ -50,7 +45,7 @@ class _Scene1State extends State<Scene1> {
         } else if (userData['message'].contains('student')) {
           Navigator.pushReplacement(
             context,
-            MaterialPageRoute(builder: (_) => SceneStudentHome(email: '')),
+            MaterialPageRoute(builder: (_) => SceneStudentHome(email: '',)),
           );
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
@@ -68,7 +63,7 @@ class _Scene1State extends State<Scene1> {
       ));
     }
   }
-
+ 
   @override
   Widget build(BuildContext context) {
     double baseWidth = 360;
@@ -117,7 +112,7 @@ class _Scene1State extends State<Scene1> {
                             ),
                           ),
                           child: TextField(
-                            obscureText: !_isPasswordVisible,
+                            obscureText: true,
                             controller: passwordController,
                             decoration: InputDecoration(
                               border: InputBorder.none,
@@ -237,21 +232,6 @@ class _Scene1State extends State<Scene1> {
                             height: 40 * fem,
                           ),
                         ),
-                      ),
-                    ),
-                  ),
-                  Positioned(
-                    right: 30 * fem,
-                    top: 60 * fem,
-                    child: IconButton(
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
-                      icon: Icon(
-                        _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
-                        color: Color(0xff475569),
                       ),
                     ),
                   ),

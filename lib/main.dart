@@ -4,6 +4,7 @@
   import 'package:google_fonts/google_fonts.dart';
   import 'package:pim/page-1/CreateQuestionPage.dart';
   import 'package:pim/page-1/CreateTestPage.dart';
+import 'package:pim/page-1/StudentsListPage.dart';
   import 'package:pim/page-1/TestsHistory.dart';
   import 'package:pim/page-1/information_page.dart';
   import 'package:pim/page-1/profile_page.dart';
@@ -59,8 +60,8 @@
           primarySwatch: Colors.blue,
         ),
     routes: {
-          '/create_test': (context) => CreateQuestionPage( onSubmitQuestions: (questions) {  },
-                      ),
+          '/create_test': (context) => CreateQuestionPage( onSubmitQuestions: (questions) {  },),
+          '/list_students': (context) => StudentsListPage(),
           '/tests_history': (context) => TestsHistory(tests: [], onMenuItemClicked: (int ) {  },),
           '/profile': (context) => ProfilePage(),
             '/update_profile': (context) => UpdateProfilePage(),

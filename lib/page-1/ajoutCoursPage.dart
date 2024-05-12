@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:pim/page-1/coursPage.dart';
 import 'package:pim/services/coursRecService.dart';
 import 'package:file_picker/file_picker.dart';
+import 'side_menu.dart';
 
 class AjoutCoursPage extends StatefulWidget {
   @override
@@ -134,6 +135,17 @@ class _AjoutCoursPageState extends State<AjoutCoursPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+   appBar: AppBar(
+        leading: Builder(
+          builder: (context) => IconButton(
+            icon: Icon(Icons.menu),
+            onPressed: () => Scaffold.of(context).openDrawer(),
+          ),
+        ),
+        title: Text('AddCours'),
+      ),
+      drawer: SideMenu(onMenuItemClicked: (int) {}),
+     
       body: Stack(
         children: [
           Container(
@@ -160,8 +172,8 @@ class _AjoutCoursPageState extends State<AjoutCoursPage> {
               children: [
                 Padding(
                   padding: EdgeInsets.fromLTRB(
-                    MediaQuery.of(context).size.width > 600 ? 400.0 : 70.0,
-                    MediaQuery.of(context).size.width > 600 ? 150.0 : 70.0,
+                    MediaQuery.of(context).size.width > 600 ? 430.0 : 120.0,
+                    MediaQuery.of(context).size.width > 600 ? 150.0 : 90.0,
                     0.0,
                     0.0,
                   ),
@@ -189,8 +201,8 @@ class _AjoutCoursPageState extends State<AjoutCoursPage> {
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width > 600
-                          ? 410.0
-                          : 60.0),
+                          ? 420.0
+                          : 70.0),
                   child: DropdownButton<String>(
                     value: _selectedChapter,
                     hint: Text(
@@ -243,12 +255,12 @@ class _AjoutCoursPageState extends State<AjoutCoursPage> {
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width > 600
-                          ? 410.0
-                          : 100.0),
+                          ? 450.0
+                          : 125.0),
                   child: ElevatedButton(
                     onPressed: _pickPDF,
                     child: Text(
-                      'Select a PDF',
+                      'Select PDF',
                       style: MediaQuery.of(context).size.width < 600
                           ? TextStyle(
                               fontSize: MediaQuery.of(context).size.width / 30)
@@ -275,21 +287,16 @@ class _AjoutCoursPageState extends State<AjoutCoursPage> {
                 Padding(
                   padding: EdgeInsets.symmetric(
                       horizontal: MediaQuery.of(context).size.width > 600
-                          ? 430.0
+                          ? 450.0
                           : 130.0),
                   child: ElevatedButton(
                     onPressed: _ajouterCours,
                     child: Text(
-                      'Add Course',
+                      'Add Cours',
                       style: MediaQuery.of(context).size.width < 600
                           ? TextStyle(
-                              fontSize: MediaQuery.of(context).size.width / 40,
-                              fontWeight: FontWeight.bold,
-                            )
-                          : TextStyle(
-                              fontSize: 20,
-                              fontWeight: FontWeight.bold,
-                            ),
+                              fontSize: MediaQuery.of(context).size.width / 33)
+                          : TextStyle(fontSize: 20),
                     ),
                   ),
                 ),
@@ -302,436 +309,3 @@ class _AjoutCoursPageState extends State<AjoutCoursPage> {
   }
 }
 
-
-  /*
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Container(
-        decoration: BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color.fromARGB(255, 157, 14, 14),
-              Color.fromARGB(255, 157, 14, 14),
-            ],
-            stops: [0, 1],
-          ),
-          image: DecorationImage(
-            image: AssetImage('assets/bajoutt.png'),
-            fit: BoxFit.cover,
-          ),
-        ),
-        child: Padding(
-          padding: EdgeInsets.all(0.0), // Aucun décalage
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start, // Aligner le contenu à gauche
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width > 600 ? 400.0 : 70.0, // Décalage horizontal
-                  MediaQuery.of(context).size.width > 600 ? 150.0 : 70.0, // Décalage vertical
-                  0.0, // Pas de décalage horizontal
-                  0.0, // Pas de décalage vertical
-                ),
-                child: Text(
-                  'Ajouter votre cours',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                    color: Colors.white, // Couleur du texte en blanc pour contraste
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 430.0 : 130.0),
-                child: Image.asset(
-                  'assets/ok.png',
-                  width: 150,
-                ),
-              ),
-              SizedBox(height: 40),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 410.0 : 80.0),
-                child: DropdownButton<String>(
-                  value: _selectedChapter,
-                  hint: Text(
-                    'Choisir un chapitre',
-                    style: TextStyle(color: Colors.white), // Couleur du texte en blanc pour contraste
-                  ),
-                  items: [
-                    "Les classes et les objets",
-                    "L'héritage",
-                    "Le polymorphisme",
-                    "Les interfaces",
-                    "Encapsulation"
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedChapter = newValue;
-                    });
-                  },
-                ),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width > 600 ? 20.0 : 20.0,
-                  0.0, // Pas de décalage vertical
-                  MediaQuery.of(context).size.width > 600 ? 600.0 : 20.0,
-                  0.0, // Pas de décalage vertical
-                ),
-                child: TextField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(
-                    labelText: 'Description',
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Colors.white, // Bordure en blanc pour contraste
-                      ),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    fillColor: Colors.white,
-                    filled: true,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 410.0 : 100.0),
-                child: ElevatedButton(
-                  onPressed: _pickPDF,
-                  child: Text('Sélectionner un PDF'),
-                ),
-              ),
-              SizedBox(height: 10),
-              if (_fileName != null)
-                Row(
-                  children: [
-                    Icon(Icons.picture_as_pdf, color: Colors.red),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Fichier sélectionné: $_fileName',
-                        style: TextStyle(fontSize: 16),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 430.0 : 130.0),
-                child: ElevatedButton(
-                  onPressed: _ajouterCours,
-                  child: Text('Ajouter Cours'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-  
-   
-   @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.white, // Ajout de la couleur de fond blanche
-      body: Padding(
-        padding: EdgeInsets.only(left: 00.0), // Décalage vers la gauche
-        child: Container(
-          decoration: BoxDecoration(
-            gradient: LinearGradient(
-              begin: Alignment.topCenter,
-              end: Alignment.bottomCenter,
-              colors: [
-                Color.fromARGB(255, 157, 14, 14),
-                Color.fromARGB(255, 157, 14, 14),
-              ],
-              stops: [0, 1],
-            ),
-            image: DecorationImage(
-              image: AssetImage('assets/bajoutt.png'),
-              fit: BoxFit.cover,
-            ),
-            borderRadius: BorderRadius.circular(15),
-          ),
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.start,
-            crossAxisAlignment: CrossAxisAlignment.start, // Aligner le contenu à gauche
-            children: [
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width > 600 ? 400.0 : 70.0, // Décalage horizontal
-                  MediaQuery.of(context).size.width > 600 ? 150.0 : 70.0, // Décalage vers le haut pour les grands écrans, sinon pour les petits écrans
-                  0.0, // Décalage horizontal
-                  0.0, // Pas de décalage vers le bas
-                ),
-                child: Text(
-                  'Ajouter votre cours',
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold,
-                    fontSize: 24,
-                    color: Color.fromARGB(255, 255, 255, 255),
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 430.0 : 130.0),
-                child: Image.asset(
-                  'assets/ok.png',
-                  width: 150,
-                ),
-              ),
-              SizedBox(height: 40),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 410.0 : 80.0),
-                child: DropdownButton<String>(
-                  value: _selectedChapter,
-                  hint: Text(
-                    'Choisir un chapitre',
-                    style: TextStyle(color: Color.fromARGB(255, 119, 14, 14)),
-                  ),
-                  items: [
-                    "Les classes et les objets",
-                    "L'héritage",
-                    "Le polymorphisme",
-                    "Les interfaces",
-                    "Encapsulation"
-                  ].map<DropdownMenuItem<String>>((String value) {
-                    return DropdownMenuItem<String>(
-                      value: value,
-                      child: Text(value),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    setState(() {
-                      _selectedChapter = newValue;
-                    });
-                  },
-                ),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.fromLTRB(
-                  MediaQuery.of(context).size.width > 600 ? 20.0 : 20.0,
-                  0.0, // Pas de décalage vers le haut
-                  MediaQuery.of(context).size.width > 600 ? 600.0 : 20.0,
-                  0.0, // Pas de décalage vers le bas
-                ),
-                child: TextField(
-                  controller: _descriptionController,
-                  decoration: InputDecoration(
-                    labelText: 'Description',
-                    border: OutlineInputBorder(
-                      borderSide: BorderSide(
-                        color: Color.fromARGB(255, 255, 255, 255),
-                      ),
-                      borderRadius: BorderRadius.circular(10.0),
-                    ),
-                    fillColor: Color.fromARGB(255, 255, 255, 255),
-                    filled: true,
-                  ),
-                ),
-              ),
-              SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 410.0 : 100.0),
-                child: ElevatedButton(
-                  onPressed: _pickPDF,
-                  child: Text('Sélectionner un PDF'),
-                ),
-              ),
-              SizedBox(height: 10),
-              if (_fileName != null)
-                Row(
-                  children: [
-                    Icon(Icons.picture_as_pdf, color: Colors.red),
-                    SizedBox(width: 10),
-                    Expanded(
-                      child: Text(
-                        'Fichier sélectionné: $_fileName',
-                        style: TextStyle(fontSize: 16),
-                        overflow: TextOverflow.ellipsis,
-                      ),
-                    ),
-                  ],
-                ),
-              SizedBox(height: 20),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 430.0 : 130.0),
-                child: ElevatedButton(
-                  onPressed: _ajouterCours,
-                  child: Text('Ajouter Cours'),
-                ),
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-  }*/
-  /*
-  @override
-Widget build(BuildContext context) {
- return Scaffold(
-   body: Padding(
-    padding: EdgeInsets.only(left: 00.0), // Décalage vers la gauche
-    child: Container(
-      decoration: BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color.fromARGB(255, 157, 14, 14),
-            Color.fromARGB(255, 157, 14, 14),
-          ],
-          stops: [0, 1],
-        ),
-        image: DecorationImage(
-          image: AssetImage('assets/bajoutt.png'),
-          fit: BoxFit.cover,
-        ),
-        borderRadius: BorderRadius.circular(20),
-      ),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.start,
-        crossAxisAlignment: CrossAxisAlignment.start, // Aligner le contenu à gauche
-        children: [
-     Padding(
-  padding: EdgeInsets.fromLTRB(
-    MediaQuery.of(context).size.width > 600 ? 400.0 : 70.0, // Décalage horizontal
-    MediaQuery.of(context).size.width > 600 ? 150.0 : 70.0, // Décalage vers le haut pour les grands écrans, sinon pour les petits écrans
-    0.0, // Décalage horizontal
-    0.0, // Pas de décalage vers le bas
-  ),
-  child: Text(
-    'Ajouter votre cours',
-    style: TextStyle(
-      fontWeight: FontWeight.bold,
-      fontSize: 24,
-      color: Color.fromARGB(255, 255, 255, 255),
-    ),
-  ),
-),
-
-          SizedBox(height: 20),
-
-      Padding(
-  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 430.0 : 130.0),
-  child:Image.asset(
-            'assets/ok.png', 
-            width: 150, 
-          ),
-),
-          SizedBox(height: 40),
-          
-         
-           Padding(
-  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 410.0 : 80.0),
-  child:
-          DropdownButton<String>(
-            value: _selectedChapter,
-           hint: Text(
-    'Choisir un chapitre',
-    style: TextStyle(color: Color.fromARGB(255, 119, 14, 14)),
-  ),
-            items: [
-              "Les classes et les objets",
-              "L'héritage",
-              "Le polymorphisme",
-              "Les interfaces",
-              "Encapsulation"
-            ].map<DropdownMenuItem<String>>((String value) {
-              return DropdownMenuItem<String>(
-                value: value,
-                child: Text(value),
-              );
-            }).toList(),
-            onChanged: (String? newValue) {
-              setState(() {
-                _selectedChapter = newValue;
-              });
-            },
-          ),
-           ),
-          SizedBox(height: 20),
-Padding(
-  padding: EdgeInsets.fromLTRB(
-    MediaQuery.of(context).size.width > 600 ? 20.0 : 20.0, 
-    0.0, // Pas de décalage vers le haut
-    MediaQuery.of(context).size.width > 600 ? 600.0 : 20.0, 
-    0.0, // Pas de décalage vers le bas
-  ),
-  child: TextField(
-    controller: _descriptionController,
-    decoration: InputDecoration(
-      labelText: 'Description',
-      border: OutlineInputBorder(
-        borderSide: BorderSide(
-          color: Color.fromARGB(255, 255, 255, 255),
-        ),
-        borderRadius: BorderRadius.circular(10.0),
-      ),
-      fillColor: Color.fromARGB(255, 255, 255, 255),
-      filled: true,
-    ),
-  ),
-),
-
-          SizedBox(height: 20),
-             Padding(
- padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 410.0 : 100.0),// Décalage vers la gauche et vers la droite
-  child:
-          ElevatedButton(
-            onPressed: _pickPDF,
-            child: Text('Sélectionner un PDF'),
-          ),
-       
-             ),
-                SizedBox(height: 10),
-          if (_fileName != null)
-            Row(
-              children: [
-                Icon(Icons.picture_as_pdf, color: Colors.red),
-                SizedBox(width: 10),
-                Expanded(
-                  child: Text(
-                    'Fichier sélectionné: $_fileName',
-                    style: TextStyle(fontSize: 16),
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                ),
-              ],
-            ),
-          SizedBox(height: 20),
-               Padding(
-  //padding: EdgeInsets.only(left: 430.0, right: 20.0), // Décalage vers la gauche et vers la droite
-  padding: EdgeInsets.symmetric(horizontal: MediaQuery.of(context).size.width > 600 ? 430.0 : 130.0),
-  child:
-          ElevatedButton(
-            onPressed: _ajouterCours,
-            child: Text('Ajouter Cours'),
-          ),
-               ),
-        ],
-      ),
-    ),
-  ),
-);
-
-}
-}*/

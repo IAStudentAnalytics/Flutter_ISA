@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:fl_chart/fl_chart.dart'; // Import the fl_chart package
 import 'dart:math';
 import 'package:http/http.dart' as http;
+import 'package:pim/apiConstants.dart';
 import 'package:spider_chart/spider_chart.dart';
 
 class Performance extends StatefulWidget {
@@ -87,7 +88,7 @@ class _PerformanceState extends State<Performance> {
   }
 
   Future<void> sendPredictRequest(Map<String, double?> preparedData) async {
-    final url = Uri.parse('http://172.16.1.188:5000/note/predictWithFlask');
+    final url = Uri.parse('${APIConstants.baseURL}/note/predictWithFlask');
     final headers = {"Content-Type": "application/json"};
     final body = json.encode(preparedData);
 

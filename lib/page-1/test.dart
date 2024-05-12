@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:pim/apiConstants.dart';
 import 'package:pim/models/question.dart';
 import 'dart:convert';
 import 'package:pim/page-1/performance.dart';
@@ -84,7 +85,7 @@ class _TestPageState extends State<TestPage> {
     print(answers);
     print(widget.testId);
     final response = await http.post(
-      Uri.parse('http://172.16.1.188:5000/note/tests/submit'),
+      Uri.parse('${APIConstants.baseURL}/note/tests/submit'),
       headers: <String, String>{
         'Content-Type': 'application/json; charset=UTF-8',
       },

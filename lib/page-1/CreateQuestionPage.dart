@@ -1,5 +1,7 @@
-
 import 'dart:io';
+
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:pim/page-1/CreateTestPage.dart';
@@ -31,7 +33,6 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
     'Encapsulation'
   ];
 
-  File? _image;
   List<Option> options = [];
   bool isQuizQuestion = true;
   List<Map<String, dynamic>> questions = [];
@@ -50,7 +51,6 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
     'options': options.map((option) => option.text).toList(),
     'chapitre': selectedChapter,
     'type': isQuizQuestion ? 'Quiz' : 'QA',
-    'image': _image.toString(),
   };
 
   // Append the new question to the list of questions
@@ -62,12 +62,24 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
   _clearFields();
   widget.onSubmitQuestions(questions);
 }
+
   void _saveQuestions() {
   if (questions.isEmpty) {
     _showAlert('No questions to save.');
     return;
   }
-
+  num sum = 0;
+  for (var question in questions){
+    sum += question['marks'] ?? 0;
+  }
+  if (sum != 20){
+    _showAlert('The marks sum should be 20!');
+    return;
+  }
+  if (questions.length <= 2){
+    _showAlert('Test must contains more than two questions');
+    return;
+  }
   List<Map<String, dynamic>> savedQuestions = List.from(questions);
   questions.clear();
   print('Saved Questions : $savedQuestions');
@@ -84,7 +96,10 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
 
   bool _areFieldsEmpty() {
     return questionController.text.isEmpty ||
-        marksController.text.isEmpty;
+        marksController.text.isEmpty || 
+        answerController.text.isEmpty ||
+        selectedChapter == null ||
+        selectedComplexity == null ;
   }
 
   void _clearFields() {
@@ -92,8 +107,8 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
     marksController.clear();
     answerController.clear();
     imageController.clear();
+    options.clear();
     setState(() {
-      _image = null;
     });
   }
 
@@ -113,14 +128,13 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
     );
   }
 
-  Future<void> _getImage() async {
-    final pickedFile = await ImagePicker().getImage(source: ImageSource.gallery);
-    setState(() {
-      _image = pickedFile != null ? File(pickedFile.path) : null;
-    });
+  
+  void initState() {
+    super.initState();
+    // Initialize with two options
+    options.add(Option()); // Add an empty option
+    options.add(Option());
   }
-  
-  
   
   @override
   Widget build(BuildContext context) {
@@ -132,10 +146,9 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
           title: Text('Create Questions'),
         ),
         body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.0),
+        //padding: EdgeInsets.all(16.0),
         child: Container(
           width: MediaQuery.of(context).size.width,
-          height: MediaQuery.of(context).size.height,
           decoration: BoxDecoration(
             gradient: LinearGradient(
               begin: Alignment.topCenter,
@@ -144,9 +157,8 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
               stops: [0, 1],
             ),
           ),
-      child: Padding(
+        child: Padding(
         padding: const EdgeInsets.all(16.0),
-        child: SingleChildScrollView(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
@@ -184,8 +196,6 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
                   borderRadius: BorderRadius.circular(10.0),
                   borderSide: BorderSide.none, // Define border color
                 ),
-                // Add additional styling properties as needed
-                // You can customize labelStyle, hintStyle, and more
               ),
             ),
             SizedBox(height: 10 * fem),
@@ -206,53 +216,57 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
                   Text('Options:'),
                   SizedBox(height: 8 * fem),
                   for (int i = 0; i < options.length; i++)
-                    ListTile(
-                      leading: Icon(Icons.drag_handle),
-                      title: Row(
-                        children: [
-                          Expanded(
-                            child: TextField(
-                              decoration: InputDecoration(
-                                labelText: 'Option ${i + 1}',
-                                border: OutlineInputBorder(
-                                  borderRadius: BorderRadius.circular(10.0),
-                                  borderSide: BorderSide.none,
-                                ),
-                                filled: true,
-                                fillColor: Colors.white.withOpacity(0.8),
+                    Row(
+                    children: [
+                      Expanded(
+                        child: Padding(
+                          padding: const EdgeInsets.symmetric(vertical: 8.0),
+                          child: TextField(
+                            decoration: InputDecoration(
+                              labelText: 'Option ${i + 1}',
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(10.0),
+                                borderSide: BorderSide.none,
                               ),
-                              onChanged: (value) {
-                                options[i].text = value;
-                              },
+                              filled: true,
+                              fillColor: Colors.white.withOpacity(0.8),
                             ),
-                          ),
-                          Checkbox(
-                            value: options[i].isCorrect,
                             onChanged: (value) {
                               setState(() {
-                                options[i].isCorrect = value ?? false;
-                                if (value ?? false) {
-                                  answerController.text = options[i].text;
-                                }
+                                options[i].text = value;
                               });
                             },
                           ),
-                          IconButton(
-                            icon: Icon(Icons.delete),
-                            onPressed: () {
-                              setState(() {
-                                options.removeAt(i);
-                              });
-                            },
-                          ),
-                        ],
+                        ),
                       ),
-                    ),
-                  SizedBox(height: 8 * fem),
+                      Checkbox(
+                        value: options[i].isCorrect,
+                        onChanged: (value) {
+                          setState(() {
+                            options[i].isCorrect = value ?? false;
+                            if (value ?? false) {
+                              answerController.text = options[i].text;
+                            }
+                          });
+                        },
+                      ),
+                      if (options.length > 2) // Condition to prevent deleting when minimum options are present
+                        IconButton(
+                          icon: Icon(Icons.delete),
+                          onPressed: () {
+                            setState(() {
+                              options.removeAt(i);
+                            });
+                          },
+                        ),
+                    ],
+                  ),
+                 SizedBox(height: 8 * fem),
+                if (options.length < 4) // Condition to prevent adding when maximum options are reached
                   ElevatedButton(
                     onPressed: () {
                       setState(() {
-                        options.add(Option());
+                        options.add(Option()); // Assuming Option() creates a new option object
                       });
                     },
                     child: Text('Add Option'),
@@ -320,38 +334,7 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
                   ],
                 ),
               ],
-            ),
-            SizedBox(height: 16 * fem),
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Expanded(
-                  child: TextField(
-                    readOnly: true,
-                    decoration: InputDecoration(
-                      labelText: 'Image URL',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10.0),
-                        borderSide: BorderSide.none,
-                      ),
-                      filled: true,
-                      fillColor: Colors.white.withOpacity(0.8),
-                    ),
-                    controller: TextEditingController(text: _image?.path ?? ''),
-                  ),
-                ),
-                SizedBox(width: 16),
-                SizedBox(
-                  height: 48.0,
-                  child: ElevatedButton(
-                    onPressed: () {
-                      _getImage();
-                    },
-                    child: Text('Select Image'),
-                  ),
-                ),
-              ],
-            ),
+            ),            
             SizedBox(height: 16 * fem),
             TextField(
               controller: marksController,
@@ -366,7 +349,7 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
                 ),
               ),
             ),
-            SizedBox(height: 16.0),
+            SizedBox(height: 16 * fem),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
@@ -387,24 +370,23 @@ class _CreateQuestionPageState extends State<CreateQuestionPage> {
               'Questions:',
               style: TextStyle(fontSize: 18.0, fontWeight: FontWeight.bold),
             ),
-            SizedBox(height: 8.0),
-            ListView.builder(
-              shrinkWrap: true,
-              itemCount: questions.length,
-              itemBuilder: (context, index) {
-                return ListTile(
-                  title: Text(questions[index]['question']),
-                  subtitle: Text('Complexity: ${questions[index]['complexity']}, Marks: ${questions[index]['marks']}'),
-                  leading: questions[index]['image'] != null ? Image.network(questions[index]['image']) : null ,
-                );
-              },
-            ),
+            SizedBox(
+  height: 200, // Set a fixed height for the ListView
+  child: ListView.builder(
+    itemCount: questions.length,
+    itemBuilder: (context, index) {
+      return ListTile(
+        title: Text(questions[index]['question']),
+        subtitle: Text('Complexity: ${questions[index]['complexity']}, Marks: ${questions[index]['marks']}'),
+      );
+    },
+  ),
+),
           ],
         ),
         ),
       ),
     ),
-  ),
     );
   }
 }
